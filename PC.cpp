@@ -37,6 +37,6 @@ namespace DK86PC {
     }
     
     void PC::run() {
-        
+        cpu.step();
     }
 }

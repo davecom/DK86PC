@@ -18,8 +18,13 @@
 //  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "CPU.hpp"
+#include <iostream>
+
+using namespace std;
 
 namespace DK86PC {
+    
+#define NEXT_INSTRUCTION ((((address)cs) << 4) + ip)
     
     void CPU::reset() {
         ax = 0;
@@ -30,11 +35,37 @@ namespace DK86PC {
         bp = 0;
         si = 0;
         di = 0;
-        cs = 0;
+        cs = 0xFFFF;
         ds = 0;
         es = 0;
         ss = 0;
-        ip = 0xFFFF0; // reset vector
+        ip = 0; // reset vector
+        flags = 0xF000;
+    }
+    
+    void CPU::step() {
+        bool jump = false;
+        byte instructionLength = 1;
+        
+        byte opcode = memory.readByte(NEXT_INSTRUCTION);
+        cout << hex << opcode << endl;
+        
+        switch (opcode) {
+            case 0xEA: // JMP direct
+                // next two instructions are new ip
+                ip = memory.readWord(NEXT_INSTRUCTION + 1);
+                // next two after that are new cs
+                cs = memory.readWord(NEXT_INSTRUCTION + 3);
+                jump = true;
+                instructionLength = 5;
+                break;
+            default:
+                cout << "Unknown opcode!" << endl;
+                break;
+        }
+        
+        // if we didn't jump, move the instruction pointer forward
+        if (!jump) { ip += instructionLength; }
     }
     
 }

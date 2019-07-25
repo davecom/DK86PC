@@ -36,6 +36,8 @@ namespace DK86PC {
             delete ram;
         }
         void loadData(vector<byte> &data, address location);
+        byte readByte(address location);
+        word readWord(address location);
     private:
         byte *ram;
     };

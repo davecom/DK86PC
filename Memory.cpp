@@ -28,4 +28,12 @@ namespace DK86PC {
         copy(data.begin(), data.end(), ram+location);
     }
     
+    byte Memory::readByte(address location) {
+        return ram[location];
+    }
+    
+    word Memory::readWord(address location) {
+        return (((word)ram[location]) << 8) | ram[location + 1];
+    }
+    
 }

@@ -62,22 +62,25 @@ namespace DK86PC {
         
         word sp, bp, si, di; // stack pointer, base pointer, source index, destination index
         word cs, ds, es, ss; // current segment, data segment, extra, stack
-        address ip; // instruction pointer
-        struct {
-            byte nothing: 4; //bits 12-15 unused
-            byte overflow: 1; // bit 11
-            byte direction: 1; // bit 10
-            byte interrupt: 1; // bit 9
-            byte trace: 1; // bit 8
-            byte sign: 1; // bit 7
-            byte zero: 1; // bit 6
-            byte nothing2: 1; // bit 5
-            byte auxiliaryCarry: 1; // bit 4
-            byte nothing3: 1; // bit 3
-            byte parity: 1; // bit 2
-            byte nothing4: 1; // bit 1
-            byte carry: 1; // bit 0
-        } flags;
+        word ip; // instruction pointer
+        union {
+            struct {
+                byte carry: 1; // bit 0
+                byte nothing4: 1; // bit 1
+                byte parity: 1; // bit 2
+                byte nothing3: 1; // bit 3
+                byte auxiliaryCarry: 1; // bit 4
+                byte nothing2: 1; // bit 5
+                byte zero: 1; // bit 6
+                byte sign: 1; // bit 7
+                byte trace: 1; // bit 8
+                byte interrupt: 1; // bit 9
+                byte direction: 1; // bit 10
+                byte overflow: 1; // bit 11
+                byte nothing: 4; //bits 12-15 unused
+            } flag;
+            word flags;
+        };
     };
 
 }
