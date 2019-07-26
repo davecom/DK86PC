@@ -17,17 +17,18 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		557530D422E7E69A009C1B28 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = usr/share/man/man1;
+			buildActionMask = 12;
+			dstPath = "";
 			dstSubfolderSpec = 16;
 			files = (
 				55A0F3EE22E82F8900F6A149 /* BIOS in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		556C12B622EABC8600A3F140 /* notes.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = notes.txt; sourceTree = "<group>"; };
 		557530D622E7E69A009C1B28 /* DK86PC */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DK86PC; sourceTree = BUILT_PRODUCTS_DIR; };
 		557530D922E7E69A009C1B28 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		55A0F3DF22E7E85C00F6A149 /* CPU.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CPU.cpp; sourceTree = "<group>"; };
@@ -79,6 +80,7 @@
 				55A0F3E222E7EA2900F6A149 /* Memory.cpp */,
 				55A0F3E322E7EA2900F6A149 /* Memory.hpp */,
 				55A0F3E522E7EAA200F6A149 /* Types.h */,
+				556C12B622EABC8600A3F140 /* notes.txt */,
 			);
 			name = DK86PC;
 			sourceTree = "<group>";
@@ -204,6 +206,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "";
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -256,6 +259,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "";
 				SDKROOT = macosx;
 			};
 			name = Release;

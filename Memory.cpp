@@ -25,7 +25,7 @@ using namespace std;
 namespace DK86PC {
     
     void Memory::loadData(vector<byte> &data, address location) {
-        copy(data.begin(), data.end(), ram+location);
+        copy(data.begin(), data.end(), ram + location);
     }
     
     byte Memory::readByte(address location) {
@@ -33,7 +33,7 @@ namespace DK86PC {
     }
     
     word Memory::readWord(address location) {
-        return (((word)ram[location]) << 8) | ram[location + 1];
+        return (((word)ram[location + 1]) << 8) | ram[location];
     }
     
 }

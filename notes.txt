@@ -1,0 +1,5 @@
+
+LLDB Read Reset vector
+memory read -t byte -fX -c8 'memory.ram + 0xFFFF0'
+
+Support Chips 8237, 8253, 8259, cga, soundblaster

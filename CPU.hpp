@@ -30,8 +30,10 @@ namespace DK86PC {
             reset();
         };
         void reset();
-        void step();
+        unsigned long long step();
     private:
+        uint64_t cycleCount;
+        
         // External Constructs
         Memory &memory;
         
@@ -45,8 +47,7 @@ namespace DK86PC {
         };
         generalRegister ar, br, cr, dr; // general purpose registers
         
-        // this would be a lot easier if c++ supported anonymous unions
-        // like c11
+        // this would be a lot easier if c++ supported anonymous structs like c11
         #define ax ar.main
         #define al ar.inner.low
         #define ah ar.inner.high
@@ -65,20 +66,20 @@ namespace DK86PC {
         word ip; // instruction pointer
         union {
             struct {
-                byte carry: 1; // bit 0
-                byte nothing4: 1; // bit 1
-                byte parity: 1; // bit 2
-                byte nothing3: 1; // bit 3
-                byte auxiliaryCarry: 1; // bit 4
-                byte nothing2: 1; // bit 5
-                byte zero: 1; // bit 6
-                byte sign: 1; // bit 7
-                byte trace: 1; // bit 8
-                byte interrupt: 1; // bit 9
-                byte direction: 1; // bit 10
-                byte overflow: 1; // bit 11
-                byte nothing: 4; //bits 12-15 unused
-            } flag;
+                bool carry: 1; // bit 0
+                bool nothing4: 1; // bit 1
+                bool parity: 1; // bit 2
+                bool nothing3: 1; // bit 3
+                bool auxiliaryCarry: 1; // bit 4
+                bool nothing2: 1; // bit 5
+                bool zero: 1; // bit 6
+                bool sign: 1; // bit 7
+                bool trace: 1; // bit 8
+                bool interrupt: 1; // bit 9
+                bool direction: 1; // bit 10
+                bool overflow: 1; // bit 11
+                bool nothing: 4; //bits 12-15 unused
+            };
             word flags;
         };
     };

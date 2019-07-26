@@ -19,6 +19,7 @@
 
 #include "CPU.hpp"
 #include <iostream>
+#include <iomanip>
 
 using namespace std;
 
@@ -27,6 +28,9 @@ namespace DK86PC {
 #define NEXT_INSTRUCTION ((((address)cs) << 4) + ip)
     
     void CPU::reset() {
+        cycleCount = 0;
+        
+        // reset registers
         ax = 0;
         bx = 0;
         cx = 0;
@@ -39,33 +43,47 @@ namespace DK86PC {
         ds = 0;
         es = 0;
         ss = 0;
-        ip = 0; // reset vector
+        ip = 0; // reset vector at OxFFFF0 (cs << 4 + ip)
         flags = 0xF000;
     }
     
-    void CPU::step() {
+    // returns the number of cycles counted
+    uint64_t CPU::step() {
         bool jump = false;
         byte instructionLength = 1;
         
         byte opcode = memory.readByte(NEXT_INSTRUCTION);
-        cout << hex << opcode << endl;
+        cout << hex << uppercase << (int)opcode << dec << endl;
         
         switch (opcode) {
             case 0xEA: // JMP direct
+            { // scope for new variables
                 // next two instructions are new ip
-                ip = memory.readWord(NEXT_INSTRUCTION + 1);
+                // can't change ip until after have read CS
+                word nextIp = memory.readWord(NEXT_INSTRUCTION + 1);
                 // next two after that are new cs
-                cs = memory.readWord(NEXT_INSTRUCTION + 3);
+                word nextCs = memory.readWord(NEXT_INSTRUCTION + 3);
+                ip = nextIp;
+                cs = nextCs;
                 jump = true;
                 instructionLength = 5;
                 break;
+            }
+                
+            case 0xFA: // CLI clear interrupt
+                interrupt = false;
+                break;
             default:
                 cout << "Unknown opcode!" << endl;
-                break;
+                return -1;
         }
         
         // if we didn't jump, move the instruction pointer forward
         if (!jump) { ip += instructionLength; }
+        
+        // dummy for now until we have accurate cycle counts
+        cycleCount += 1;
+        return 1;
     }
     
 }

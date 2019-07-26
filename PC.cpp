@@ -19,7 +19,9 @@
 
 #include <string>
 #include <fstream>
+#include <iostream>
 #include <iterator>
+#include <algorithm>
 #include <vector>
 #include "PC.hpp"
 
@@ -30,13 +32,27 @@ namespace DK86PC {
     // On the original PC BIOS exists from 0xE0000 to 0xFFFFF
     // so implicitly must be <= 128k
     void PC::loadBIOS(string filename) {
+        
+        // open input stream
         ifstream input(filename, ios::in | ios::binary);
-        vector<byte> buffer(istreambuf_iterator<char>(input), {});
+        // check if the file opened successfully
+        if (!input.is_open() || input.fail()) {
+            cout << "BIOS File " << filename << " can't be opened!";
+            return;
+        }
+        
+        vector<byte> buffer;
+        copy(istreambuf_iterator<char>(input),
+             istreambuf_iterator<char>(),
+             back_inserter(buffer));
+        
+        // in original IBM PC BIOS is right before end of 1 MB of memory
         address biosPlace = 0x100000 - (address) buffer.size();
         memory.loadData(buffer, biosPlace);
     }
     
     void PC::run() {
-        cpu.step();
+        // keep going until we hit an illegal/unknown instruction
+        while (cpu.step() != -1) { }
     }
 }

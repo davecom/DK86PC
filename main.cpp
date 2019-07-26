@@ -27,7 +27,7 @@ int main(int argc, const char * argv[]) {
     // insert code here...
     std::cout << "Hello, World!\n";
     PC pc = PC();
-    pc.loadBIOS("/BIOS/BIOS_5150_24APR81_U33.BIN");
+    pc.loadBIOS("BIOS/BIOS_5150_24APR81_U33.BIN");
     pc.run();
     
     return 0;

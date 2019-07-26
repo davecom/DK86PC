@@ -7,9 +7,12 @@
 //
 
 #include <cstdint>
+#include <iostream>
 
 #ifndef Types_h
 #define Types_h
+
+using namespace std;
 
 namespace DK86PC {
     
