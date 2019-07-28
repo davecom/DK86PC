@@ -45,20 +45,46 @@ namespace DK86PC {
         uint64_t cycleCount;
         
         // Private methods
-        inline byte getModRMWord(ModRegRM mrr);
-        inline byte getRegWord(byte reg);
+        
+        // Flag Set Methods
+        inline void setSignFlagByte(byte data);
+        template <typename T>
+        inline void setZeroFlag(T data);
+        template <typename T>
+        inline void CPU::setParityFlag(T data);
+        inline void setSZPFlagsByte(byte data);
+        
+        inline void setSignFlagWord(word data);
+        inline void setSZPFlagsWord(word data);
+        
+        // Get & Change Reg/Memory Methods
+        inline address calcEffectiveAddress(ModRegRM mrr);
+        inline word getModRMWord(ModRegRM mrr);
+        inline word getRegWord(byte reg);
         inline byte getModRMByte(ModRegRM mrr);
         inline byte getRegByte(byte reg);
         template <typename T>
         inline void setReg(byte reg, T data);
+        inline void setRegByte(byte reg, byte data);
+        inline void setRegWord(byte reg, word data);
+        inline void setModRMByte(ModRegRM mrr, byte data);
+        inline void setModRMWord(ModRegRM mrr, word data);
+        
         //ROL/ROR/RCL/RCR/SHL/SHR/SAR
-        inline void rol(ModRegRM mrr, byte amount);
-        inline void ror(ModRegRM mrr, byte amount);
-        inline void rcl(ModRegRM mrr, byte amount);
-        inline void rcr(ModRegRM mrr, byte amount);
-        inline void shl(ModRegRM mrr, byte amount);
-        inline void shr(ModRegRM mrr, byte amount);
-        inline void sar(ModRegRM mrr, byte amount);
+        inline void rolByte(ModRegRM mrr, byte amount);
+        inline void rorByte(ModRegRM mrr, byte amount);
+        inline void rclByte(ModRegRM mrr, byte amount);
+        inline void rcrByte(ModRegRM mrr, byte amount);
+        inline void shlByte(ModRegRM mrr, byte amount);
+        inline void shrByte(ModRegRM mrr, byte amount);
+        inline void sarByte(ModRegRM mrr, byte amount);
+        inline void rolWord(ModRegRM mrr, byte amount);
+        inline void rorWord(ModRegRM mrr, byte amount);
+        inline void rclWord(ModRegRM mrr, byte amount);
+        inline void rcrWord(ModRegRM mrr, byte amount);
+        inline void shlWord(ModRegRM mrr, byte amount);
+        inline void shrWord(ModRegRM mrr, byte amount);
+        inline void sarWord(ModRegRM mrr, byte amount);
         
         // External Constructs
         Memory &memory;

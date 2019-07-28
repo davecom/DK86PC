@@ -30,56 +30,81 @@ namespace DK86PC {
     // Utility Stuff
     #define NEXT_INSTRUCTION ((((address)cs) << 4) + ip)
     
+    inline void CPU::setSignFlagByte(byte data) {
+        if (highBitByte(data)) {
+            sign = true;
+        } else {
+            sign = false;
+        }
+    }
     
+    template <typename T>
+    inline void CPU::setZeroFlag(T data) {
+        if (data == 0) {
+            zero = true;
+        } else {
+            zero = false;
+        }
+    }
+    
+    template <typename T>
+    inline void CPU::setParityFlag(T data) {
+        // source: http://graphics.stanford.edu/~seander/bithacks.html#ParityNaive
+        byte tested = lowByte(data);
+        bool p = true;
+        
+        while (tested) {
+            p = !p;
+            tested = tested & (tested - 1);
+        }
+        
+        parity = p;
+    }
+    
+    inline void CPU::setSZPFlagsByte(byte data) {
+        setSignFlagByte(data);
+        setZeroFlag(data);
+        setParityFlag(data);
+    }
+    
+    inline void CPU::setSignFlagWord(word data) {
+        if (highBitWord(data)) {
+            sign = true;
+        } else {
+            sign = false;
+        }
+    }
+    
+    inline void CPU::setSZPFlagsWord(word data) {
+        setSignFlagWord(data);
+        setZeroFlag(data);
+        setParityFlag(data);
+    }
     
     inline word CPU::getRegWord(byte reg) {
         switch (reg) {
-            case 0b000:         // w = 0
-                return al;
-                break;
-            case 0b001:
-                return cl;
-                break;
-            case 0b010:
-                return dl;
-                break;
-            case 0b011:
-                return bl;
-                break;
-            case 0b100:
-                return ah;
-                break;
-            case 0b101:
-                return ch;
-                break;
-            case 0b110:
-                return dh;
-                break;
-            case 0b111:
-                return bh;
-                break;
-            case 0b1000:        // w = 1
+            case 0b000:        // w = 1
                 return ax;
                 break;
-            case 0b1001:
+            case 0b001:
                 return cx;
                 break;
-            case 0b1010:
+            case 0b010:
                 return dx;
                 break;
-            case 0b1011:
+            case 0b011:
                 return bx;
                 break;
-            case 0b1100:
+            case 0b100:
                 return sp;
                 break;
-            case 0b1101:
+            case 0b101:
                 return bp;
                 break;
-            case 0b1110:
+            case 0b110:
                 return si;
                 break;
-            case 0b1111:
+            case 0b111:
                 return di;
                 break;
         }
@@ -113,39 +138,12 @@ namespace DK86PC {
             case 0b111:
                 return bh;
                 break;
-            case 0b1000:        // w = 1
-                return ax;
-                break;
-            case 0b1001:
-                return cx;
-                break;
-            case 0b1010:
-                return dx;
-                break;
-            case 0b1011:
-                return bx;
-                break;
-            case 0b1100:
-                return sp;
-                break;
-            case 0b1101:
-                return bp;
-                break;
-            case 0b1110:
-                return si;
-                break;
-            case 0b1111:
-                return di;
-                break;
         }
         
         return 0;
     }
     
-    inline byte CPU::getModRMWord(ModRegRM mrr) {
-        if (mrr.mod == 0b11) {
-            return getRegWord(mrr.rm);
-        }
+    inline address CPU::calcEffectiveAddress(ModRegRM mrr) {
         word disp = 0;
         if (mrr.mod == 0b01) {
             disp = signExtend(memory.readByte(NEXT_INSTRUCTION + 2));
@@ -177,47 +175,26 @@ namespace DK86PC {
                 ea = bx + disp;
                 break;
         }
+        return ea;
+    }
+    
+    inline word CPU::getModRMWord(ModRegRM mrr) {
+        if (mrr.mod == 0b11) {
+            return getRegWord(mrr.rm);
+        }
         
-        return memory.readWord(((*currentSegment << 4) + ea));
+        address ea = calcEffectiveAddress(mrr);
+        address pa = ((*currentSegment << 4) + ea); // physical address
+        return memory.readWord(pa);
     }
     
     inline byte CPU::getModRMByte(ModRegRM mrr) {
         if (mrr.mod == 0b11) {
             return getRegByte(mrr.rm);
         }
-        word disp = 0;
-        if (mrr.mod == 0b01) {
-            disp = signExtend(memory.readByte(NEXT_INSTRUCTION + 2));
-        } else if (mrr.mod == 0b10) {
-            disp = memory.readWord(NEXT_INSTRUCTION + 2);
-        }
-        
-        address ea = bx + si + disp; // 0b000
-        switch (mrr.rm) {
-            case 0b001:
-                ea = bx + di + disp;
-                break;
-            case 0b010:
-                ea = bp + si + disp;
-                break;
-            case 0b011:
-                ea = bp + di + disp;
-                break;
-            case 0b100:
-                ea = si + disp;
-                break;
-            case 0b101:
-                ea = di + disp;
-                break;
-            case 0b110:
-                ea = bp + disp;
-                break;
-            case 0b111:
-                ea = bx + disp;
-                break;
-        }
-        
-        return memory.readByte(((*currentSegment << 4) + ea));
+        address ea = calcEffectiveAddress(mrr);
+        address pa = ((*currentSegment << 4) + ea); // physical address
+        return memory.readByte(pa);
     }
     
     template <typename T>
@@ -274,34 +251,120 @@ namespace DK86PC {
         }
     }
     
-    inline void CPU::rol(ModRegRM mrr, byte amount) {
+    inline void CPU::setRegByte(byte reg, byte data) {
+        switch (reg) {
+            case 0b000:         // w = 0
+                al = data;
+                break;
+            case 0b001:
+                cl = data;
+                break;
+            case 0b010:
+                dl = data;
+                break;
+            case 0b011:
+                bl = data;
+                break;
+            case 0b100:
+                ah = data;
+                break;
+            case 0b101:
+                ch = data;
+                break;
+            case 0b110:
+                dh = data;
+                break;
+            case 0b111:
+                bh = data;
+                break;
+        }
+    }
+    
+    inline void CPU::setRegWord(byte reg, word data) {
+        switch (reg) {
+            case 0b000:        // w = 1
+                ax = data;
+                break;
+            case 0b001:
+                cx = data;
+                break;
+            case 0b010:
+                dx = data;
+                break;
+            case 0b011:
+                bx = data;
+                break;
+            case 0b100:
+                sp = data;
+                break;
+            case 0b101:
+                bp = data;
+                break;
+            case 0b110:
+                si = data;
+                break;
+            case 0b111:
+                di = data;
+                break;
+        }
+    }
+    
+    inline void CPU::setModRMByte(ModRegRM mrr, byte data) {
+        if (mrr.mod == 0b11) {
+            setRegByte(mrr.rm, data);
+            return;
+        }
+        
+        address ea = calcEffectiveAddress(mrr);
+        address pa = ((*currentSegment << 4) + ea); // physical address
+        memory.setByte(pa, data);
+    }
+    
+    inline void CPU::setModRMWord(ModRegRM mrr, word data) {
+        if (mrr.mod == 0b11) {
+            setRegWord(mrr.rm, data);
+            return;
+        }
+        
+        address ea = calcEffectiveAddress(mrr);
+        address pa = ((*currentSegment << 4) + ea); // physical address
+        memory.setWord(pa, data);
+    }
+    
+    inline void CPU::rolByte(ModRegRM mrr, byte amount) {
         
     }
     
-    inline void CPU::ror(ModRegRM mrr, byte amount) {
+    inline void CPU::rorByte(ModRegRM mrr, byte amount) {
         
     }
     
-    inline void CPU::rcl(ModRegRM mrr, byte amount) {
+    inline void CPU::rclByte(ModRegRM mrr, byte amount) {
         
     }
     
-    inline void CPU::rcr(ModRegRM mrr, byte amount) {
+    inline void CPU::rcrByte(ModRegRM mrr, byte amount) {
         
     }
     
-    inline void CPU::shl(ModRegRM mrr, byte amount) {
+    inline void CPU::shlByte(ModRegRM mrr, byte amount) {
         
     }
     
-    inline void CPU::shr(ModRegRM mrr, byte amount) {
-        
-        
+    inline void CPU::shrByte(ModRegRM mrr, byte amount) {
         int count = amount;
-        if (count == 1) { overflow = }
+        byte operand = getModRMByte(mrr);
+        if (count == 1) { overflow = highBitByte(operand); }
+        while (count > 0) {
+            carry = lowBit(operand);
+            operand >>= 1;
+            count--;
+        }
+        setSZPFlagsByte(operand);
+        setModRMByte(mrr, operand);
     }
     
-    inline void CPU::sar(ModRegRM mrr, byte amount) {
+    inline void CPU::sarByte(ModRegRM mrr, byte amount) {
         
     }
     

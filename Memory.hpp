@@ -38,6 +38,9 @@ namespace DK86PC {
         void loadData(vector<byte> &data, address location);
         byte readByte(address location);
         word readWord(address location);
+        void setByte(address location, byte data);
+        void setWord(address location, word data);
+        byte& readByteRef(address location);
     private:
         byte *ram;
     };

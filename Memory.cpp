@@ -36,4 +36,17 @@ namespace DK86PC {
         return (((word)ram[location + 1]) << 8) | ram[location];
     }
     
+    void Memory::setByte(address location, byte data) {
+        ram[location] = data;
+    }
+    
+    void Memory::setWord(address location, word data) {
+        ram[location] = lowByte(data);
+        ram[location + 1] = highByte(data);
+    }
+    
+    byte& Memory::readByteRef(address location) {
+        return ram[location];
+    }
+    
 }

@@ -19,7 +19,12 @@ namespace DK86PC {
 #define lowNibble(b) ((b) & 0x0F)
 #define highNibble(b) (((b) & 0xF0) >> 4)
     
-    
+#define highBitByte(b) (((b) & 0x80) >> 7)
+#define highBitWord(w) (((w) & 0x8000) >> 15)
+#define lowBit(b) ((b) & 1)
+
+#define lowByte(w) ((byte) ((w) & 0x00FF))
+#define highByte(w) ((byte) (((w) & 0xFF00) >> 7))
     
     typedef uint8_t byte;
     typedef uint16_t word;
