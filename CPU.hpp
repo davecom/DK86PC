@@ -51,7 +51,7 @@ namespace DK86PC {
         template <typename T>
         inline void setZeroFlag(T data);
         template <typename T>
-        inline void CPU::setParityFlag(T data);
+        inline void setParityFlag(T data);
         inline void setSZPFlagsByte(byte data);
         
         inline void setSignFlagWord(word data);
@@ -69,6 +69,9 @@ namespace DK86PC {
         inline void setRegWord(byte reg, word data);
         inline void setModRMByte(ModRegRM mrr, byte data);
         inline void setModRMWord(ModRegRM mrr, word data);
+        inline void modInstructionLength(ModRegRM mrr, byte &il);
+        inline word getSegmentRegWord(byte reg);
+        inline void setSegmentRegWord(byte reg, word data);
         
         //ROL/ROR/RCL/RCR/SHL/SHR/SAR
         inline void rolByte(ModRegRM mrr, byte amount);
@@ -85,6 +88,15 @@ namespace DK86PC {
         inline void shlWord(ModRegRM mrr, byte amount);
         inline void shrWord(ModRegRM mrr, byte amount);
         inline void sarWord(ModRegRM mrr, byte amount);
+        
+        //XOR/OR
+        inline void xorByte(byte &left, byte right);
+        inline void xorWord(word &left, word right);
+        inline void orByte(byte &left, byte right);
+        inline void orWord(word &left, word right);
+        
+        // Debug
+        inline void debugPrint(byte opcode);
         
         // External Constructs
         Memory &memory;

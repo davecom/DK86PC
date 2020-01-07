@@ -28,6 +28,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5564B20223C254500081F6B1 /* Instructions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Instructions.h; sourceTree = "<group>"; };
 		556C12B622EABC8600A3F140 /* notes.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = notes.txt; sourceTree = "<group>"; };
 		557530D622E7E69A009C1B28 /* DK86PC */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DK86PC; sourceTree = BUILT_PRODUCTS_DIR; };
 		557530D922E7E69A009C1B28 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
@@ -73,6 +74,7 @@
 			isa = PBXGroup;
 			children = (
 				557530D922E7E69A009C1B28 /* main.cpp */,
+				5564B20223C254500081F6B1 /* Instructions.h */,
 				55A0F3DF22E7E85C00F6A149 /* CPU.cpp */,
 				55A0F3E022E7E85C00F6A149 /* CPU.hpp */,
 				55A0F3E622E80F3900F6A149 /* PC.cpp */,
@@ -111,7 +113,7 @@
 		557530CE22E7E69A009C1B28 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1030;
+				LastUpgradeCheck = 1130;
 				ORGANIZATIONNAME = "David Kopec";
 				TargetAttributes = {
 					557530D522E7E69A009C1B28 = {
@@ -125,6 +127,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 557530CD22E7E69A009C1B28;
 			productRefGroup = 557530D722E7E69A009C1B28 /* Products */;
@@ -267,6 +270,7 @@
 		557530DE22E7E69A009C1B28 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 59VX8JQ7R6;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -276,6 +280,7 @@
 		557530DF22E7E69A009C1B28 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 59VX8JQ7R6;
 				PRODUCT_NAME = "$(TARGET_NAME)";
