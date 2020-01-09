@@ -55,4 +55,45 @@ namespace DK86PC {
         // keep going until we hit an illegal/unknown instruction
         while (cpu.step() != -1) { }
     }
+
+    void PC::writePort(word port, word value) {
+        switch (port) {
+            case 0x00: case 0x01: case 0x02: case 0x03: case 0x04: case 0x05: case 0x06: case 0x07:
+            {
+                byte channel = (byte) port / 2;
+                if (port % 2 == 0) {
+                    dma.setAddress(channel, value);
+                } else {
+                    dma.setCounter(channel, value);
+                }
+                break;
+            }
+            case 0x83:
+                dma.setPage(1, value);
+                break;
+            case 0x61:
+                ppi.setB(value);
+                break;
+            case 0x63:
+                ppi.setControl(value);
+                break;
+            case 0xA0:
+                pic2.setCommand(value);
+                break;
+            case 0xA1:
+                pic2.setStatus(value);
+                break;
+            default:
+                cout << "Port " << port << " not implemented for writing!" << endl;
+                break;
+        }
+    }
+
+    word PC::readPort(word port) {
+        switch (port) {
+            default:
+                cout << "Port " << port << " not implemented for reading!" << endl;
+                return 0;
+        }
+    }
 }

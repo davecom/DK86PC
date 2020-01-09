@@ -1,8 +1,8 @@
 //
-//  PC.hpp
+//  PIC.hpp
 //
 //  DK86PC - An Intel 8086 and IBM PC 5150 emulator.
-//  Copyright (C) 2019 David Kopec
+//  Copyright (C) 2020 David Kopec
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -17,37 +17,27 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef PC_hpp
-#define PC_hpp
+// implement the intel 8259
 
-#include <string>
-#include "CPU.hpp"
-#include "Memory.hpp"
-#include "DMA.hpp"
-#include "PIC.hpp"
-#include "PPI.hpp"
+#ifndef PIC_hpp
+#define PIC_hpp
 
-using namespace std;
+#include <stdio.h>
+#include "Types.h"
 
 namespace DK86PC {
-    class CPU;
-
-    class PC {
+    class PIC {
     public:
-        PC() : cpu(*this, memory), dma(), pic1(), pic2(), ppi() {};
-        void loadBIOS(string filename);
-        void run();
-        void writePort(word port, word value);
-        word readPort(word port);
+        PIC() : commandRegister(0), statusRegister(0), interruptRequestRegister(0), inServiceRegister(0), interruptMaskRegister(0) {};
+        void setCommand(byte command);
+        void setStatus(byte status);
     private:
-        Memory memory;
-        CPU cpu;
-        DMA dma;
-        PIC pic1; // 0x20, 0x21 ports
-        PIC pic2; // 0xA0, 0xA1 ports
-        PPI ppi;
+        byte commandRegister;
+        byte statusRegister;
+        byte interruptRequestRegister;
+        byte inServiceRegister;
+        byte interruptMaskRegister;
     };
-    
 }
 
-#endif /* PC_hpp */
+#endif /* PIC_hpp */

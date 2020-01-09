@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5564B20523C5FB7E0081F6B1 /* DMA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5564B20323C5FB7E0081F6B1 /* DMA.cpp */; };
+		5564B20823C60B400081F6B1 /* PIC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5564B20623C60B400081F6B1 /* PIC.cpp */; };
+		5564B20B23C614470081F6B1 /* PPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5564B20923C614470081F6B1 /* PPI.cpp */; };
 		557530DA22E7E69A009C1B28 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 557530D922E7E69A009C1B28 /* main.cpp */; };
 		55A0F3E122E7E85C00F6A149 /* CPU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55A0F3DF22E7E85C00F6A149 /* CPU.cpp */; };
 		55A0F3E422E7EA2900F6A149 /* Memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55A0F3E222E7EA2900F6A149 /* Memory.cpp */; };
@@ -29,6 +32,12 @@
 
 /* Begin PBXFileReference section */
 		5564B20223C254500081F6B1 /* Instructions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Instructions.h; sourceTree = "<group>"; };
+		5564B20323C5FB7E0081F6B1 /* DMA.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DMA.cpp; sourceTree = "<group>"; };
+		5564B20423C5FB7E0081F6B1 /* DMA.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DMA.hpp; sourceTree = "<group>"; };
+		5564B20623C60B400081F6B1 /* PIC.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PIC.cpp; sourceTree = "<group>"; };
+		5564B20723C60B400081F6B1 /* PIC.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PIC.hpp; sourceTree = "<group>"; };
+		5564B20923C614470081F6B1 /* PPI.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PPI.cpp; sourceTree = "<group>"; };
+		5564B20A23C614470081F6B1 /* PPI.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PPI.hpp; sourceTree = "<group>"; };
 		556C12B622EABC8600A3F140 /* notes.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = notes.txt; sourceTree = "<group>"; };
 		557530D622E7E69A009C1B28 /* DK86PC */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DK86PC; sourceTree = BUILT_PRODUCTS_DIR; };
 		557530D922E7E69A009C1B28 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
@@ -81,6 +90,12 @@
 				55A0F3E722E80F3900F6A149 /* PC.hpp */,
 				55A0F3E222E7EA2900F6A149 /* Memory.cpp */,
 				55A0F3E322E7EA2900F6A149 /* Memory.hpp */,
+				5564B20323C5FB7E0081F6B1 /* DMA.cpp */,
+				5564B20423C5FB7E0081F6B1 /* DMA.hpp */,
+				5564B20623C60B400081F6B1 /* PIC.cpp */,
+				5564B20723C60B400081F6B1 /* PIC.hpp */,
+				5564B20923C614470081F6B1 /* PPI.cpp */,
+				5564B20A23C614470081F6B1 /* PPI.hpp */,
 				55A0F3E522E7EAA200F6A149 /* Types.h */,
 				556C12B622EABC8600A3F140 /* notes.txt */,
 			);
@@ -144,10 +159,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5564B20823C60B400081F6B1 /* PIC.cpp in Sources */,
 				55A0F3E422E7EA2900F6A149 /* Memory.cpp in Sources */,
 				55A0F3E122E7E85C00F6A149 /* CPU.cpp in Sources */,
 				55A0F3E822E80F3900F6A149 /* PC.cpp in Sources */,
 				557530DA22E7E69A009C1B28 /* main.cpp in Sources */,
+				5564B20B23C614470081F6B1 /* PPI.cpp in Sources */,
+				5564B20523C5FB7E0081F6B1 /* DMA.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

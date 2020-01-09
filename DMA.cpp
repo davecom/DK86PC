@@ -1,8 +1,8 @@
 //
-//  PC.hpp
+//  DMA.cpp
 //
 //  DK86PC - An Intel 8086 and IBM PC 5150 emulator.
-//  Copyright (C) 2019 David Kopec
+//  Copyright (C) 2020 David Kopec
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -17,37 +17,24 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef PC_hpp
-#define PC_hpp
+// implement the intel 8237
 
-#include <string>
-#include "CPU.hpp"
-#include "Memory.hpp"
 #include "DMA.hpp"
-#include "PIC.hpp"
-#include "PPI.hpp"
 
 using namespace std;
 
 namespace DK86PC {
-    class CPU;
-
-    class PC {
-    public:
-        PC() : cpu(*this, memory), dma(), pic1(), pic2(), ppi() {};
-        void loadBIOS(string filename);
-        void run();
-        void writePort(word port, word value);
-        word readPort(word port);
-    private:
-        Memory memory;
-        CPU cpu;
-        DMA dma;
-        PIC pic1; // 0x20, 0x21 ports
-        PIC pic2; // 0xA0, 0xA1 ports
-        PPI ppi;
-    };
     
+void DMA::setAddress(byte channel, word address) {
+    addressRegisters[channel] = address;
 }
 
-#endif /* PC_hpp */
+void DMA::setCounter(byte channel, word count) {
+    counterRegisters[channel] = count;
+}
+
+void DMA::setPage(byte channel, byte page) {
+    pageRegisters[channel] = page;
+}
+    
+}

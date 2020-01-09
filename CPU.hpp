@@ -17,12 +17,14 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "Memory.hpp"
-
 #ifndef CPU_hpp
 #define CPU_hpp
 
+#include "Memory.hpp"
+
+
 namespace DK86PC {
+    class PC;
 
     union ModRegRM {
         struct {
@@ -36,7 +38,7 @@ namespace DK86PC {
     
     class CPU {
     public:
-        CPU(Memory &mem) : memory(mem) {
+        CPU(PC &p, Memory &mem) : pc(p), memory(mem) {
             reset();
         };
         void reset();
@@ -89,16 +91,21 @@ namespace DK86PC {
         inline void shrWord(ModRegRM mrr, byte amount);
         inline void sarWord(ModRegRM mrr, byte amount);
         
-        //XOR/OR
+        //XOR/OR/SUB/ADD
         inline void xorByte(byte &left, byte right);
         inline void xorWord(word &left, word right);
         inline void orByte(byte &left, byte right);
         inline void orWord(word &left, word right);
+        inline void subByte(byte &left, byte right);
+        inline void subWord(word &left, word right);
+        inline void addByte(byte &left, byte right);
+        inline void addWord(word &left, word right);
         
         // Debug
         inline void debugPrint(byte opcode);
         
         // External Constructs
+        PC &pc;
         Memory &memory;
         
         // Registers

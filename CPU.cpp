@@ -21,6 +21,7 @@
 #include "CPU.hpp"
 #include <iostream>
 #include <iomanip>
+#include "PC.hpp"
 
 using namespace std;
 
@@ -617,6 +618,42 @@ namespace DK86PC {
         carry = 0;
         setSZPFlagsByte(left);
     }
+    
+    inline void CPU::subByte(byte &left, byte right) {
+        byte originalHigh = highBitByte(left);
+        carry = (right > left);
+        auxiliaryCarry = (lowNibble(right) > lowNibble(left));
+        left = left - right;
+        overflow = (highBitByte(originalHigh) ^ highBitByte(right)) && (originalHigh ^ highBitByte(left));
+        setSZPFlagsByte(left);
+    }
+
+    inline void CPU::subWord(word &left, word right) {
+        word originalHigh = highBitWord(left);
+        carry = (right > left);
+        auxiliaryCarry = (lowNibble(right) > lowNibble(left));
+        left = left - right;
+        overflow = (highBitWord(originalHigh) ^ highBitWord(right)) && (originalHigh ^ highBitWord(left));
+        setSZPFlagsWord(left);
+    }
+
+    inline void CPU::addByte(byte &left, byte right) {
+        byte originalHigh = highBitByte(left);
+        carry = ((word)right + (word)left) > 0x00FF;
+        auxiliaryCarry = ((lowNibble(right) + lowNibble(left)) > 0x0F);
+        left = left + right;
+        overflow = (highBitByte(originalHigh) == highBitByte(right)) && (originalHigh ^ highBitByte(left));
+        setSZPFlagsByte(left);
+    }
+
+    inline void CPU::addWord(word &left, word right) {
+        word originalHigh = highBitWord(left);
+        carry = ((uint32_t)right + (uint32_t)left) > 0x0000FFFF;
+        auxiliaryCarry = ((lowNibble(right) + lowNibble(left)) > 0x0F);
+        left = left + right;
+        overflow = (highBitWord(originalHigh) == highBitWord(right)) && (originalHigh ^ highBitWord(left));
+        setSZPFlagsWord(left);
+    }
 
     inline void CPU::debugPrint(byte opcode) {
         cout << hex << uppercase << (int)opcode << dec;
@@ -704,6 +741,61 @@ namespace DK86PC {
         debugPrint(opcode);
         switch (opcode) {
             
+            // ADD integer addition
+            case 0x00:
+            {
+                ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
+                modInstructionLength(mrr, instructionLength);
+                byte temp = getModRMByte(mrr);
+                addByte(temp, getRegByte(mrr.reg));
+                setModRMByte(mrr, temp);
+                break;
+            }
+            
+            case 0x01:
+            {
+                ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
+                modInstructionLength(mrr, instructionLength);
+                word temp = getModRMWord(mrr);
+                addWord(temp, getRegWord(mrr.reg));
+                setModRMWord(mrr, temp);
+                break;
+            }
+            
+            case 0x02:
+            {
+                ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
+                modInstructionLength(mrr, instructionLength);
+                byte temp = getRegByte(mrr.reg);
+                addByte(temp, getModRMByte(mrr));
+                setRegByte(mrr.reg, temp);
+                break;
+            }
+            
+            case 0x03:
+            {
+                ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
+                modInstructionLength(mrr, instructionLength);
+                word temp = getRegWord(mrr.reg);
+                addWord(temp, getModRMWord(mrr));
+                setRegWord(mrr.reg, temp);
+                break;
+            }
+            
+            case 0x04:
+                addByte(al, memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
+                break;
+                
+            case 0x05:
+                addWord(ax, memory.readWord(NEXT_INSTRUCTION + 1));
+                instructionLength = 3;
+                break;
+            
             // OR inclusive or
             case 0x08:
             {
@@ -756,6 +848,61 @@ namespace DK86PC {
                 
             case 0x0D:
                 orWord(ax, memory.readWord(NEXT_INSTRUCTION + 1));
+                instructionLength = 3;
+                break;
+            
+            // SUB integer subtraction
+            case 0x28:
+            {
+                ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
+                modInstructionLength(mrr, instructionLength);
+                byte temp = getModRMByte(mrr);
+                subByte(temp, getRegByte(mrr.reg));
+                setModRMByte(mrr, temp);
+                break;
+            }
+            
+            case 0x29:
+            {
+                ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
+                modInstructionLength(mrr, instructionLength);
+                word temp = getModRMWord(mrr);
+                subWord(temp, getRegWord(mrr.reg));
+                setModRMWord(mrr, temp);
+                break;
+            }
+            
+            case 0x2A:
+            {
+                ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
+                modInstructionLength(mrr, instructionLength);
+                byte temp = getRegByte(mrr.reg);
+                subByte(temp, getModRMByte(mrr));
+                setRegByte(mrr.reg, temp);
+                break;
+            }
+            
+            case 0x2B:
+            {
+                ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
+                modInstructionLength(mrr, instructionLength);
+                word temp = getRegWord(mrr.reg);
+                subWord(temp, getModRMWord(mrr));
+                setRegWord(mrr.reg, temp);
+                break;
+            }
+            
+            case 0x2C:
+                subByte(al, memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
+                break;
+                
+            case 0x2D:
+                subWord(ax, memory.readWord(NEXT_INSTRUCTION + 1));
                 instructionLength = 3;
                 break;
             
@@ -963,9 +1110,14 @@ namespace DK86PC {
                 instructionLength = 2;
                 modInstructionLength(mrr, instructionLength);
                 switch (mrr.reg) {
-                    case 0b000:
-                        cout << "unimplemented";
+                    case 0b000: // ADD
+                    {
+                        byte temp = getModRMByte(mrr);
+                        addByte(temp, memory.readByte(NEXT_INSTRUCTION + instructionLength));
+                        instructionLength += 1;
+                        setModRMByte(mrr, temp);
                         break;
+                    }
                     case 0b001: // OR
                     {
                         byte temp = getModRMByte(mrr);
@@ -982,9 +1134,14 @@ namespace DK86PC {
                         break;
                     case 0b100:
                         break;
-                    case 0b101:
-                        cout << "unimplemented";
+                    case 0b101: // SUB
+                    {
+                        byte temp = getModRMByte(mrr);
+                        subByte(temp, memory.readByte(NEXT_INSTRUCTION + instructionLength));
+                        instructionLength += 1;
+                        setModRMByte(mrr, temp);
                         break;
+                    }
                     case 0b110: // XOR
                     {
                         byte temp = getModRMByte(mrr);
@@ -1007,9 +1164,14 @@ namespace DK86PC {
                 instructionLength = 2;
                 modInstructionLength(mrr, instructionLength);
                 switch (mrr.reg) {
-                    case 0b000:
-                        cout << "unimplemented";
+                    case 0b000:  // ADD
+                    {
+                        word temp = getModRMWord(mrr);
+                        addWord(temp, memory.readWord(NEXT_INSTRUCTION + instructionLength));
+                        instructionLength += 2;
+                        setModRMWord(mrr, temp);
                         break;
+                    }
                     case 0b001: // OR
                     {
                         word temp = getModRMWord(mrr);
@@ -1026,15 +1188,68 @@ namespace DK86PC {
                         break;
                     case 0b100:
                         break;
-                    case 0b101:
-                        cout << "unimplemented";
+                    case 0b101: // SUB
+                    {
+                        word temp = getModRMWord(mrr);
+                        subWord(temp, memory.readWord(NEXT_INSTRUCTION + instructionLength));
+                        instructionLength += 2;
+                        setModRMWord(mrr, temp);
                         break;
+                    }
                     case 0b110: // XOR
                     {
                         word temp = getModRMWord(mrr);
                         xorWord(temp, memory.readWord(NEXT_INSTRUCTION + instructionLength));
                         instructionLength += 2;
                         setModRMWord(mrr, temp);
+                        break;
+                    }
+                    case 0b111:
+                        cout << "unimplemented";
+                        break;
+                        
+                }
+                break;
+            }
+            
+            case 0x83:
+            {
+                ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
+                modInstructionLength(mrr, instructionLength);
+                switch (mrr.reg) {
+                    case 0b000: // ADD
+                    {
+                        word temp = getModRMWord(mrr);
+                        addWord(temp, signExtend(memory.readByte(NEXT_INSTRUCTION + instructionLength)));
+                        instructionLength += 1;
+                        setModRMWord(mrr, temp);
+                        break;
+                    }
+                    case 0b001:
+                    {
+                        cout << "unimplemented";
+                        break;
+                    }
+                    case 0b010:
+                        cout << "unimplemented";
+                        break;
+                    case 0b011:
+                        cout << "unimplemented";
+                        break;
+                    case 0b100:
+                        break;
+                    case 0b101: // SUB
+                    {
+                        word temp = getModRMWord(mrr);
+                        subWord(temp, signExtend(memory.readByte(NEXT_INSTRUCTION + instructionLength)));
+                        instructionLength += 1;
+                        setModRMWord(mrr, temp);
+                        break;
+                    }
+                    case 0b110:
+                    {
+                        cout << "unimplemented";
                         break;
                     }
                     case 0b111:
@@ -1348,6 +1563,18 @@ namespace DK86PC {
                 }
                 instructionLength = 2;
                 break;
+            
+            // OUT from al
+            case 0xE6:
+                instructionLength = 2;
+                pc.writePort(memory.readByte(NEXT_INSTRUCTION + 1), al);
+                break;
+            
+            // OUT from ax
+            case 0xE7:
+                instructionLength = 2;
+                pc.writePort(memory.readByte(NEXT_INSTRUCTION + 1), ax);
+                break;
                 
             // JMP direct
             case 0xEA:
@@ -1363,6 +1590,16 @@ namespace DK86PC {
                 instructionLength = 5;
                 break;
             }
+                
+            // OUT to dx from al
+            case 0xEE:
+                pc.writePort(dx, al);
+                break;
+            
+            // OUT to dx from ax
+            case 0xEF:
+                pc.writePort(dx, ax);
+                break;
                 
             // CMC Complement Carry Flag
             case 0xF5:
