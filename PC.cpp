@@ -24,8 +24,11 @@
 #include <algorithm>
 #include <vector>
 #include "PC.hpp"
+#include <SDL.h>
 
 using namespace std;
+
+#define MILLI_PER_FRAME 16
 
 namespace DK86PC {
     
@@ -51,9 +54,53 @@ namespace DK86PC {
         memory.loadData(buffer, biosPlace);
     }
     
+
     void PC::run() {
+        static long long numFrames = 0;
         // keep going until we hit an illegal/unknown instruction
-        while (cpu.step() != -1) { }
+        while (cpu.step() != -2) {
+            if (SDL_GetTicks() / MILLI_PER_FRAME > numFrames) { // roughly 60 fps
+                cga.renderScren();
+                numFrames++;
+                
+                if (numFrames %60 == 0) {
+                    cga.verticalRetraceStart();
+                } else if (numFrames %60 == 1) {
+                    cga.verticalRetraceEnd();
+                }
+            }
+            
+            
+            SDL_Event e;
+            
+            while (SDL_PollEvent(&e) != 0) {
+                switch (e.type) {
+                    case SDL_QUIT:
+                        goto quit;
+                        break;
+                    case SDL_KEYDOWN:
+                        switch (e.key.keysym.sym) {
+                            case SDLK_x:
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    case SDL_KEYUP:
+                        switch (e.key.keysym.sym) {
+                            case SDLK_x:
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+        quit:
+        return;
     }
 
     void PC::writePort(word port, word value) {

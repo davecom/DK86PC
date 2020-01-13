@@ -11,10 +11,13 @@
 		5564B20823C60B400081F6B1 /* PIC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5564B20623C60B400081F6B1 /* PIC.cpp */; };
 		5564B20B23C614470081F6B1 /* PPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5564B20923C614470081F6B1 /* PPI.cpp */; };
 		557530DA22E7E69A009C1B28 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 557530D922E7E69A009C1B28 /* main.cpp */; };
+		558DD1BC23CBB3D400E0328B /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55F0A7C123CB8A5100A0E64B /* SDL2.framework */; };
 		55A0F3E122E7E85C00F6A149 /* CPU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55A0F3DF22E7E85C00F6A149 /* CPU.cpp */; };
 		55A0F3E422E7EA2900F6A149 /* Memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55A0F3E222E7EA2900F6A149 /* Memory.cpp */; };
 		55A0F3E822E80F3900F6A149 /* PC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55A0F3E622E80F3900F6A149 /* PC.cpp */; };
 		55A0F3EE22E82F8900F6A149 /* BIOS in CopyFiles */ = {isa = PBXBuildFile; fileRef = 55A0F3ED22E82F8900F6A149 /* BIOS */; };
+		55F0A7BF23CB739E00A0E64B /* CGA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55F0A7BD23CB739E00A0E64B /* CGA.cpp */; };
+		55F0A7C423CB8AB300A0E64B /* SDL2.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 55F0A7C123CB8A5100A0E64B /* SDL2.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -26,6 +29,17 @@
 			files = (
 				55A0F3EE22E82F8900F6A149 /* BIOS in CopyFiles */,
 			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		55F0A7C523CB8AB400A0E64B /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				55F0A7C423CB8AB300A0E64B /* SDL2.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -49,6 +63,9 @@
 		55A0F3E622E80F3900F6A149 /* PC.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PC.cpp; sourceTree = "<group>"; };
 		55A0F3E722E80F3900F6A149 /* PC.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PC.hpp; sourceTree = "<group>"; };
 		55A0F3ED22E82F8900F6A149 /* BIOS */ = {isa = PBXFileReference; lastKnownFileType = folder; path = BIOS; sourceTree = "<group>"; };
+		55F0A7BD23CB739E00A0E64B /* CGA.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CGA.cpp; sourceTree = "<group>"; };
+		55F0A7BE23CB739E00A0E64B /* CGA.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CGA.hpp; sourceTree = "<group>"; };
+		55F0A7C123CB8A5100A0E64B /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = SDL/SDL2.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +73,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				558DD1BC23CBB3D400E0328B /* SDL2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -68,6 +86,7 @@
 				55A0F3ED22E82F8900F6A149 /* BIOS */,
 				557530D822E7E69A009C1B28 /* DK86PC */,
 				557530D722E7E69A009C1B28 /* Products */,
+				55F0A7C023CB8A5100A0E64B /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -90,6 +109,8 @@
 				55A0F3E722E80F3900F6A149 /* PC.hpp */,
 				55A0F3E222E7EA2900F6A149 /* Memory.cpp */,
 				55A0F3E322E7EA2900F6A149 /* Memory.hpp */,
+				55F0A7BD23CB739E00A0E64B /* CGA.cpp */,
+				55F0A7BE23CB739E00A0E64B /* CGA.hpp */,
 				5564B20323C5FB7E0081F6B1 /* DMA.cpp */,
 				5564B20423C5FB7E0081F6B1 /* DMA.hpp */,
 				5564B20623C60B400081F6B1 /* PIC.cpp */,
@@ -102,6 +123,14 @@
 			name = DK86PC;
 			sourceTree = "<group>";
 		};
+		55F0A7C023CB8A5100A0E64B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				55F0A7C123CB8A5100A0E64B /* SDL2.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -112,6 +141,7 @@
 				557530D222E7E69A009C1B28 /* Sources */,
 				557530D322E7E69A009C1B28 /* Frameworks */,
 				557530D422E7E69A009C1B28 /* CopyFiles */,
+				55F0A7C523CB8AB400A0E64B /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -162,6 +192,7 @@
 				5564B20823C60B400081F6B1 /* PIC.cpp in Sources */,
 				55A0F3E422E7EA2900F6A149 /* Memory.cpp in Sources */,
 				55A0F3E122E7E85C00F6A149 /* CPU.cpp in Sources */,
+				55F0A7BF23CB739E00A0E64B /* CGA.cpp in Sources */,
 				55A0F3E822E80F3900F6A149 /* PC.cpp in Sources */,
 				557530DA22E7E69A009C1B28 /* main.cpp in Sources */,
 				5564B20B23C614470081F6B1 /* PPI.cpp in Sources */,
@@ -291,6 +322,16 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 59VX8JQ7R6;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/SDL",
+				);
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/SDL/SDL2.framework/Headers";
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
+				OTHER_LDFLAGS = (
+					"-framework",
+					SDL2,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -301,6 +342,16 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 59VX8JQ7R6;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/SDL",
+				);
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/SDL/SDL2.framework/Headers";
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
+				OTHER_LDFLAGS = (
+					"-framework",
+					SDL2,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

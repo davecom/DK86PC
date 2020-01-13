@@ -92,7 +92,7 @@ namespace DK86PC {
                 return cx;
                 break;
             case 0b010:
-                return dx;
+                return Dx;
                 break;
             case 0b011:
                 return bx;
@@ -233,7 +233,7 @@ namespace DK86PC {
                 cx = data;
                 break;
             case 0b1010:
-                dx = data;
+                Dx = data;
                 break;
             case 0b1011:
                 bx = data;
@@ -291,7 +291,7 @@ namespace DK86PC {
                 cx = data;
                 break;
             case 0b010:
-                dx = data;
+                Dx = data;
                 break;
             case 0b011:
                 bx = data;
@@ -674,7 +674,7 @@ namespace DK86PC {
         ax = 0;
         bx = 0;
         cx = 0;
-        dx = 0;
+        Dx = 0;
         sp = 0;
         bp = 0;
         si = 0;
@@ -1591,14 +1591,14 @@ namespace DK86PC {
                 break;
             }
                 
-            // OUT to dx from al
+            // OUT to Dx from al
             case 0xEE:
-                pc.writePort(dx, al);
+                pc.writePort(Dx, al);
                 break;
             
-            // OUT to dx from ax
+            // OUT to Dx from ax
             case 0xEF:
-                pc.writePort(dx, ax);
+                pc.writePort(Dx, ax);
                 break;
                 
             // CMC Complement Carry Flag
