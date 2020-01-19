@@ -130,6 +130,9 @@ namespace DK86PC {
             case 0xA1:
                 pic2.setStatus(value);
                 break;
+            case 0x3D8:
+                cga.setMode(value);
+                break;
             default:
                 cout << "Port " << port << " not implemented for writing!" << endl;
                 break;
@@ -138,6 +141,8 @@ namespace DK86PC {
 
     word PC::readPort(word port) {
         switch (port) {
+            case 0x3DA:
+                return cga.getStatus();
             default:
                 cout << "Port " << port << " not implemented for reading!" << endl;
                 return 0;

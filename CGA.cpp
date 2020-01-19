@@ -26,6 +26,7 @@ namespace DK86PC {
 
 #define PC_WIDTH 640
 #define PC_HEIGHT 200
+#define CGA_BASE_MEMORY_LOCATION 0xB8000
 
 void CGA::initScreen() {
     if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO) != 0) {
@@ -54,11 +55,33 @@ void CGA::renderScren() {
     // have any negative effect
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // black
     SDL_RenderClear(renderer);
-    
+    if (graphicsMode) {
+        return;
+    } else { // text mode
+        for (int row = 0; row < 25; row++) {
+            for (int column = 0; column < numColumns; column++) {
+                address memLocation = CGA_BASE_MEMORY_LOCATION + (row * (numColumns * 2)) + column * 2;
+                byte character = memory.readByte(memLocation);
+                byte attribute = memory.readByte(memLocation + 1);
+                drawCharacter(row, column, character, attribute);
+            }
+        }
+    }
 }
 
 byte CGA::getStatus() {
     return status;
+}
+
+void CGA::setMode(byte value) {
+    if (value & 1) {
+        numColumns = 80;
+    } else {
+        numColumns = 40;
+    }
+    graphicsMode = (value & 2);
+    greyscaleMode = (value & 4);
+    highResolutionMode = (value & 16);
 }
 
 void CGA::verticalRetraceStart() {
@@ -67,6 +90,10 @@ void CGA::verticalRetraceStart() {
 
 void CGA::verticalRetraceEnd() {
     status = status & 0b11110111;
+}
+
+inline void CGA::drawCharacter(byte row, byte column, byte character, byte attribute) {
+    
 }
 
 }

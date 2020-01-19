@@ -45,15 +45,20 @@ public:
     void initScreen();
     void renderScren();
     byte getStatus();
+    void setMode(byte value);
     void verticalRetraceStart();
     void verticalRetraceEnd();
 private:
+    inline void drawCharacter(byte row, byte column, byte character, byte attribute);
     Memory &memory;
-    byte mode;
     byte status;
     SDL_Window *window;
     SDL_Renderer *renderer;
     SDL_Texture *texture;
+    byte numColumns = 40;
+    bool graphicsMode = false;
+    bool greyscaleMode = false;
+    bool highResolutionMode = false;
 };
 
 }
