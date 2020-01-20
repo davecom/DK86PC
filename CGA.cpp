@@ -20,13 +20,33 @@
 // implement the Color Graphics Adapter
 
 #include "CGA.hpp"
-
+#include "Types.h"
 
 namespace DK86PC {
 
 #define PC_WIDTH 640
 #define PC_HEIGHT 200
+#define NUM_ROWS 25
 #define CGA_BASE_MEMORY_LOCATION 0xB8000
+
+SDL_Color colorPalette[16] = {
+    {0x00, 0x00, 0x00, 0xFF}, // black
+    {0x00, 0x00, 0xAA, 0xFF}, // blue
+    {0x00, 0xAA, 0x00, 0xFF}, // green
+    {0x00, 0xAA, 0xAA, 0xFF}, // cyan
+    {0xAA, 0x00, 0x00, 0xFF}, // red
+    {0xAA, 0x00, 0xAA, 0xFF}, // magenta
+    {0xAA, 0x55, 0x00, 0xFF}, // brown
+    {0xAA, 0xAA, 0xAA, 0xFF}, // light gray
+    {0x55, 0x55, 0x55, 0xFF}, // dark gray
+    {0x55, 0x55, 0xFF, 0xFF}, // light blue
+    {0x55, 0xFF, 0xFF, 0xFF}, // light green
+    {0x55, 0xFF, 0xFF, 0xFF}, // light cyan
+    {0xFF, 0x55, 0x55, 0xFF}, // light red
+    {0xFF, 0x55, 0xFF, 0xFF}, // light magenta
+    {0xFF, 0xFF, 0x55, 0xFF}, // yellow
+    {0xFF, 0xFF, 0xFF, 0xFF}, // white
+};
 
 void CGA::initScreen() {
     if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO) != 0) {
@@ -53,12 +73,20 @@ void CGA::renderScren() {
     // clear renderer
     // used to have this in but took it out and it seems to not
     // have any negative effect
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // black
+    SDL_Color bgColor;
+    if (graphicsMode) {
+        bgColor = colorPalette[backgroundColor];
+    } else {
+        bgColor = colorPalette[0];
+    }
+    SDL_SetRenderDrawColor(renderer, bgColor.r, bgColor.g, bgColor.b, 255);
     SDL_RenderClear(renderer);
     if (graphicsMode) {
         return;
     } else { // text mode
-        for (int row = 0; row < 25; row++) {
+        cellWidth = PC_WIDTH / numColumns;
+        cellHeight = PC_HEIGHT / NUM_ROWS;
+        for (int row = 0; row < NUM_ROWS; row++) {
             for (int column = 0; column < numColumns; column++) {
                 address memLocation = CGA_BASE_MEMORY_LOCATION + (row * (numColumns * 2)) + column * 2;
                 byte character = memory.readByte(memLocation);
@@ -84,6 +112,12 @@ void CGA::setMode(byte value) {
     highResolutionMode = (value & 16);
 }
 
+void CGA::setColor(byte value) {
+    backgroundColor = (value & 0x0F);
+    intensePalette = (value & 16);
+    alternatePalette = (value & 32);
+}
+
 void CGA::verticalRetraceStart() {
     status = status | 8;
 }
@@ -93,7 +127,18 @@ void CGA::verticalRetraceEnd() {
 }
 
 inline void CGA::drawCharacter(byte row, byte column, byte character, byte attribute) {
-    
+    // some monitors/bios treat color and black and white modes both as color, so we'll try that here
+    SDL_Color bgColor = colorPalette[highNibble(attribute)];
+    SDL_Color fgColor = colorPalette[lowNibble(attribute)];
+    SDL_Rect rect;
+    rect.x = column * cellWidth;
+    rect.y = row * cellHeight;
+    rect.w = cellWidth;
+    rect.h = cellHeight;
+    // draw background of text cell
+    SDL_SetRenderDrawColor(renderer, bgColor.r, bgColor.g, bgColor.b, bgColor.a);
+    SDL_RenderFillRect(renderer, &rect);
+    // draw text in foreground
 }
 
 }

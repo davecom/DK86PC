@@ -46,6 +46,7 @@ public:
     void renderScren();
     byte getStatus();
     void setMode(byte value);
+    void setColor(byte value);
     void verticalRetraceStart();
     void verticalRetraceEnd();
 private:
@@ -59,6 +60,11 @@ private:
     bool graphicsMode = false;
     bool greyscaleMode = false;
     bool highResolutionMode = false;
+    byte backgroundColor = 0;
+    bool intensePalette = false;
+    bool alternatePalette = false;
+    int cellWidth = 8;  // text cell width
+    int cellHeight = 8; // text cell height
 };
 
 }

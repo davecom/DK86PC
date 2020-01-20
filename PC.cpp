@@ -133,6 +133,9 @@ namespace DK86PC {
             case 0x3D8:
                 cga.setMode(value);
                 break;
+            case 0x3D9:
+                cga.setColor(value);
+                break;
             default:
                 cout << "Port " << port << " not implemented for writing!" << endl;
                 break;
