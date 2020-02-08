@@ -127,7 +127,7 @@ namespace DK86PC {
         #define bh br.inner.high
         #define cx cr.main
         #define cl cr.inner.low
-        #define ch cr.inner.high
+        #define Ch cr.inner.high
         #define Dx dr.main
         #define dl dr.inner.low
         #define dh dr.inner.high

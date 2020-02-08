@@ -24,9 +24,9 @@
 
 #include <stdio.h>
 #include "Memory.hpp"
-// Apple OSX and iOS (Darwin)
-#include<SDL.h>
-#include<vector>
+#include <SDL.h>
+#include <vector>
+#include "SDL_ttf.h"
 
 namespace DK86PC {
 
@@ -36,6 +36,7 @@ public:
         initScreen();
     };
     ~CGA() {
+        TTF_CloseFont(font);
         SDL_DestroyRenderer(renderer);
         SDL_DestroyWindow(window);
         SDL_DestroyTexture(texture);
@@ -56,6 +57,7 @@ private:
     SDL_Window *window;
     SDL_Renderer *renderer;
     SDL_Texture *texture;
+    TTF_Font* font;
     byte numColumns = 40;
     bool graphicsMode = false;
     bool greyscaleMode = false;

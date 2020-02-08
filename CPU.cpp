@@ -132,7 +132,7 @@ namespace DK86PC {
                 return ah;
                 break;
             case 0b101:
-                return ch;
+                return Ch;
                 break;
             case 0b110:
                 return dh;
@@ -218,7 +218,7 @@ namespace DK86PC {
                 ah = data;
                 break;
             case 0b101:
-                ch = data;
+                Ch = data;
                 break;
             case 0b110:
                 dh = data;
@@ -271,7 +271,7 @@ namespace DK86PC {
                 ah = data;
                 break;
             case 0b101:
-                ch = data;
+                Ch = data;
                 break;
             case 0b110:
                 dh = data;

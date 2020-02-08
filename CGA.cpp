@@ -67,6 +67,16 @@ void CGA::initScreen() {
     SDL_SetRenderTarget(renderer, texture);
     SDL_SetRenderDrawColor(renderer, 0x00, 255, 0x00, 0x00);
     SDL_RenderClear(renderer);
+    // load font
+    if (TTF_Init() != 0){
+        printf("Couldn't run TTF_Init() successfully.");
+        SDL_Quit();
+    }
+    font = TTF_OpenFont("Fonts/Px437_IBM_CGA.ttf", PC_HEIGHT / NUM_ROWS);
+    if (font == NULL) {
+        printf("Could not load font file.");
+        SDL_Quit();
+    }
 }
 
 void CGA::renderScren() {
@@ -127,6 +137,10 @@ void CGA::verticalRetraceEnd() {
 }
 
 inline void CGA::drawCharacter(byte row, byte column, byte character, byte attribute) {
+    // Can't draw non-characters
+    if (character == 0) {
+        return;
+    }
     // some monitors/bios treat color and black and white modes both as color, so we'll try that here
     SDL_Color bgColor = colorPalette[highNibble(attribute)];
     SDL_Color fgColor = colorPalette[lowNibble(attribute)];
@@ -139,6 +153,18 @@ inline void CGA::drawCharacter(byte row, byte column, byte character, byte attri
     SDL_SetRenderDrawColor(renderer, bgColor.r, bgColor.g, bgColor.b, bgColor.a);
     SDL_RenderFillRect(renderer, &rect);
     // draw text in foreground
+    SDL_Surface *text_surface;
+    char text = ((char)character);
+    if(!(text_surface = TTF_RenderText_Solid(font, &text, fgColor))) {
+        //handle error here, perhaps print TTF_GetError at least
+        printf("Could not RenderText_Solid");
+    } else {
+        SDL_Texture* inbetween = SDL_CreateTextureFromSurface(renderer, text_surface);
+        //perhaps we can reuse it, but I assume not for simplicity.
+        SDL_RenderCopy(renderer, inbetween, NULL, &rect);
+        SDL_FreeSurface(text_surface);
+        SDL_DestroyTexture(inbetween);
+    }
 }
 
 }
