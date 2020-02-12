@@ -100,6 +100,10 @@ namespace DK86PC {
         inline void subWord(word &left, word right);
         inline void addByte(byte &left, byte right);
         inline void addWord(word &left, word right);
+        inline void incByte(byte &left);
+        inline void incWord(word &left);
+        inline void decByte(byte &left);
+        inline void decWord(word &left);
         
         // Debug
         inline void debugPrint(byte opcode);

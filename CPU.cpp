@@ -655,6 +655,34 @@ namespace DK86PC {
         setSZPFlagsWord(left);
     }
 
+    inline void CPU::incByte(byte &temp) {
+        auxiliaryCarry = (lowNibble(temp) == 0x0F);
+        temp++;
+        overflow = (temp == 0);
+        setSZPFlagsWord(temp);
+    }
+
+    inline void CPU::incWord(word &temp) {
+        auxiliaryCarry = (lowNibble(temp) == 0x0F);
+        temp++;
+        overflow = (temp == 0);
+        setSZPFlagsWord(temp);
+    }
+    
+    inline void CPU::decByte(byte &temp) {
+        auxiliaryCarry = (lowNibble(temp) == 0);
+        temp--;
+        overflow = (temp == 0xFF);
+        setSZPFlagsByte(temp);
+    }
+    
+    inline void CPU::decWord(word &temp) {
+        auxiliaryCarry = (lowNibble(temp) == 0);
+        temp--;
+        overflow = (temp == 0xFFFF);
+        setSZPFlagsByte(temp);
+    }
+
     inline void CPU::debugPrint(byte opcode) {
         cout << hex << uppercase << (int)opcode << dec;
         Instruction instr = instructions[opcode];
@@ -735,6 +763,7 @@ namespace DK86PC {
                     
                     goto actualOpcode;
             }
+            opcode = memory.readByte(NEXT_INSTRUCTION);
         }
         
     actualOpcode:
@@ -958,6 +987,86 @@ namespace DK86PC {
             case 0x35:
                 xorWord(ax, memory.readWord(NEXT_INSTRUCTION + 1));
                 instructionLength = 3;
+                break;
+                
+            // INC AX
+            case 0x40:
+                incWord(ax);
+                break;
+            
+            // INC CX
+            case 0x41:
+                incWord(cx);
+                break;
+            
+            // INC DX
+            case 0x42:
+                incWord(Dx);
+                break;
+            
+            // INC BX
+            case 0x43:
+                incWord(bx);
+                break;
+            
+            // INC SP
+            case 0x44:
+                incWord(sp);
+                break;
+            
+            // INC BP
+            case 0x45:
+                incWord(bp);
+                break;
+            
+            // INC SI
+            case 0x46:
+                incWord(si);
+                break;
+            
+            // INC DI
+            case 0x47:
+                incWord(di);
+                break;
+            
+            // DEC AX
+            case 0x48:
+                decWord(ax);
+                break;
+            
+            // DEC CX
+            case 0x49:
+                decWord(cx);
+                break;
+            
+            // DEC DX
+            case 0x4A:
+                decWord(Dx);
+                break;
+            
+            // DEC BX
+            case 0x4B:
+                decWord(bx);
+                break;
+            
+            // DEC SP
+            case 0x4C:
+                decWord(sp);
+                break;
+            
+            // DEC BP
+            case 0x4D:
+                decWord(bp);
+                break;
+            
+            // DEC SI
+            case 0x4E:
+                decWord(si);
+                break;
+            
+            // DEC DI
+            case 0x4F:
+                decWord(di);
                 break;
             
             // JO jump on overflow
@@ -1576,6 +1685,15 @@ namespace DK86PC {
                 pc.writePort(memory.readByte(NEXT_INSTRUCTION + 1), ax);
                 break;
                 
+            // JMP within segment or group, ip relative; 16 bit displacement
+            case 0xE9:
+            {
+                instructionLength = 3;
+                word displacement = memory.readWord(NEXT_INSTRUCTION + 1);
+                ip += displacement;
+                break;
+            }
+                
             // JMP direct
             case 0xEA:
             { // scope for new variables
@@ -1588,6 +1706,15 @@ namespace DK86PC {
                 cs = nextCs;
                 jump = true;
                 instructionLength = 5;
+                break;
+            }
+                
+            // JMP within segment or group, ip relative; 8 bit displacement sign extend
+            case 0xEB:
+            {
+                instructionLength = 2;
+                byte displacement = memory.readByte(NEXT_INSTRUCTION + 1);
+                ip += signExtend(displacement);
                 break;
             }
                 
@@ -1657,6 +1784,58 @@ namespace DK86PC {
             case 0xFD:
                 direction = true;
                 break;
+                
+            
+            case 0xFE:
+            {
+                ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
+                modInstructionLength(mrr, instructionLength);
+                switch (mrr.reg) {
+                    case 0b000: // INC increment byte by 1
+                    {
+                        byte temp = getModRMByte(mrr);
+                        incByte(temp);
+                        setModRMByte(mrr, temp);
+                        break;
+                    }
+                    case 0b001: // DEC decrement byte by 1
+                    {
+                        byte temp = getModRMByte(mrr);
+                        decByte(temp);
+                        setModRMByte(mrr, temp);
+                        break;
+                    }
+                       
+                }
+                break;
+            }
+            
+            case 0xFF:
+            {
+                ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
+                modInstructionLength(mrr, instructionLength);
+                switch (mrr.reg) {
+                    case 0b000: // INC increment word by 1
+                    {
+                        word temp = getModRMWord(mrr);
+                        incWord(temp);
+                        setModRMWord(mrr, temp);
+                        break;
+                    }
+                    case 0b001: // DEC decrement word by 1
+                    {
+                        word temp = getModRMWord(mrr);
+                        decWord(temp);
+                        setModRMWord(mrr, temp);
+                        break;
+                    }
+                       
+                }
+                break;
+            }
+                
                 
             // Unknown Opcode
             default:
