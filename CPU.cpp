@@ -1494,6 +1494,24 @@ namespace DK86PC {
                 setReg(lowNibble(opcode), memory.readWord(NEXT_INSTRUCTION + 1));
                 instructionLength = 3;
                 break;
+                
+            // RET intrasegment and add displacement
+            case 0xC2:
+            {
+                word displacement = memory.readWord(NEXT_INSTRUCTION + 1);
+                jump = true;
+                ip = memory.readWord(((((address)ss) << 4) + sp));
+                sp += 2;
+                sp += displacement;
+                break;
+            }
+            
+            // RET intra-segment
+            case 0xC3:
+                jump = true;
+                ip = memory.readWord(((((address)ss) << 4) + sp));
+                sp += 2;
+                break;
             
             // MOV immediate byte to rm
             case 0xC6:
@@ -1518,6 +1536,28 @@ namespace DK86PC {
                 setModRMWord(mrr, data);
                 break;
             }
+            
+            // RET intersegment and add displacement
+            case 0xCA:
+            {
+                word displacement = memory.readWord(NEXT_INSTRUCTION + 1);
+                jump = true;
+                ip = memory.readWord(((((address)ss) << 4) + sp));
+                sp += 2;
+                cs = memory.readWord(((((address)ss) << 4) + sp));
+                sp += 2;
+                sp += displacement;
+                break;
+            }
+            
+            // RET intra-segment
+            case 0xCB:
+                jump = true;
+                ip = memory.readWord(((((address)ss) << 4) + sp));
+                sp += 2;
+                cs = memory.readWord(((((address)ss) << 4) + sp));
+                sp += 2;
+                break;
             
             // ROL/ROR/RCL/RCR/SHL/SHR/SAR/ROL 8 bits 1
             case 0xD0:
@@ -1662,6 +1702,36 @@ namespace DK86PC {
                 }
                 break;
             }
+                
+            // LOOPNE, LOOPNZ branch if CX non-zero and ZF = 0
+            case 0xE0:
+                cx--;
+                if (cx != 0 && zero == false) {
+                    ip = (ip + 2) + signExtend(memory.readByte(NEXT_INSTRUCTION + 1));
+                    jump = true;
+                }
+                instructionLength = 2;
+                break;
+            
+            // LOOPE, LOOPZ branch if CX non-zero and ZF = 1
+            case 0xE1:
+                cx--;
+                if (cx != 0 && zero == true) {
+                    ip = (ip + 2) + signExtend(memory.readByte(NEXT_INSTRUCTION + 1));
+                    jump = true;
+                }
+                instructionLength = 2;
+                break;
+            
+            // LOOP branch if CX non-zero
+            case 0xE2:
+                cx--;
+                if (cx != 0) {
+                    ip = (ip + 2) + signExtend(memory.readByte(NEXT_INSTRUCTION + 1));
+                    jump = true;
+                }
+                instructionLength = 2;
+                break;
                 
             
             // JCXZ Jump if CX is zero
