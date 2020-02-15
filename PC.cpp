@@ -137,7 +137,7 @@ namespace DK86PC {
                 cga.setColor(value);
                 break;
             default:
-                cout << "Port " << port << " not implemented for writing!" << endl;
+                cout << "Port 0x" << hex << uppercase << port << dec << " not implemented for writing!" << endl;
                 break;
         }
     }
@@ -147,7 +147,7 @@ namespace DK86PC {
             case 0x3DA:
                 return cga.getStatus();
             default:
-                cout << "Port " << port << " not implemented for reading!" << endl;
+                cout << "Port 0x" << hex << uppercase << port << dec << " not implemented for reading!" << endl;
                 return 0;
         }
     }
