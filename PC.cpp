@@ -63,6 +63,11 @@ namespace DK86PC {
                 cga.renderScren();
                 numFrames++;
                 
+                // pit is supposed to be 18.2 hz, doing ~20 hz here
+                if (numFrames % 3 == 0) {
+                    pit.update();
+                }
+                
                 if (numFrames %60 == 0) {
                     cga.verticalRetraceStart();
                 } else if (numFrames %60 == 1) {
@@ -117,6 +122,18 @@ namespace DK86PC {
             }
             case 0x83:
                 dma.setPage(1, value);
+                break;
+            case 0x40:
+                pit.writeCounter(0, value);
+                break;
+            case 0x41:
+                pit.writeCounter(1, value);
+                break;
+            case 0x42:
+                pit.writeCounter(2, value);
+                break;
+            case 0x43:
+                pit.writeControl((byte)value);
                 break;
             case 0x61:
                 ppi.setB(value);

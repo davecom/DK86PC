@@ -10,6 +10,7 @@
 		5539EC5A23EE82C400257920 /* SDL2_ttf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5539EC5923EE82C400257920 /* SDL2_ttf.framework */; };
 		5539EC5B23EE82D200257920 /* SDL2_ttf.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5539EC5923EE82C400257920 /* SDL2_ttf.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5539EC5D23EE82F100257920 /* Fonts in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5539EC5C23EE82F100257920 /* Fonts */; };
+		555F82F523F7EE390068D5AB /* PIT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 555F82F323F7EE390068D5AB /* PIT.cpp */; };
 		5564B20523C5FB7E0081F6B1 /* DMA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5564B20323C5FB7E0081F6B1 /* DMA.cpp */; };
 		5564B20823C60B400081F6B1 /* PIC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5564B20623C60B400081F6B1 /* PIC.cpp */; };
 		5564B20B23C614470081F6B1 /* PPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5564B20923C614470081F6B1 /* PPI.cpp */; };
@@ -55,6 +56,8 @@
 /* Begin PBXFileReference section */
 		5539EC5923EE82C400257920 /* SDL2_ttf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_ttf.framework; path = SDL/SDL2_ttf.framework; sourceTree = "<group>"; };
 		5539EC5C23EE82F100257920 /* Fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Fonts; sourceTree = "<group>"; };
+		555F82F323F7EE390068D5AB /* PIT.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PIT.cpp; sourceTree = "<group>"; };
+		555F82F423F7EE390068D5AB /* PIT.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PIT.hpp; sourceTree = "<group>"; };
 		5564B20223C254500081F6B1 /* Instructions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Instructions.h; sourceTree = "<group>"; };
 		5564B20323C5FB7E0081F6B1 /* DMA.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DMA.cpp; sourceTree = "<group>"; };
 		5564B20423C5FB7E0081F6B1 /* DMA.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DMA.hpp; sourceTree = "<group>"; };
@@ -131,6 +134,8 @@
 				5564B20723C60B400081F6B1 /* PIC.hpp */,
 				5564B20923C614470081F6B1 /* PPI.cpp */,
 				5564B20A23C614470081F6B1 /* PPI.hpp */,
+				555F82F323F7EE390068D5AB /* PIT.cpp */,
+				555F82F423F7EE390068D5AB /* PIT.hpp */,
 				55A0F3E522E7EAA200F6A149 /* Types.h */,
 				556C12B622EABC8600A3F140 /* notes.txt */,
 			);
@@ -205,6 +210,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				555F82F523F7EE390068D5AB /* PIT.cpp in Sources */,
 				5564B20823C60B400081F6B1 /* PIC.cpp in Sources */,
 				55A0F3E422E7EA2900F6A149 /* Memory.cpp in Sources */,
 				55A0F3E122E7E85C00F6A149 /* CPU.cpp in Sources */,
