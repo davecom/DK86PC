@@ -23,7 +23,7 @@
 		55A5B90B23EE8E3500B9CF42 /* FreeType.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55A5B90A23EE8E3500B9CF42 /* FreeType.framework */; };
 		55A5B90C23EE8E3C00B9CF42 /* FreeType.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 55A5B90A23EE8E3500B9CF42 /* FreeType.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		55F0A7BF23CB739E00A0E64B /* CGA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55F0A7BD23CB739E00A0E64B /* CGA.cpp */; };
-		55F0A7C423CB8AB300A0E64B /* SDL2.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 55F0A7C123CB8A5100A0E64B /* SDL2.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		55F0A7C423CB8AB300A0E64B /* SDL2.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 55F0A7C123CB8A5100A0E64B /* SDL2.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -179,7 +179,7 @@
 		557530CE22E7E69A009C1B28 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1130;
+				LastUpgradeCheck = 1140;
 				ORGANIZATIONNAME = "David Kopec";
 				TargetAttributes = {
 					557530D522E7E69A009C1B28 = {

@@ -23,32 +23,32 @@
 
 namespace DK86PC {
 
-word PIT::readCounter(int counterIndex) {
+byte PIT::readCounter(int counterIndex) {
     switch (latches[counterIndex]) {
         case 0b01:
             return counters[counterIndex] & 0x00FF;
         case 0b10:
-            return counters[counterIndex] & 0xFF00;
+            return counters[counterIndex] >> 8;
         case 0b11:
             latchStatus[counterIndex] = !latchStatus[counterIndex];
-            return latchStatus[counterIndex] ? counters[counterIndex] & 0xFF00 : counters[counterIndex] & 0x00FF;
+            return latchStatus[counterIndex] ? (counters[counterIndex] & 0xFF00) >> 8 : counters[counterIndex] & 0x00FF;
         default:
             return counters[counterIndex];
     }
 }
 
-void PIT::writeCounter(int counterIndex, word value) {
+void PIT::writeCounter(int counterIndex, byte value) {
     switch (latches[counterIndex]) {
         case 0b01:
             counters[counterIndex] = (counters[counterIndex] & 0xFF00) | (value & 0x00FF);
             break;
         case 0b10:
-            counters[counterIndex] = (counters[counterIndex] & 0x00FF) | (value & 0xFF00);
+            counters[counterIndex] = (counters[counterIndex] & 0x00FF) | (value << 8);
             break;
         case 0b11:
             latchStatus[counterIndex] = !latchStatus[counterIndex];
             if (latchStatus[counterIndex]) {
-                counters[counterIndex] = (counters[counterIndex] & 0x00FF) | (value & 0xFF00);
+                counters[counterIndex] = (counters[counterIndex] & 0x00FF) | (value << 8);
             } else {
                 counters[counterIndex] = (counters[counterIndex] & 0xFF00) | (value & 0x00FF);
             }
@@ -67,6 +67,7 @@ void PIT::writeControl(byte value) {
     }
     byte counterLatch = value & 0b00110000 >> 4;
     latches[counterSelect] = counterLatch;
+    latchStatus[counterSelect] = true;
     byte mode = value & 0b00001110 >> 1;
     modes[counterSelect] = mode;
     bcd[counterSelect] = value & 1;

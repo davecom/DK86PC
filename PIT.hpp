@@ -38,8 +38,8 @@ namespace DK86PC {
                 bcd[i] = false;
             }
         }
-        word readCounter(int counterIndex);
-        void writeCounter(int counterIndex, word value);
+        byte readCounter(int counterIndex);
+        void writeCounter(int counterIndex, byte value);
         void writeControl(byte value);
         void update();
     private:

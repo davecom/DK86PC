@@ -988,6 +988,68 @@ namespace DK86PC {
                 xorWord(ax, memory.readWord(NEXT_INSTRUCTION + 1));
                 instructionLength = 3;
                 break;
+            
+            // CMP Memory/Reg with Reg byte
+            case 0x38:
+            {
+                ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
+                modInstructionLength(mrr, instructionLength);
+                byte temp = getModRMByte(mrr);
+                subByte(temp, getRegByte(mrr.reg));
+                break;
+            }
+                
+            // CMP Memory/Reg with Reg word
+            case 0x39:
+            {
+                ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
+                modInstructionLength(mrr, instructionLength);
+                word temp = getModRMWord(mrr);
+                subWord(temp, getRegWord(mrr.reg));
+                break;
+            }
+                
+            // CMP Reg w/ Memory/Reg byte
+            case 0x3A:
+            {
+                ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
+                modInstructionLength(mrr, instructionLength);
+                byte temp = getRegByte(mrr.reg);
+                subByte(temp, getModRMByte(mrr));
+                break;
+            }
+            
+            // CMP Reg w/ Memory/Reg word
+            case 0x3B:
+            {
+                ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
+                modInstructionLength(mrr, instructionLength);
+                word temp = getRegWord(mrr.reg);
+                subWord(temp, getModRMWord(mrr));
+                break;
+            }
+                
+            // Immed w/ AL
+            case 0x3C:
+            {
+                instructionLength = 2;
+                byte temp = al;
+                subByte(temp, memory.readByte(NEXT_INSTRUCTION + 1));
+                break;
+            }
+                
+            // Immed w/ AX
+            case 0x3D:
+            {
+                instructionLength = 3;
+                word temp = ax;
+                subWord(temp, memory.readWord(NEXT_INSTRUCTION + 1));
+                break;
+            }
                 
             // INC AX
             case 0x40:
@@ -1743,6 +1805,18 @@ namespace DK86PC {
                 instructionLength = 2;
                 break;
             
+            // IN fixed port to AL
+            case 0xE4:
+                instructionLength = 2;
+                al = pc.readPort(memory.readByte(NEXT_INSTRUCTION + 1));
+                break;
+            
+            // IN fixed port to AX
+            case 0xE5:
+                instructionLength = 2;
+                ax = pc.readPort(memory.readByte(NEXT_INSTRUCTION + 1));
+                break;
+            
             // OUT from al
             case 0xE6:
                 instructionLength = 2;
@@ -1787,6 +1861,16 @@ namespace DK86PC {
                 ip += signExtend(displacement);
                 break;
             }
+            
+            // IN variable port (DX) to al
+            case 0xEC:
+                al = pc.readPort(Dx);
+                break;
+            
+            // IN variable port (DX) to ax
+            case 0xED:
+                ax = pc.readPort(Dx);
+                break;
                 
             // OUT to Dx from al
             case 0xEE:
