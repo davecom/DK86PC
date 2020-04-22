@@ -1033,7 +1033,7 @@ namespace DK86PC {
                 break;
             }
                 
-            // Immed w/ AL
+            // CMP Immed w/ AL
             case 0x3C:
             {
                 instructionLength = 2;
@@ -1042,7 +1042,7 @@ namespace DK86PC {
                 break;
             }
                 
-            // Immed w/ AX
+            // CMP Immed w/ AX
             case 0x3D:
             {
                 instructionLength = 3;
@@ -1321,8 +1321,10 @@ namespace DK86PC {
                         setModRMByte(mrr, temp);
                         break;
                     }
-                    case 0b111:
-                        cout << "unimplemented";
+                    case 0b111: // CMP
+                        byte temp = getModRMByte(mrr);
+                        subByte(temp, memory.readByte(NEXT_INSTRUCTION + instructionLength));
+                        instructionLength += 1;
                         break;
                         
                 }
@@ -1375,8 +1377,10 @@ namespace DK86PC {
                         setModRMWord(mrr, temp);
                         break;
                     }
-                    case 0b111:
-                        cout << "unimplemented";
+                    case 0b111: // CMP
+                        word temp = getModRMWord(mrr);
+                        subWord(temp, memory.readWord(NEXT_INSTRUCTION + instructionLength));
+                        instructionLength += 2;
                         break;
                         
                 }
@@ -1423,8 +1427,10 @@ namespace DK86PC {
                         cout << "unimplemented";
                         break;
                     }
-                    case 0b111:
-                        cout << "unimplemented";
+                    case 0b111: // CMP
+                        word temp = getModRMWord(mrr);
+                        subWord(temp, signExtend(memory.readByte(NEXT_INSTRUCTION + instructionLength)));
+                        instructionLength += 1;
                         break;
                         
                 }
@@ -1493,6 +1499,15 @@ namespace DK86PC {
                 
             // NOP no op
             case 0x90:
+                break;
+            
+            // CWD Convert Word to Doubleword
+            case 0x99:
+                if ((ax & 0x8000) == 0x8000) {
+                    Dx = 0xFFFF;
+                } else {
+                    Dx = 0;
+                }
                 break;
             
             // SAHF store AH into lower byte of flags
