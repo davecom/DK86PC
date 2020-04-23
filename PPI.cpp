@@ -26,6 +26,18 @@ void PPI::setB(byte value) {
     b = value;
 }
 
+byte PPI::readA() {
+    return a;
+}
+
+byte PPI::readB() {
+    return b;
+}
+
+byte PPI::readC() {
+    return c;
+}
+
 void PPI::setControl(byte value) {
     control = value;
 }

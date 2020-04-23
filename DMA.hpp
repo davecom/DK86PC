@@ -39,13 +39,24 @@ namespace DK86PC {
         }
         void setAddress(byte channel, word address);
         void setCounter(byte channel, word count);
+        word readAddress(byte channel);
+        word readCounter(byte channel);
         void setPage(byte channel, byte page);
+        void setMode(byte m);
+        void singleChannelMask(byte m);
+        void multiChannelMask(byte m);
+        
         void writeCommand(byte command);
+        void masterReset();
     private:
         word addressRegisters[4];
         word counterRegisters[4];
         byte pageRegisters[4];
+        byte status = 0;
         bool enabled = true;
+        bool flipflop = false; // false send low byte, true high
+        byte masks = 0;
+        byte mode = 0;
     };
 }
 

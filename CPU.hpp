@@ -91,7 +91,7 @@ namespace DK86PC {
         inline void shrWord(ModRegRM mrr, byte amount);
         inline void sarWord(ModRegRM mrr, byte amount);
         
-        //XOR/OR/SUB/ADD
+        //XOR/OR/AND/SUB/ADD/INC/DEC
         inline void xorByte(byte &left, byte right);
         inline void xorWord(word &left, word right);
         inline void orByte(byte &left, byte right);

@@ -1640,6 +1640,46 @@ namespace DK86PC {
                 memory.setWord(pa, ax);
                 break;
             }
+            
+            // STOSB store string byte
+            case 0xAA:
+            {
+                repAA:
+                address place = (es << 4) + di;
+                memory.setByte(place, al);
+                if (direction == 0) {
+                    di++;
+                } else {
+                    di--;
+                }
+                
+                if (repeatCX && (cx > 0)) {
+                    cx--;
+                    goto repAA;
+                }
+                
+                break;
+            }
+            
+            // STOSW store string word
+            case 0xAB:
+            {
+                repAB:
+                address place = (es << 4) + di;
+                memory.setWord(place, ax);
+                if (direction == 0) {
+                    di += 2;
+                } else {
+                    di -= 2;
+                }
+                
+                if (repeatCX && (cx > 0)) {
+                    cx--;
+                    goto repAB;
+                }
+                
+                break;
+            }
                 
             // MOV Byte move data to register
             case 0xB0: case 0xB1: case 0xB2: case 0xB3: case 0xB4: case 0xB5: case 0xB6: case 0xB7:

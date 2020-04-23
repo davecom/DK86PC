@@ -124,6 +124,18 @@ namespace DK86PC {
             case 0x08:
                 dma.writeCommand((byte) value);
                 break;
+            case 0x0A:
+                dma.singleChannelMask((byte) value);
+                break;
+            case 0x0B:
+                dma.setMode((byte) value);
+                break;
+            case 0x0D:
+                dma.masterReset();
+                break;
+            case 0x0F:
+                dma.multiChannelMask((byte) value);
+                break;
             case 0x83:
                 dma.setPage(1, value);
                 break;
@@ -168,8 +180,24 @@ namespace DK86PC {
 
     word PC::readPort(word port) {
         switch (port) {
+            case 0x00: case 0x01: case 0x02: case 0x03: case 0x04: case 0x05: case 0x06: case 0x07:
+            {
+                byte channel = (byte) port / 2;
+                if (port % 2 == 0) {
+                    return dma.readAddress(channel);
+                } else {
+                    return dma.readCounter(channel);
+                }
+                break;
+            }
             case 0x41:
                 return pit.readCounter(1);
+                break;
+            case 0x60:
+                return ppi.readA();
+                break;
+            case 0x62:
+                return ppi.readC();
                 break;
             case 0x3DA:
                 return cga.getStatus();

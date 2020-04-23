@@ -31,6 +31,9 @@ namespace DK86PC {
         PPI() : a(0), b(0), c(0), control(0) {};
         void setB(byte value);
         void setControl(byte value);
+        byte readA();
+        byte readB();
+        byte readC();
     private:
         byte a, b, c, control; // registers
     };

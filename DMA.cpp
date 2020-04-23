@@ -33,14 +33,44 @@ void DMA::setCounter(byte channel, word count) {
     counterRegisters[channel] = count;
 }
 
+word DMA::readAddress(byte channel) {
+    return addressRegisters[channel];
+}
+
+word DMA::readCounter(byte channel) {
+    return counterRegisters[channel];
+}
+
 void DMA::setPage(byte channel, byte page) {
     pageRegisters[channel] = page;
+}
+
+void DMA::setMode(byte m) {
+    mode = m;
+}
+
+void DMA::singleChannelMask(byte m) {
+    byte channel = m & 3;
+    // clear channel
+    masks &= ~(1 << channel);
+    // set channel
+    masks |= (((m >> 2) & 1) << channel);
+}
+
+void DMA::multiChannelMask(byte m) {
+    masks = ((m & 0xF) | (masks & 0xF0));
 }
 
 void DMA::writeCommand(byte command) {
     if (command & 4) { // bit 2 disables DMA
         enabled = false;
     }
+}
+
+void DMA::masterReset() {
+    flipflop = false;
+    status = 0;
+    masks = 0x0F;
 }
     
 }
