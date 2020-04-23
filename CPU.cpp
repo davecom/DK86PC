@@ -618,6 +618,20 @@ namespace DK86PC {
         carry = 0;
         setSZPFlagsByte(left);
     }
+
+    inline void CPU::andByte(byte &left, byte right) {
+        left = left & right;
+        overflow = 0;
+        carry = 0;
+        setSZPFlagsByte(left);
+    }
+
+    inline void CPU::andWord(word &left, word right) {
+        left = left & right;
+        overflow = 0;
+        carry = 0;
+        setSZPFlagsByte(left);
+    }
     
     inline void CPU::subByte(byte &left, byte right) {
         byte originalHigh = highBitByte(left);
@@ -877,6 +891,61 @@ namespace DK86PC {
                 
             case 0x0D:
                 orWord(ax, memory.readWord(NEXT_INSTRUCTION + 1));
+                instructionLength = 3;
+                break;
+            
+            // AND
+            case 0x20:
+            {
+                ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
+                modInstructionLength(mrr, instructionLength);
+                byte temp = getModRMByte(mrr);
+                andByte(temp, getRegByte(mrr.reg));
+                setModRMByte(mrr, temp);
+                break;
+            }
+                
+            case 0x21:
+            {
+                ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
+                modInstructionLength(mrr, instructionLength);
+                word temp = getModRMWord(mrr);
+                andWord(temp, getRegWord(mrr.reg));
+                setModRMWord(mrr, temp);
+                break;
+            }
+                
+            case 0x22:
+            {
+                ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
+                modInstructionLength(mrr, instructionLength);
+                byte temp = getRegByte(mrr.reg);
+                andByte(temp, getModRMByte(mrr));
+                setRegByte(mrr.reg, temp);
+                break;
+            }
+            
+            case 0x23:
+            {
+                ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
+                modInstructionLength(mrr, instructionLength);
+                word temp = getRegWord(mrr.reg);
+                andWord(temp, getModRMWord(mrr));
+                setRegWord(mrr.reg, temp);
+                break;
+            }
+            
+            case 0x24:
+                andByte(al, memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
+                break;
+                
+            case 0x25:
+                andWord(ax, memory.readWord(NEXT_INSTRUCTION + 1));
                 instructionLength = 3;
                 break;
             
@@ -1303,8 +1372,14 @@ namespace DK86PC {
                     case 0b011:
                         cout << "unimplemented";
                         break;
-                    case 0b100:
+                    case 0b100: // AND
+                    {
+                        byte temp = getModRMByte(mrr);
+                        andByte(temp, memory.readByte(NEXT_INSTRUCTION + instructionLength));
+                        instructionLength += 1;
+                        setModRMByte(mrr, temp);
                         break;
+                    }
                     case 0b101: // SUB
                     {
                         byte temp = getModRMByte(mrr);
@@ -1359,8 +1434,14 @@ namespace DK86PC {
                     case 0b011:
                         cout << "unimplemented";
                         break;
-                    case 0b100:
-                        break;
+                    case 0b100:  // AND
+                        {
+                            word temp = getModRMWord(mrr);
+                            andWord(temp, memory.readWord(NEXT_INSTRUCTION + instructionLength));
+                            instructionLength += 2;
+                            setModRMWord(mrr, temp);
+                            break;
+                        }
                     case 0b101: // SUB
                     {
                         word temp = getModRMWord(mrr);

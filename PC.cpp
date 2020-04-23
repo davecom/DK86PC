@@ -120,6 +120,10 @@ namespace DK86PC {
                 }
                 break;
             }
+            
+            case 0x08:
+                dma.writeCommand((byte) value);
+                break;
             case 0x83:
                 dma.setPage(1, value);
                 break;
@@ -147,6 +151,9 @@ namespace DK86PC {
             case 0xA1:
                 pic2.setStatus(value);
                 break;
+            case 0x3B8:
+                cout << "Ignoring port 3B8 MDA Controller";
+                break;
             case 0x3D8:
                 cga.setMode(value);
                 break;
@@ -161,8 +168,12 @@ namespace DK86PC {
 
     word PC::readPort(word port) {
         switch (port) {
+            case 0x41:
+                return pit.readCounter(1);
+                break;
             case 0x3DA:
                 return cga.getStatus();
+                break;
             default:
                 cout << "Port 0x" << hex << uppercase << port << dec << " not implemented for reading!" << endl;
                 return 0;

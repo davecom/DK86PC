@@ -96,6 +96,8 @@ namespace DK86PC {
         inline void xorWord(word &left, word right);
         inline void orByte(byte &left, byte right);
         inline void orWord(word &left, word right);
+        inline void andByte(byte &left, byte right);
+        inline void andWord(word &left, word right);
         inline void subByte(byte &left, byte right);
         inline void subWord(word &left, word right);
         inline void addByte(byte &left, byte right);

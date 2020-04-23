@@ -40,10 +40,12 @@ namespace DK86PC {
         void setAddress(byte channel, word address);
         void setCounter(byte channel, word count);
         void setPage(byte channel, byte page);
+        void writeCommand(byte command);
     private:
         word addressRegisters[4];
         word counterRegisters[4];
         byte pageRegisters[4];
+        bool enabled = true;
     };
 }
 

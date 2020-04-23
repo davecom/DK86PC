@@ -36,5 +36,11 @@ void DMA::setCounter(byte channel, word count) {
 void DMA::setPage(byte channel, byte page) {
     pageRegisters[channel] = page;
 }
+
+void DMA::writeCommand(byte command) {
+    if (command & 4) { // bit 2 disables DMA
+        enabled = false;
+    }
+}
     
 }
