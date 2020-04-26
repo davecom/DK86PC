@@ -58,7 +58,15 @@ namespace DK86PC {
     void PC::run() {
         static long long numFrames = 0;
         // keep going until we hit an illegal/unknown instruction
-        while (cpu.step() != -2) {
+        while (true) {
+            
+            byte interruptType = pic1.getInterrupt();
+            if (interruptType != NO_INTERRUPT) {
+                cpu.hardwareInterrupt(interruptType);
+            }
+            
+            cpu.step();
+            
             if (SDL_GetTicks() / MILLI_PER_FRAME > numFrames) { // roughly 60 fps
                 cga.renderScren();
                 numFrames++;
@@ -136,8 +144,11 @@ namespace DK86PC {
             case 0x0F:
                 dma.multiChannelMask((byte) value);
                 break;
-            case 0x83:
-                dma.setPage(1, value);
+            case 0x20:
+                pic1.writeCommand(value);
+                break;
+            case 0x21:
+                pic1.writeData(value);
                 break;
             case 0x40:
                 pit.writeCounter(0, value);
@@ -157,11 +168,14 @@ namespace DK86PC {
             case 0x63:
                 ppi.setControl(value);
                 break;
+            case 0x83:
+                dma.setPage(1, value);
+                break;
             case 0xA0:
-                pic2.setCommand(value);
+                pic2.writeCommand(value);
                 break;
             case 0xA1:
-                pic2.setStatus(value);
+                pic2.writeData(value);
                 break;
             case 0x3B8:
                 cout << "Ignoring port 3B8 MDA Controller";
@@ -190,6 +204,12 @@ namespace DK86PC {
                 }
                 break;
             }
+            case 0x20:
+                return pic1.readStatus();
+                break;
+            case 0x21:
+                return pic1.readData();
+                break;
             case 0x41:
                 return pit.readCounter(1);
                 break;
@@ -199,6 +219,12 @@ namespace DK86PC {
             case 0x62:
                 return ppi.readC();
                 break;
+            case 0xA0:
+               return pic2.readStatus();
+               break;
+           case 0xA1:
+               return pic2.readData();
+               break;
             case 0x3DA:
                 return cga.getStatus();
                 break;

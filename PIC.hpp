@@ -25,15 +25,26 @@
 #include <stdio.h>
 #include "Types.h"
 
+#define NO_INTERRUPT 255
+
 namespace DK86PC {
     class PIC {
     public:
-        PIC() : commandRegister(0), statusRegister(0), interruptRequestRegister(0), inServiceRegister(0), interruptMaskRegister(0) {};
-        void setCommand(byte command);
-        void setStatus(byte status);
+        PIC() :  interruptRequestRegister(0), inServiceRegister(0), interruptMaskRegister(0), initializationWordNumber(1),
+        needICW4(false), readInService(false), baseVectorAddress(0)
+        {};
+        void writeCommand(byte command);
+        byte readStatus();
+        void writeData(byte mask);
+        byte readData();
+        void requestInterrupt(byte irq);
+        byte getInterrupt();
+        
     private:
-        byte commandRegister;
-        byte statusRegister;
+        byte baseVectorAddress;
+        int initializationWordNumber;
+        bool needICW4;
+        bool readInService;
         byte interruptRequestRegister;
         byte inServiceRegister;
         byte interruptMaskRegister;

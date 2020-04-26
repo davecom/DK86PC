@@ -697,6 +697,29 @@ namespace DK86PC {
         setSZPFlagsByte(temp);
     }
 
+    inline void CPU::push(word value) {
+        sp -= 2;
+        address stackBottom = (((address)ss) << 4) + sp;
+        memory.setWord(stackBottom, value);
+    }
+        
+    inline word CPU::pop() {
+        address stackBottom = (((address)ss) << 4) + sp;
+        word value = memory.readWord(stackBottom);
+        sp += 2;
+        return value;
+    }
+        
+    inline void CPU::performInterrupt(byte type) {
+        push(flags);
+        interrupt = false;
+        trace = false;
+        push(cs);
+        push(ip);
+        cs = memory.readWord(type * 4 + 2);
+        ip = memory.readWord(type * 4);
+    }
+
     inline void CPU::debugPrint(byte opcode) {
         cout << hex << uppercase << (int)opcode << dec;
         Instruction instr = instructions[opcode];
@@ -728,9 +751,18 @@ namespace DK86PC {
         ip = 0; // reset vector at OxFFFF0 (cs << 4 + ip)
         flags = 0xF000;
     }
+
+    void CPU::hardwareInterrupt(byte info) {
+        if (interrupt) {
+            //byte baseVector = info & 0b11111000;
+            //byte irq = info & 0b00000111;
+            //performInterrupt(baseVector / 4 + irq);
+            performInterrupt(info);
+        }
+    }
     
     // returns the number of cycles counted
-    uint64_t CPU::step() {
+    void CPU::step() {
         bool jump = false;
         bool lock = false;
         bool repeatCX = false;
@@ -1591,6 +1623,16 @@ namespace DK86PC {
                 }
                 break;
             
+            // PUSHF
+            case 0x9C:
+                push(flags);
+                break;
+            
+            // POPF
+            case 0x9D:
+                flags = pop();
+                break;
+            
             // SAHF store AH into lower byte of flags
             case 0x9E:
                 flags = ((flags & 0xFF00) | ah);
@@ -1755,6 +1797,39 @@ namespace DK86PC {
                 sp += 2;
                 cs = memory.readWord(((((address)ss) << 4) + sp));
                 sp += 2;
+                break;
+            
+            // INT (always 3)
+            case 0xCC:
+                jump = true;
+                performInterrupt(3);
+                break;
+            
+            // INT type
+            case 0xCD:
+            {
+                instructionLength = 2;
+                byte type = memory.readByte(NEXT_INSTRUCTION + 1);
+                jump = true;
+                performInterrupt(type);
+                break;
+            }
+                
+            // INTO overflow interrupt
+            case 0xCE:
+                if (overflow) {
+                    jump=true;
+                    performInterrupt(4);
+                }
+                break;
+                
+                
+            // IRET
+            case 0xCF:
+                jump = true;
+                ip = pop();
+                cs = pop();
+                flags = pop();
                 break;
             
             // ROL/ROR/RCL/RCR/SHL/SHR/SAR/ROL 8 bits 1
@@ -2130,7 +2205,6 @@ namespace DK86PC {
             // Unknown Opcode
             default:
                 cout << "Unknown opcode!" << endl;
-                return -1;
         }
         
         // if we didn't jump, move the instruction pointer forward
@@ -2138,7 +2212,6 @@ namespace DK86PC {
         
         // dummy for now until we have accurate cycle counts
         cycleCount += 1;
-        return 1;
     }
     
 }

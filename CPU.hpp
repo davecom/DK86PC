@@ -42,7 +42,8 @@ namespace DK86PC {
             reset();
         };
         void reset();
-        unsigned long long step();
+        void hardwareInterrupt(byte info);
+        void step();
     private:
         uint64_t cycleCount;
         
@@ -106,6 +107,11 @@ namespace DK86PC {
         inline void incWord(word &left);
         inline void decByte(byte &left);
         inline void decWord(word &left);
+        
+        // stack and interrupts
+        inline void push(word value);
+        inline word pop();
+        inline void performInterrupt(byte type);
         
         // Debug
         inline void debugPrint(byte opcode);
