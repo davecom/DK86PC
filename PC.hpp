@@ -36,7 +36,7 @@ namespace DK86PC {
 
     class PC {
     public:
-        PC() : memory(), cpu(*this, memory), dma(), pic1(), pic2(), ppi(), pit(), cga(memory) {};
+        PC() : memory(), cpu(*this, memory), dma(), pic(), ppi(), pit(), cga(memory) {};
         void loadBIOS(string filename);
         void run();
         void writePort(word port, word value);
@@ -45,8 +45,8 @@ namespace DK86PC {
         Memory memory;
         CPU cpu;
         DMA dma;
-        PIC pic1; // 0x20, 0x21 ports
-        PIC pic2; // 0xA0, 0xA1 ports
+        PIC pic; // 0x20, 0x21 ports
+        //PIC pic2; // 0xA0, 0xA1 ports // 5150 has only 1
         PPI ppi;
         PIT pit;
         CGA cga;

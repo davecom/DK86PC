@@ -699,15 +699,14 @@ namespace DK86PC {
 
     inline void CPU::push(word value) {
         sp -= 2;
-        address stackBottom = (((address)ss) << 4) + sp;
-        memory.setWord(stackBottom, value);
+        address topOfStack = (((address)ss) << 4) + sp;
+        memory.setWord(topOfStack, value);
     }
         
     inline word CPU::pop() {
-        address stackBottom = (((address)ss) << 4) + sp;
-        word value = memory.readWord(stackBottom);
+        address topOfStack = (((address)ss) << 4) + sp;
         sp += 2;
-        return value;
+        return memory.readWord(topOfStack);
     }
         
     inline void CPU::performInterrupt(byte type) {
@@ -870,6 +869,16 @@ namespace DK86PC {
                 addWord(ax, memory.readWord(NEXT_INSTRUCTION + 1));
                 instructionLength = 3;
                 break;
+                
+            // PUSH es
+            case 0x06:
+                push(es);
+                break;
+            
+            // POP es
+            case 0x07:
+                es = pop();
+                break;
             
             // OR inclusive or
             case 0x08:
@@ -924,6 +933,31 @@ namespace DK86PC {
             case 0x0D:
                 orWord(ax, memory.readWord(NEXT_INSTRUCTION + 1));
                 instructionLength = 3;
+                break;
+            
+            // PUSH cs
+            case 0x0E:
+                push(cs);
+                break;
+            
+            // PUSH ss
+            case 0x16:
+                push(ss);
+                break;
+            
+            // POP ss
+            case 0x17:
+                ss = pop();
+                break;
+            
+            // PUSH ds
+            case 0x1E:
+                push(ds);
+                break;
+                
+            // POP ds
+            case 0x1F:
+                ds = pop();
                 break;
             
             // AND
@@ -1230,6 +1264,86 @@ namespace DK86PC {
             // DEC DI
             case 0x4F:
                 decWord(di);
+                break;
+            
+            // PUSH ax
+            case 0x50:
+                push(ax);
+                break;
+            
+            // PUSH cx
+            case 0x51:
+                push(cx);
+                break;
+            
+            // PUSH dx
+            case 0x52:
+                push(Dx);
+                break;
+            
+            // PUSH bx
+            case 0x53:
+                push(bx);
+                break;
+                
+            // PUSH sp
+            case 0x54:
+                push(sp);
+                break;
+                
+            // PUSH bp
+            case 0x55:
+                push(bp);
+                break;
+                
+            // PUSH si
+            case 0x56:
+                push(si);
+                break;
+                
+            // PUSH di
+            case 0x57:
+                push(di);
+                break;
+            
+            // POP ax
+            case 0x58:
+                ax = pop();
+                break;
+            
+            // POP cx
+            case 0x59:
+                cx = pop();
+                break;
+            
+            // POP dx
+            case 0x5A:
+                Dx = pop();
+                break;
+            
+            // POP bx
+            case 0x5B:
+                bx = pop();
+                break;
+                
+            // POP sp
+            case 0x5C:
+                sp = pop();
+                break;
+                
+            // POP bp
+            case 0x5D:
+                bp = pop();
+                break;
+                
+            // POP si
+            case 0x5E:
+                si = pop();
+                break;
+                
+            // POP di
+            case 0x5F:
+                di = pop();
                 break;
             
             // JO jump on overflow
@@ -1609,6 +1723,16 @@ namespace DK86PC {
                 setSegmentRegWord(mrr.reg, getModRMWord(mrr));
                 break;
             }
+            
+            // POP
+            case 0x8F:
+            {
+                ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
+                modInstructionLength(mrr, instructionLength);
+                setModRMWord(mrr, pop());
+                break;
+            }
                 
             // NOP no op
             case 0x90:
@@ -1622,6 +1746,23 @@ namespace DK86PC {
                     Dx = 0;
                 }
                 break;
+            
+            // CALL direct
+            case 0x9A:
+            { // scope for new variables
+                instructionLength = 5;
+                push(cs);
+                push(ip + instructionLength);
+                // next two instructions are new ip
+                // can't change ip until after have read CS
+                word nextIp = memory.readWord(NEXT_INSTRUCTION + 1);
+                // next two after that are new cs
+                word nextCs = memory.readWord(NEXT_INSTRUCTION + 3);
+                ip = nextIp;
+                cs = nextCs;
+                jump = true;
+                break;
+            }
             
             // PUSHF
             case 0x9C:
@@ -1722,6 +1863,46 @@ namespace DK86PC {
                 
                 break;
             }
+            
+            // LODSB load string byte
+            case 0xAC:
+            {
+                repAC:
+                address place = (ds << 4) + si;
+                al = memory.readByte(place);
+                if (direction == 0) {
+                    si++;
+                } else {
+                    si--;
+                }
+                
+                if (repeatCX && (cx > 0)) {
+                    cx--;
+                    goto repAC;
+                }
+                
+                break;
+            }
+            
+            // LODSW load string word
+            case 0xAD:
+            {
+                repAD:
+                address place = (ds << 4) + si;
+                ax = memory.readWord(place);
+                if (direction == 0) {
+                    si += 2;
+                } else {
+                    si -= 2;
+                }
+                
+                if (repeatCX && (cx > 0)) {
+                    cx--;
+                    goto repAD;
+                }
+                
+                break;
+            }
                 
             // MOV Byte move data to register
             case 0xB0: case 0xB1: case 0xB2: case 0xB3: case 0xB4: case 0xB5: case 0xB6: case 0xB7:
@@ -1740,8 +1921,7 @@ namespace DK86PC {
             {
                 word displacement = memory.readWord(NEXT_INSTRUCTION + 1);
                 jump = true;
-                ip = memory.readWord(((((address)ss) << 4) + sp));
-                sp += 2;
+                ip = pop();
                 sp += displacement;
                 break;
             }
@@ -1749,8 +1929,7 @@ namespace DK86PC {
             // RET intra-segment
             case 0xC3:
                 jump = true;
-                ip = memory.readWord(((((address)ss) << 4) + sp));
-                sp += 2;
+                ip = pop();
                 break;
             
             // MOV immediate byte to rm
@@ -1782,10 +1961,8 @@ namespace DK86PC {
             {
                 word displacement = memory.readWord(NEXT_INSTRUCTION + 1);
                 jump = true;
-                ip = memory.readWord(((((address)ss) << 4) + sp));
-                sp += 2;
-                cs = memory.readWord(((((address)ss) << 4) + sp));
-                sp += 2;
+                ip = pop();
+                cs = pop();
                 sp += displacement;
                 break;
             }
@@ -1793,10 +1970,8 @@ namespace DK86PC {
             // RET intra-segment
             case 0xCB:
                 jump = true;
-                ip = memory.readWord(((((address)ss) << 4) + sp));
-                sp += 2;
-                cs = memory.readWord(((((address)ss) << 4) + sp));
-                sp += 2;
+                ip = pop();
+                cs = pop();
                 break;
             
             // INT (always 3)
@@ -2040,12 +2215,24 @@ namespace DK86PC {
                 pc.writePort(memory.readByte(NEXT_INSTRUCTION + 1), ax);
                 break;
                 
+            // CALL within segment or group, ip relative; 16 bit displacement
+            case 0xE8:
+            {
+                instructionLength = 3;
+                push(ip + instructionLength);
+                word displacement = memory.readWord(NEXT_INSTRUCTION + 1);
+                ip += (displacement + instructionLength);
+                jump = true;
+                break;
+            }
+                
             // JMP within segment or group, ip relative; 16 bit displacement
             case 0xE9:
             {
                 instructionLength = 3;
                 word displacement = memory.readWord(NEXT_INSTRUCTION + 1);
-                ip += displacement;
+                ip += (displacement + instructionLength);
+                jump = true;
                 break;
             }
                 
@@ -2098,24 +2285,71 @@ namespace DK86PC {
                 carry = !carry;
                 break;
             
-            // NOT one's complement (invert 1s and 0s) byte
+            
             case 0xF6:
             {
                 ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
                 instructionLength = 2;
                 modInstructionLength(mrr, instructionLength);
-                setModRMByte(mrr, ~getModRMByte(mrr));
+                switch (mrr.reg) {
+                    case 0b000: // TEST
+                    {
+                        byte temp1 = getModRMByte(mrr);
+                        byte temp2 = memory.readByte(NEXT_INSTRUCTION + instructionLength);
+                        instructionLength += 1;
+                        byte result = temp1 & temp2;
+                        setSZPFlagsByte(result);
+                        carry = false;
+                        overflow = false;
+                        break;
+                    }
+                    case 0b010: // // NOT one's complement (invert 1s and 0s) byte
+                    {
+                        setModRMByte(mrr, ~getModRMByte(mrr));
+                        break;
+                    }
+                    default:
+                    {
+                        cout << "unimplemented F6 opcode" << endl;
+                        break;
+                    }
+                }
                 break;
+                
+                
             }
             
-            // NOT one's complement (invert 1s and 0s) word
             case 0xF7:
             {
                 ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
                 instructionLength = 2;
                 modInstructionLength(mrr, instructionLength);
-                setModRMWord(mrr, ~getModRMWord(mrr));
+                switch (mrr.reg) {
+                    case 0b000: // TEST word
+                    {
+                        word temp1 = getModRMWord(mrr);
+                        word temp2 = memory.readWord(NEXT_INSTRUCTION + instructionLength);
+                        instructionLength += 2;
+                        word result = temp1 & temp2;
+                        setSZPFlagsWord(result);
+                        carry = false;
+                        overflow = false;
+                        break;
+                    }
+                    case 0b010: // // NOT one's complement (invert 1s and 0s) word
+                    {
+                        setModRMWord(mrr, ~getModRMWord(mrr));
+                        break;
+                    }
+                    default:
+                    {
+                        cout << "unimplemented F7 opcode" << endl;
+                        break;
+                    }
+                }
                 break;
+                
+                
             }
                 
             // CLC clear carry flag
@@ -2171,7 +2405,11 @@ namespace DK86PC {
                         setModRMByte(mrr, temp);
                         break;
                     }
-                       
+                    default:
+                    {
+                        cout << "unimplemented FE opcode" << endl;
+                        break;
+                    }
                 }
                 break;
             }
@@ -2196,7 +2434,35 @@ namespace DK86PC {
                         setModRMWord(mrr, temp);
                         break;
                     }
-                       
+                    case 0b010: // CALL within segment indirect
+                    {
+                        push(ip + instructionLength);
+                        word temp = getModRMWord(mrr);
+                        ip = temp;
+                        jump = true;
+                        break;
+                    }
+                    case 0b011: // CALL inter-segment indirect
+                    {
+                        push(cs);
+                        push(ip + instructionLength);
+                        // next two instructions are new ip
+                        // can't change ip until after have read CS
+                        address ea = calcEffectiveAddress(mrr);
+                        address pa = ((*currentSegment << 4) + ea); // physical address
+                        ip = memory.readWord(pa);
+                        cs = memory.readWord(pa + 2);
+                        jump = true;
+                        break;
+                    }
+                    case 0b110: // PUSH modrm
+                        push(getModRMWord(mrr));
+                        break;
+                    default:
+                    {
+                        cout << "unimplemented FF opcode" << endl;
+                        break;
+                    }
                 }
                 break;
             }

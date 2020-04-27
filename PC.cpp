@@ -60,7 +60,7 @@ namespace DK86PC {
         // keep going until we hit an illegal/unknown instruction
         while (true) {
             
-            byte interruptType = pic1.getInterrupt();
+            byte interruptType = pic.getInterrupt();
             if (interruptType != NO_INTERRUPT) {
                 cpu.hardwareInterrupt(interruptType);
             }
@@ -145,10 +145,10 @@ namespace DK86PC {
                 dma.multiChannelMask((byte) value);
                 break;
             case 0x20:
-                pic1.writeCommand(value);
+                pic.writeCommand(value);
                 break;
             case 0x21:
-                pic1.writeData(value);
+                pic.writeData(value);
                 break;
             case 0x40:
                 pit.writeCounter(0, value);
@@ -172,10 +172,7 @@ namespace DK86PC {
                 dma.setPage(1, value);
                 break;
             case 0xA0:
-                pic2.writeCommand(value);
-                break;
-            case 0xA1:
-                pic2.writeData(value);
+                cout << "Port A0 on 5150 disables NMI interrupts " << endl;
                 break;
             case 0x3B8:
                 cout << "Ignoring port 3B8 MDA Controller";
@@ -205,10 +202,10 @@ namespace DK86PC {
                 break;
             }
             case 0x20:
-                return pic1.readStatus();
+                return pic.readStatus();
                 break;
             case 0x21:
-                return pic1.readData();
+                return pic.readData();
                 break;
             case 0x41:
                 return pit.readCounter(1);
@@ -219,12 +216,6 @@ namespace DK86PC {
             case 0x62:
                 return ppi.readC();
                 break;
-            case 0xA0:
-               return pic2.readStatus();
-               break;
-           case 0xA1:
-               return pic2.readData();
-               break;
             case 0x3DA:
                 return cga.getStatus();
                 break;
