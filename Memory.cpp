@@ -29,18 +29,38 @@ namespace DK86PC {
     }
     
     byte Memory::readByte(address location) {
+#ifdef DEBUG
+        if (watchLocations.find(location) != watchLocations.end()) {
+            cout << "read byte "  << hex << uppercase <<  (int) ram[location] << dec << " from " << location << endl;
+        }
+#endif
         return ram[location];
     }
     
     word Memory::readWord(address location) {
+#ifdef DEBUG
+        if (watchLocations.find(location) != watchLocations.end()) {
+            cout << "read word " << hex << uppercase << (int) ((((word)ram[location + 1]) << 8) | ram[location]) << dec << " from " << location << endl;
+        }
+#endif
         return (((word)ram[location + 1]) << 8) | ram[location];
     }
     
     void Memory::setByte(address location, byte data) {
+#ifdef DEBUG
+        if (watchLocations.find(location) != watchLocations.end()) {
+            cout << "wrote byte "  << hex << uppercase << (int) data << dec << " to " << location << endl;
+        }
+#endif
         ram[location] = data;
     }
     
     void Memory::setWord(address location, word data) {
+        #ifdef DEBUG
+                if (watchLocations.find(location) != watchLocations.end()) {
+                    cout << "wrote word "  << hex << uppercase << (int) data << dec << " to " << location << endl;
+                }
+        #endif
         ram[location] = lowByte(data);
         ram[location + 1] = highByte(data);
     }

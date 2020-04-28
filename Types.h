@@ -24,7 +24,7 @@ namespace DK86PC {
 #define lowBit(b) ((b) & 1)
 
 #define lowByte(w) ((byte) ((w) & 0x00FF))
-#define highByte(w) ((byte) (((w) & 0xFF00) >> 7))
+#define highByte(w) ((byte) (((w) & 0xFF00) >> 8))
     
     typedef uint8_t byte;
     typedef uint16_t word;

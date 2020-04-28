@@ -770,21 +770,29 @@ namespace DK86PC {
         
         byte opcode = memory.readByte(NEXT_INSTRUCTION);
         
-        
         currentSegment = &ds;
         
         // check for prefix to opcode
         while (true) {
             switch (opcode) {
                 case 0xF0:
+                    #ifdef DEBUG
+                    debugPrint(opcode);
+                    #endif
                     lock = true;
                     ip += 1;
                     break;
                 case 0xF3:
+                    #ifdef DEBUG
+                    debugPrint(opcode);
+                    #endif
                     repeatCX = true;
                     ip += 1;
                     break;
                 case 0xF2:
+                    #ifdef DEBUG
+                    debugPrint(opcode);
+                    #endif
                     repeatZF = true;
                     ip += 1;
                     break;
@@ -797,10 +805,16 @@ namespace DK86PC {
                     ip += 1;
                     break;
                 case 0x3E:
+                    #ifdef DEBUG
+                    debugPrint(opcode);
+                    #endif
                     currentSegment = &ds;
                     ip += 1;
                     break;
                 case 0x26:
+                    #ifdef DEBUG
+                    debugPrint(opcode);
+                    #endif
                     currentSegment = &es;
                     ip += 1;
                     break;
@@ -809,10 +823,13 @@ namespace DK86PC {
                     goto actualOpcode;
             }
             opcode = memory.readByte(NEXT_INSTRUCTION);
+            
         }
         
     actualOpcode:
+        #ifdef DEBUG
         debugPrint(opcode);
+        #endif
         switch (opcode) {
             
             // ADD integer addition
@@ -1930,6 +1947,7 @@ namespace DK86PC {
             case 0xC3:
                 jump = true;
                 ip = pop();
+                cout << ip << endl;
                 break;
             
             // MOV immediate byte to rm
@@ -2220,6 +2238,7 @@ namespace DK86PC {
             {
                 instructionLength = 3;
                 push(ip + instructionLength);
+                cout << (ip + instructionLength) << endl;
                 word displacement = memory.readWord(NEXT_INSTRUCTION + 1);
                 ip += (displacement + instructionLength);
                 jump = true;
@@ -2478,6 +2497,9 @@ namespace DK86PC {
         
         // dummy for now until we have accurate cycle counts
         cycleCount += 1;
+        
+        // sanity check
+        //cout << hex << uppercase << (int)memory.readByte(90095) << dec << endl;
     }
     
 }

@@ -36,7 +36,12 @@ namespace DK86PC {
 
     class PC {
     public:
-        PC() : memory(), cpu(*this, memory), dma(), pic(), ppi(), pit(), cga(memory) {};
+        PC() : memory(), cpu(*this, memory), dma(), pic(), ppi(), pit(), cga(memory) {
+#ifdef DEBUG
+            //memory.setWatch(90094);
+#endif
+            
+        };
         void loadBIOS(string filename);
         void run();
         void writePort(word port, word value);

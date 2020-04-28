@@ -22,6 +22,9 @@
 
 #include <vector>
 #include "Types.h"
+#ifdef DEBUG
+#include <set>
+#endif
 
 using namespace std;
 
@@ -41,8 +44,16 @@ namespace DK86PC {
         void setByte(address location, byte data);
         void setWord(address location, word data);
         byte& readByteRef(address location);
+#ifdef DEBUG
+        void setWatch(address location) {
+            watchLocations.insert(location);
+        }
+#endif
     private:
         byte *ram;
+#ifdef DEBUG
+        set<address> watchLocations;
+#endif
     };
 }
 
