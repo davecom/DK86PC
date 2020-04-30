@@ -780,6 +780,8 @@ namespace DK86PC {
         byte opcode = memory.readByte(NEXT_INSTRUCTION);
         currentSegment = &ds;
         
+        
+        
         // check for prefix to opcode
         while (true) {
             switch (opcode) {
@@ -1694,6 +1696,30 @@ namespace DK86PC {
                 }
                 break;
             }
+            
+            // XCHG byte reg to modrm
+            case 0x86:
+            {
+                ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
+                modInstructionLength(mrr, instructionLength);
+                byte temp = getModRMByte(mrr);
+                setModRMByte(mrr, getRegByte(mrr.reg));
+                setRegByte(mrr.reg, temp);
+                break;
+            }
+            
+            // XCHG word reg to modrm
+            case 0x87:
+            {
+                ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
+                modInstructionLength(mrr, instructionLength);
+                word temp = getModRMWord(mrr);
+                setModRMWord(mrr, getRegWord(mrr.reg));
+                setRegWord(mrr.reg, temp);
+                break;
+            }
                 
             // MOV byte reg to rm
             case 0x88:
@@ -1765,9 +1791,72 @@ namespace DK86PC {
                 break;
             }
                 
-            // NOP no op
+            // NOP no op (technically XCHG AX with AX)
             case 0x90:
                 break;
+            
+            // XCHG AX w/ CX
+            case 0x91:
+            {
+                word temp = ax;
+                ax = cx;
+                cx = temp;
+                break;
+            }
+            
+            // XCHG AX w/ DX
+            case 0x92:
+            {
+                word temp = ax;
+                ax = Dx;
+                Dx = temp;
+                break;
+            }
+            
+            // XCHG AX w/ BX
+            case 0x93:
+            {
+                word temp = ax;
+                ax = bx;
+                bx = temp;
+                break;
+            }
+            
+            // XCHG AX w/ SP
+            case 0x94:
+            {
+                word temp = ax;
+                ax = sp;
+                sp = temp;
+                break;
+            }
+            
+            // XCHG AX w/ BP
+            case 0x95:
+            {
+                word temp = ax;
+                ax = bp;
+                bp = temp;
+                break;
+            }
+            
+            // XCHG AX w/ SI
+            case 0x96:
+            {
+                word temp = ax;
+                ax = si;
+                si = temp;
+                break;
+            }
+            
+            // XCHG AX w/ DI
+            case 0x97:
+            {
+                word temp = ax;
+                ax = di;
+                di = temp;
+                break;
+            }
             
             // CWD Convert Word to Doubleword
             case 0x99:
