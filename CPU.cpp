@@ -155,6 +155,9 @@ namespace DK86PC {
         
         address ea = bx + si + disp; // 0b000
         switch (mrr.rm) {
+            case 0b000:
+                ea = bx + si + disp;
+                break;
             case 0b001:
                 ea = bx + di + disp;
                 break;
@@ -171,7 +174,11 @@ namespace DK86PC {
                 ea = di + disp;
                 break;
             case 0b110:
-                ea = bp + disp;
+                if (mrr.mod == 0b00) {
+                    ea = memory.readWord(NEXT_INSTRUCTION + 2); // direct addressing
+                } else {
+                    ea = bp + disp;
+                }
                 break;
             case 0b111:
                 ea = bx + disp;
@@ -338,6 +345,8 @@ namespace DK86PC {
         if (mrr.mod == 0b01) {
             il += 1;
         } else if (mrr.mod == 0b10) {
+            il += 2;
+        } else if (mrr.mod == 0b00 && mrr.rm == 0b110) {
             il += 2;
         }
     }
@@ -769,7 +778,6 @@ namespace DK86PC {
         byte instructionLength = 1;
         
         byte opcode = memory.readByte(NEXT_INSTRUCTION);
-        
         currentSegment = &ds;
         
         // check for prefix to opcode
@@ -797,10 +805,16 @@ namespace DK86PC {
                     ip += 1;
                     break;
                 case 0x2E:
+                    #ifdef DEBUG
+                    debugPrint(opcode);
+                    #endif
                     currentSegment = &cs;
                     ip += 1;
                     break;
                 case 0x36:
+                    #ifdef DEBUG
+                    debugPrint(opcode);
+                    #endif
                     currentSegment = &ss;
                     ip += 1;
                     break;
@@ -1885,7 +1899,7 @@ namespace DK86PC {
             case 0xAC:
             {
                 repAC:
-                address place = (ds << 4) + si;
+                address place = (*currentSegment << 4) + si;
                 al = memory.readByte(place);
                 if (direction == 0) {
                     si++;
