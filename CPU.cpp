@@ -682,7 +682,7 @@ namespace DK86PC {
         auxiliaryCarry = (lowNibble(temp) == 0x0F);
         temp++;
         overflow = (temp == 0);
-        setSZPFlagsWord(temp);
+        setSZPFlagsByte(temp);
     }
 
     inline void CPU::incWord(word &temp) {
@@ -703,7 +703,7 @@ namespace DK86PC {
         auxiliaryCarry = (lowNibble(temp) == 0);
         temp--;
         overflow = (temp == 0xFFFF);
-        setSZPFlagsByte(temp);
+        setSZPFlagsWord(temp);
     }
 
     inline void CPU::push(word value) {
@@ -729,6 +729,16 @@ namespace DK86PC {
     }
 
     inline void CPU::debugPrint(byte opcode) {
+        cout << "\t" << "AX " << hex << uppercase << setfill('0') << setw(4) << ax << dec;
+        cout << " BX " << hex << uppercase << setfill('0') << setw(4) << bx << dec;
+        cout << " CX " << hex << uppercase << setfill('0') << setw(4) << cx << dec;
+        cout << " DX " << hex << uppercase << setfill('0') << setw(4) << Dx << dec;
+        cout << " CPAZSTIDO" << endl;
+        cout << "\t" << "SP " << hex << uppercase << setfill('0') << setw(4) << sp << dec;
+        cout << " BP " << hex << uppercase << setfill('0') << setw(4) << bp << dec;
+        cout << " SI " << hex << uppercase << setfill('0') << setw(4) << si << dec;
+        cout << " DI " << hex << uppercase << setfill('0') << setw(4) << di << dec;
+        cout << " " << carry << parity << auxiliaryCarry << zero << sign << trace << interrupt << direction << overflow << endl;
         cout << hex << uppercase << (int)opcode << dec;
         Instruction instr = instructions[opcode];
         string mnemonic = instr.mnemonic;
@@ -1949,6 +1959,8 @@ namespace DK86PC {
             {
                 repAA:
                 address place = (es << 4) + di;
+                cout << place <<  " : ";
+                cout << hex << uppercase << setfill('0') << setw(2) << al << endl;
                 memory.setByte(place, al);
                 if (direction == 0) {
                     di++;
@@ -1989,6 +2001,8 @@ namespace DK86PC {
             {
                 repAC:
                 address place = (*currentSegment << 4) + si;
+                cout << place <<  " : ";
+                cout << hex << uppercase << setfill('0') << setw(2) << memory.readByte(place) << endl;
                 al = memory.readByte(place);
                 if (direction == 0) {
                     si++;
