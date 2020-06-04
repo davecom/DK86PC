@@ -611,7 +611,7 @@ namespace DK86PC {
         left = left ^ right;
         overflow = 0;
         carry = 0;
-        setSZPFlagsByte(left);
+        setSZPFlagsWord(left);
     }
 
     inline void CPU::orByte(byte &left, byte right) {
@@ -625,7 +625,7 @@ namespace DK86PC {
         left = left | right;
         overflow = 0;
         carry = 0;
-        setSZPFlagsByte(left);
+        setSZPFlagsWord(left);
     }
 
     inline void CPU::andByte(byte &left, byte right) {
@@ -639,7 +639,7 @@ namespace DK86PC {
         left = left & right;
         overflow = 0;
         carry = 0;
-        setSZPFlagsByte(left);
+        setSZPFlagsWord(left);
     }
     
     inline void CPU::subByte(byte &left, byte right) {
@@ -739,6 +739,10 @@ namespace DK86PC {
         cout << " SI " << hex << uppercase << setfill('0') << setw(4) << si << dec;
         cout << " DI " << hex << uppercase << setfill('0') << setw(4) << di << dec;
         cout << " " << carry << parity << auxiliaryCarry << zero << sign << trace << interrupt << direction << overflow << endl;
+        cout << "\t" << "CS " << hex << uppercase << setfill('0') << setw(4) << cs << dec;
+        cout << " DS " << hex << uppercase << setfill('0') << setw(4) << ds << dec;
+        cout << " ES " << hex << uppercase << setfill('0') << setw(4) << es << dec;
+        cout << " SS " << hex << uppercase << setfill('0') << setw(4) << ss << dec << endl;
         cout << hex << uppercase << (int)opcode << dec;
         Instruction instr = instructions[opcode];
         string mnemonic = instr.mnemonic;
@@ -1968,9 +1972,11 @@ namespace DK86PC {
                     di--;
                 }
                 
-                if (repeatCX && (cx > 0)) {
+                if (repeatCX) {
                     cx--;
-                    goto repAA;
+                    if (cx > 0) {
+                        goto repAA;
+                    }
                 }
                 
                 break;
@@ -1988,9 +1994,11 @@ namespace DK86PC {
                     di -= 2;
                 }
                 
-                if (repeatCX && (cx > 0)) {
+                if (repeatCX) {
                     cx--;
-                    goto repAB;
+                    if (cx > 0) {
+                        goto repAB;
+                    }
                 }
                 
                 break;
@@ -2010,9 +2018,11 @@ namespace DK86PC {
                     si--;
                 }
                 
-                if (repeatCX && (cx > 0)) {
+                if (repeatCX) {
                     cx--;
-                    goto repAC;
+                    if (cx > 0) {
+                        goto repAC;
+                    }
                 }
                 
                 break;
@@ -2030,9 +2040,11 @@ namespace DK86PC {
                     si -= 2;
                 }
                 
-                if (repeatCX && (cx > 0)) {
+                if (repeatCX) {
                     cx--;
-                    goto repAD;
+                    if (cx > 0) {
+                        goto repAD;
+                    }
                 }
                 
                 break;
