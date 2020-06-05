@@ -726,6 +726,7 @@ namespace DK86PC {
         push(ip);
         cs = memory.readWord(type * 4 + 2);
         ip = memory.readWord(type * 4);
+        
     }
 
     inline void CPU::debugPrint(byte opcode) {
@@ -742,7 +743,8 @@ namespace DK86PC {
         cout << "\t" << "CS " << hex << uppercase << setfill('0') << setw(4) << cs << dec;
         cout << " DS " << hex << uppercase << setfill('0') << setw(4) << ds << dec;
         cout << " ES " << hex << uppercase << setfill('0') << setw(4) << es << dec;
-        cout << " SS " << hex << uppercase << setfill('0') << setw(4) << ss << dec << endl;
+        cout << " SS " << hex << uppercase << setfill('0') << setw(4) << ss << dec;
+        cout << " IP " << hex << uppercase << setfill('0') << setw(4) << ip << dec << endl;
         cout << hex << uppercase << (int)opcode << dec;
         Instruction instr = instructions[opcode];
         string mnemonic = instr.mnemonic;

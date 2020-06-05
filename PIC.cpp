@@ -100,8 +100,12 @@ byte PIC::getInterrupt() {
     }
     for (int i = 0; i < 8; i++) {
         if (interruptRequestRegister & (1 << i)) {
+            // turn off request
+            interruptRequestRegister &= ~((byte) 1 << i);
+            // set in service
             inServiceRegister = inServiceRegister | (1 << i);
-            return baseVectorAddress / 4 + i;
+            // return correct location
+            return baseVectorAddress + i;
         }
     }
     return NO_INTERRUPT;
