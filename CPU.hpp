@@ -123,8 +123,8 @@ namespace DK86PC {
         // Registers
         union generalRegister {
             struct {
-                byte high;
                 byte low;
+                byte high;
             } inner;
             word main;
         };
