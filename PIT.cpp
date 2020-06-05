@@ -40,41 +40,85 @@ byte PIT::readCounter(int counterIndex) {
 void PIT::writeCounter(int counterIndex, byte value) {
     switch (latches[counterIndex]) {
         case 0b01:
-            counters[counterIndex] = (counters[counterIndex] & 0xFF00) | (value & 0x00FF);
+            counters[counterIndex] = (counters[counterIndex] & 0xFF00) | ((word)value & 0x00FF);
             break;
         case 0b10:
-            counters[counterIndex] = (counters[counterIndex] & 0x00FF) | (value << 8);
+            counters[counterIndex] = (counters[counterIndex] & 0x00FF) | ((word)value << 8);
             break;
         case 0b11:
             latchStatus[counterIndex] = !latchStatus[counterIndex];
             if (latchStatus[counterIndex]) {
-                counters[counterIndex] = (counters[counterIndex] & 0x00FF) | (value << 8);
+                counters[counterIndex] = (counters[counterIndex] & 0x00FF) | ((word)value << 8);
             } else {
-                counters[counterIndex] = (counters[counterIndex] & 0xFF00) | (value & 0x00FF);
+                counters[counterIndex] = (counters[counterIndex] & 0xFF00) | ((word)value & 0x00FF);
             }
             break;
         default:
             counters[counterIndex] = value;
             break;
     }
+    count[counterIndex] = counters[counterIndex];
 }
 
 void PIT::writeControl(byte value) {
-    byte counterSelect = value & 0b11000000 >> 6;
+    byte counterSelect = (value & 0b11000000) >> 6;
     if (counterSelect == 0b11) {
         printf("This is a writeControl for an 8254, but this is an 8253.");
         return;
     }
-    byte counterLatch = value & 0b00110000 >> 4;
+    byte counterLatch = (value & 0b00110000) >> 4;
     latches[counterSelect] = counterLatch;
     latchStatus[counterSelect] = true;
-    byte mode = value & 0b00001110 >> 1;
+    byte mode = (value & 0b00001110) >> 1;
     modes[counterSelect] = mode;
     bcd[counterSelect] = value & 1;
 }
 
 void PIT::update() {
     for (int i = 0; i < NUM_COUNTERS; i++) {
+        switch(modes[i]) {
+            case 0:
+                if (count[i] > 0) { // only fire once
+                    count[i]--;
+                    if (count[i] == 0 && i == 0) {
+                        pic.requestInterrupt(0);
+                    }
+                }
+                break;
+            case 1:
+                count[i]--;
+                if (count[i] == 0) {
+                    if (i == 0) {
+                        pic.requestInterrupt(0);
+                    }
+                    // reset
+                    count[i] = counters[i];
+                }
+                break;
+            case 2:
+                count[i]--;
+                if (count[i] == 1) {
+                    if (i == 0) {
+                        pic.requestInterrupt(0);
+                    }
+                    // reset
+                    count[i] = counters[i];
+                }
+                break;
+            case 3: // supposed to be square wave, but not really implemented right now
+                count[i]--;
+                if (count[i] == 0) {
+                    if (i == 0) {
+                        pic.requestInterrupt(0);
+                    }
+                    // reset
+                    count[i] = counters[i];
+                }
+                break;
+            default:
+                cout << "Unimplemented timer mode " << modes[i] << endl;
+                break;
+        }
         if (modes[i] == 1 && counters[i] == 0) { continue; }
         counters[i]--;
     }

@@ -36,7 +36,7 @@ namespace DK86PC {
 
     class PC {
     public:
-        PC() : memory(), cpu(*this, memory), dma(), pic(), ppi(), pit(), cga(memory) {
+        PC() : memory(), cpu(*this, memory), dma(), pic(), ppi(), pit(pic), cga(memory) {
 #ifdef DEBUG
             //memory.setWatch(90094);
             //memory.setWatch(00000);

@@ -23,15 +23,17 @@
 
 #include <stdio.h>
 #include "Types.h"
+#include "PIC.hpp"
 
 #define NUM_COUNTERS 3
 
 namespace DK86PC {
     class PIT {
     public:
-        PIT() {
+        PIT(PIC &pic) : pic(pic) {
             for (int i = 0; i < NUM_COUNTERS; i++) {
                 counters[i] = 0;
+                count[i] = 0;
                 modes[i] = 0;
                 latchStatus[i] = true;
                 latches[i] = 0;
@@ -44,10 +46,12 @@ namespace DK86PC {
         void update();
     private:
         word counters[NUM_COUNTERS];
+        word count[NUM_COUNTERS];
         byte latches[NUM_COUNTERS];
-        byte latchStatus[NUM_COUNTERS];
+        bool latchStatus[NUM_COUNTERS];
         byte modes[NUM_COUNTERS];
         bool bcd[NUM_COUNTERS];
+        PIC &pic;
     };
 }
 

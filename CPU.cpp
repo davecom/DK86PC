@@ -1957,6 +1957,30 @@ namespace DK86PC {
                 memory.setWord(pa, ax);
                 break;
             }
+                
+            // TEST AL & immediate
+            case 0xA8:
+            {
+                byte temp = memory.readByte(NEXT_INSTRUCTION + 1);
+                instructionLength = 2;
+                byte result = al & temp;
+                setSZPFlagsByte(result);
+                carry = false;
+                overflow = false;
+                break;
+            }
+            
+            // TEST AX & immediate
+            case 0xA9:
+            {
+                word temp = memory.readWord(NEXT_INSTRUCTION + 1);
+                instructionLength = 3;
+                word result = al & temp;
+                setSZPFlagsWord(result);
+                carry = false;
+                overflow = false;
+                break;
+            }
             
             // STOSB store string byte
             case 0xAA:

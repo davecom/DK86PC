@@ -66,15 +66,16 @@ namespace DK86PC {
             }
             
             cpu.step();
+            pit.update(); // not quite right, but hopefully close enough
             
             if (SDL_GetTicks() / MILLI_PER_FRAME > numFrames) { // roughly 60 fps
                 cga.renderScren();
                 numFrames++;
                 
                 // pit is supposed to be 18.2 hz, doing ~20 hz here
-                if (numFrames % 3 == 0) {
-                    pit.update();
-                }
+//                if (numFrames % 3 == 0) {
+//                    pit.update();
+//                }
                 
                 if (numFrames %60 == 0) {
                     cga.verticalRetraceStart();
@@ -212,6 +213,9 @@ namespace DK86PC {
                 break;
             case 0x60:
                 return ppi.readA();
+                break;
+            case 0x61:
+                return ppi.readB();
                 break;
             case 0x62:
                 return ppi.readC();
