@@ -681,28 +681,28 @@ namespace DK86PC {
     inline void CPU::incByte(byte &temp) {
         auxiliaryCarry = (lowNibble(temp) == 0x0F);
         temp++;
-        overflow = (temp == 0);
+        overflow = (temp == 0x80);
         setSZPFlagsByte(temp);
     }
 
     inline void CPU::incWord(word &temp) {
         auxiliaryCarry = (lowNibble(temp) == 0x0F);
         temp++;
-        overflow = (temp == 0);
+        overflow = (temp == 0x8000);
         setSZPFlagsWord(temp);
     }
     
     inline void CPU::decByte(byte &temp) {
         auxiliaryCarry = (lowNibble(temp) == 0);
         temp--;
-        overflow = (temp == 0xFF);
+        overflow = (temp == 0x7F);
         setSZPFlagsByte(temp);
     }
     
     inline void CPU::decWord(word &temp) {
         auxiliaryCarry = (lowNibble(temp) == 0);
         temp--;
-        overflow = (temp == 0xFFFF);
+        overflow = (temp == 0x7FFF);
         setSZPFlagsWord(temp);
     }
 
