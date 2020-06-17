@@ -2219,6 +2219,30 @@ namespace DK86PC {
                 ip = pop();
                 cout << ip << endl;
                 break;
+                
+            // LES ES
+            case 0xC4:
+            {
+                ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
+                modInstructionLength(mrr, instructionLength);
+                address temp = calcEffectiveAddress(mrr);
+                word operand1 = memory.readWord(temp);
+                word operand2 = memory.readWord(temp + 2);
+                setRegWord(mrr.reg, operand1);
+                es = operand2;
+            }
+                
+            // LES DS
+            case 0xC5:
+            {
+                ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
+                modInstructionLength(mrr, instructionLength);
+                address temp = calcEffectiveAddress(mrr);
+                word operand1 = memory.readWord(temp);
+                word operand2 = memory.readWord(temp + 2);
+                setRegWord(mrr.reg, operand1);
+                ds = operand2;
+            }
             
             // MOV immediate byte to rm
             case 0xC6:
@@ -2744,6 +2768,18 @@ namespace DK86PC {
                         jump = true;
                         break;
                     }
+                    case 0b100: // JMP within segment, indirect
+                        ip = getModRMWord(mrr);
+                        jump = true;
+                        break;
+                    case 0b101: // JMP inter-segment, indirect
+                        {
+                            address temp = calcEffectiveAddress(mrr);
+                            cs = temp >> 16;
+                            ip = temp & 0xFFFF;
+                            jump = true;
+                            break;
+                        }
                     case 0b110: // PUSH modrm
                         push(getModRMWord(mrr));
                         break;
