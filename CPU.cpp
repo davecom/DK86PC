@@ -819,6 +819,7 @@ namespace DK86PC {
                     #ifdef DEBUG
                     debugPrint(opcode);
                     #endif
+                    repeatCX = true;
                     repeatZF = true;
                     ip += 1;
                     break;
@@ -2058,7 +2059,7 @@ namespace DK86PC {
             case 0xAD:
             {
                 repAD:
-                address place = (ds << 4) + si;
+                address place = (*currentSegment << 4) + si;
                 ax = memory.readWord(place);
                 if (direction == 0) {
                     si += 2;
@@ -2070,6 +2071,68 @@ namespace DK86PC {
                     cx--;
                     if (cx > 0) {
                         goto repAD;
+                    }
+                }
+                
+                break;
+            }
+            
+            // SCASB scan string byte
+            case 0xAE:
+            {
+                repAE:
+                address place = (es << 4) + di;
+                cout << place <<  " : ";
+                cout << hex << uppercase << setfill('0') << setw(2) << memory.readByte(place) << endl;
+                byte temp1 = al;
+                byte temp2 = memory.readByte(place);
+                subByte(temp1, temp2);
+                if (direction == 0) {
+                    di++;
+                } else {
+                    di--;
+                }
+                
+                if (repeatCX) {
+                    cx--;
+                    if (cx > 0) {
+                        if (!repeatZF && zero == true) {
+                            break;
+                        }
+                        if (repeatZF && zero == false) {
+                            break;
+                        }
+                        goto repAE;
+                    }
+                }
+                
+                break;
+            }
+            
+            // SCASW scan string word
+            case 0xAF:
+            {
+                repAF:
+                address place = (es << 4) + di;
+                word temp1 = ax;
+                word temp2 = memory.readWord(place);
+                subWord(temp1, temp2);
+                if (direction == 0) {
+                    di += 2;
+                } else {
+                    di -= 2;
+                }
+                
+                if (repeatCX) {
+                    cx--;
+                    if (cx > 0) {
+                        if (!repeatZF && zero == true) {
+                            break;
+                        }
+                        if (repeatZF && zero == false) {
+                            break;
+                        }
+                        goto repAF;
                     }
                 }
                 
