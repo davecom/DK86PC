@@ -1970,8 +1970,10 @@ namespace DK86PC {
                 memory.setByte(toPlace, memory.readByte(fromPlace));
                 if (direction == 0) {
                     di++;
+                    si++;
                 } else {
                     di--;
+                    si--;
                 }
                 
                 if (repeatCX) {
@@ -1993,8 +1995,10 @@ namespace DK86PC {
                 memory.setWord(toPlace, memory.readWord(fromPlace));
                 if (direction == 0) {
                     di += 2;
+                    si += 2;
                 } else {
                     di -= 2;
+                    si -= 2;
                 }
                 
                 if (repeatCX) {
@@ -2060,6 +2064,8 @@ namespace DK86PC {
             {
                 repAB:
                 address place = (es << 4) + di;
+                //cout << place <<  " : ";
+                //cout << hex << uppercase << setfill('0') << setw(4) << ax << endl;
                 memory.setWord(place, ax);
                 if (direction == 0) {
                     di += 2;

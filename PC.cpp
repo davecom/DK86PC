@@ -197,6 +197,9 @@ namespace DK86PC {
             case 0x3D9:
                 cga.setColor(value);
                 break;
+            case 0x3F2:
+                fdc.writeControl(value);
+                break;
             default:
                 cout << "Port 0x" << hex << uppercase << port << dec << " not implemented for writing!" << endl;
                 break;

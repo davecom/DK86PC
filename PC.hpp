@@ -28,6 +28,7 @@
 #include "PPI.hpp"
 #include "PIT.hpp"
 #include "CGA.hpp"
+#include "FDC.hpp"
 
 using namespace std;
 
@@ -36,7 +37,7 @@ namespace DK86PC {
 
     class PC {
     public:
-        PC() : memory(), cpu(*this, memory), dma(), pic(), ppi(), pit(pic), cga(memory) {
+        PC() : memory(), cpu(*this, memory), dma(), pic(), ppi(), pit(pic), cga(memory), fdc() {
 #ifdef DEBUG
             //memory.setWatch(90094);
             //memory.setWatch(00000);
@@ -57,6 +58,7 @@ namespace DK86PC {
         PPI ppi;
         PIT pit;
         CGA cga;
+        FDC fdc;
     };
     
 }
