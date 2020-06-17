@@ -1961,6 +1961,52 @@ namespace DK86PC {
                 break;
             }
                 
+            // MOVSB move string byte
+            case 0xA4:
+            {
+                repA4:
+                address fromPlace = (ds << 4) + si;
+                address toPlace = (es << 4) + di;
+                memory.setByte(toPlace, memory.readByte(fromPlace));
+                if (direction == 0) {
+                    di++;
+                } else {
+                    di--;
+                }
+                
+                if (repeatCX) {
+                    cx--;
+                    if (cx > 0) {
+                        goto repA4;
+                    }
+                }
+                
+                break;
+            }
+            
+            // MOVSW move string word
+            case 0xA5:
+            {
+                repA5:
+                address fromPlace = (ds << 4) + si;
+                address toPlace = (es << 4) + di;
+                memory.setWord(toPlace, memory.readWord(fromPlace));
+                if (direction == 0) {
+                    di += 2;
+                } else {
+                    di -= 2;
+                }
+                
+                if (repeatCX) {
+                    cx--;
+                    if (cx > 0) {
+                        goto repA5;
+                    }
+                }
+                
+                break;
+            }
+                
             // TEST AL & immediate
             case 0xA8:
             {
