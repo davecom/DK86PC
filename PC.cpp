@@ -169,11 +169,24 @@ namespace DK86PC {
             case 0x63:
                 ppi.setControl(value);
                 break;
-            case 0x83:
+            case 0x80:
+                dma.setPage(0, value);
+                break;
+            case 0x81:
                 dma.setPage(1, value);
+                break;
+            case 0x82:
+                dma.setPage(2, value);
+                break;
+            case 0x83:
+                dma.setPage(3, value);
                 break;
             case 0xA0:
                 cout << "Port A0 on 5150 disables NMI interrupts " << endl;
+                break;
+            case 0x213:
+                // enable expansion unit (1) or disable (0)
+                // ignored
                 break;
             case 0x3B8:
                 cout << "Ignoring port 3B8 MDA Controller";
