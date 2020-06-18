@@ -28,7 +28,7 @@
 namespace DK86PC {
     class PPI {
     public:
-        PPI() : a(0), b(0), c(0), control(0) {};
+        PPI() : a(0), b(32), c(0), control(0) {};
         void setB(byte value);
         void setControl(byte value);
         byte readA();

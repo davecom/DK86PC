@@ -2230,6 +2230,7 @@ namespace DK86PC {
                 word operand2 = memory.readWord(temp + 2);
                 setRegWord(mrr.reg, operand1);
                 es = operand2;
+                break;
             }
                 
             // LES DS
@@ -2242,6 +2243,7 @@ namespace DK86PC {
                 word operand2 = memory.readWord(temp + 2);
                 setRegWord(mrr.reg, operand1);
                 ds = operand2;
+                break;
             }
             
             // MOV immediate byte to rm
@@ -2775,8 +2777,8 @@ namespace DK86PC {
                     case 0b101: // JMP inter-segment, indirect
                         {
                             address temp = calcEffectiveAddress(mrr);
-                            cs = temp >> 16;
-                            ip = temp & 0xFFFF;
+                            ip = memory.readWord(temp);
+                            cs = memory.readWord(temp + 2);
                             jump = true;
                             break;
                         }

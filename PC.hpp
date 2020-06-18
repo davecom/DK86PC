@@ -41,7 +41,7 @@ namespace DK86PC {
 #ifdef DEBUG
             //memory.setWatch(90094);
             //memory.setWatch(00000);
-            //memory.setWatch(32);
+            memory.setWatch(0x63);
 #endif
             
         };
