@@ -2224,6 +2224,7 @@ namespace DK86PC {
             case 0xC4:
             {
                 ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
                 modInstructionLength(mrr, instructionLength);
                 address temp = calcEffectiveAddress(mrr);
                 word operand1 = memory.readWord(temp);
@@ -2237,6 +2238,7 @@ namespace DK86PC {
             case 0xC5:
             {
                 ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
                 modInstructionLength(mrr, instructionLength);
                 address temp = calcEffectiveAddress(mrr);
                 word operand1 = memory.readWord(temp);
