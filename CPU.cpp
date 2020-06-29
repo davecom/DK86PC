@@ -1000,6 +1000,61 @@ namespace DK86PC {
                 ss = pop();
                 break;
             
+            // SBB integer subtraction with Borrow
+            case 0x18:
+            {
+                ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
+                modInstructionLength(mrr, instructionLength);
+                byte temp = getModRMByte(mrr);
+                subByte(temp, (getRegByte(mrr.reg) - carry));
+                setModRMByte(mrr, temp);
+                break;
+            }
+            
+            case 0x19:
+            {
+                ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
+                modInstructionLength(mrr, instructionLength);
+                word temp = getModRMWord(mrr);
+                subWord(temp, (getRegWord(mrr.reg) - carry));
+                setModRMWord(mrr, temp);
+                break;
+            }
+            
+            case 0x1A:
+            {
+                ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
+                modInstructionLength(mrr, instructionLength);
+                byte temp = getRegByte(mrr.reg);
+                subByte(temp, (getModRMByte(mrr) - carry));
+                setRegByte(mrr.reg, temp);
+                break;
+            }
+            
+            case 0x1B:
+            {
+                ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
+                modInstructionLength(mrr, instructionLength);
+                word temp = getRegWord(mrr.reg);
+                subWord(temp, (getModRMWord(mrr) - carry));
+                setRegWord(mrr.reg, temp);
+                break;
+            }
+            
+            case 0x1C:
+                subByte(al, (memory.readByte(NEXT_INSTRUCTION + 1) - carry));
+                instructionLength = 2;
+                break;
+                
+            case 0x1D:
+                subWord(ax, (memory.readWord(NEXT_INSTRUCTION + 1) - carry));
+                instructionLength = 3;
+                break;
+            
             // PUSH ds
             case 0x1E:
                 push(ds);
@@ -1565,9 +1620,14 @@ namespace DK86PC {
                     case 0b010:
                         cout << "unimplemented";
                         break;
-                    case 0b011:
-                        cout << "unimplemented";
+                    case 0b011: // SBB
+                    {
+                        byte temp = getModRMByte(mrr);
+                        subByte(temp, (memory.readByte(NEXT_INSTRUCTION + instructionLength) - carry));
+                        instructionLength += 1;
+                        setModRMByte(mrr, temp);
                         break;
+                    }
                     case 0b100: // AND
                     {
                         byte temp = getModRMByte(mrr);
@@ -1627,9 +1687,14 @@ namespace DK86PC {
                     case 0b010:
                         cout << "unimplemented";
                         break;
-                    case 0b011:
-                        cout << "unimplemented";
+                    case 0b011: // SBB
+                    {
+                        word temp = getModRMWord(mrr);
+                        subWord(temp, (memory.readWord(NEXT_INSTRUCTION + instructionLength) - carry));
+                        instructionLength += 2;
+                        setModRMWord(mrr, temp);
                         break;
+                    }
                     case 0b100:  // AND
                         {
                             word temp = getModRMWord(mrr);
@@ -1686,10 +1751,16 @@ namespace DK86PC {
                     case 0b010:
                         cout << "unimplemented";
                         break;
-                    case 0b011:
-                        cout << "unimplemented";
+                    case 0b011: // SBB
+                    {
+                        word temp = getModRMWord(mrr);
+                        subWord(temp, signExtend((memory.readByte(NEXT_INSTRUCTION + instructionLength) - 1)));
+                        instructionLength += 1;
+                        setModRMWord(mrr, temp);
                         break;
+                    }
                     case 0b100:
+                        cout << "unimplemented";
                         break;
                     case 0b101: // SUB
                     {
