@@ -50,6 +50,8 @@ public:
     void setColor(byte value);
     void verticalRetraceStart();
     void verticalRetraceEnd();
+    void horizontalRetraceStart();
+    void horizontalRetraceEnd();
 private:
     inline void drawCharacter(byte row, byte column, byte character, byte attribute);
     Memory &memory;

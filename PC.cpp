@@ -77,10 +77,14 @@ namespace DK86PC {
 //                    pit.update();
 //                }
                 
-                if (numFrames %60 == 0) {
+                if (numFrames %4 == 0) {
                     cga.verticalRetraceStart();
-                } else if (numFrames %60 == 1) {
+                } else if (numFrames %4 == 1) {
                     cga.verticalRetraceEnd();
+                } else if (numFrames %4 == 2) {
+                    cga.horizontalRetraceStart();
+                } else if (numFrames %4 == 3) {
+                    cga.horizontalRetraceEnd();
                 }
             }
             
@@ -184,12 +188,39 @@ namespace DK86PC {
             case 0xA0:
                 cout << "Port A0 on 5150 disables NMI interrupts " << endl;
                 break;
+            case 0xC0:
+                cout << "Ignoring port C0 TI SN746496 PC JR" << endl;
+                break;
             case 0x213:
                 // enable expansion unit (1) or disable (0)
                 // ignored
                 break;
+            case 0x278:
+                cout << "Ignoring port 278 Parallel Port Data" << endl;
+                break;
+            case 0x378:
+                cout << "Ignoring port 378 Parallel Port Data" << endl;
+                break;
+            case 0x3B4:
+                cout << "Ignoring port 3B4 MDA Controller" << endl;
+                break;
+            case 0x3B5:
+                cout << "Ignoring port 3B5 MDA Controller" << endl;
+                break;
             case 0x3B8:
-                cout << "Ignoring port 3B8 MDA Controller";
+                cout << "Ignoring port 3B8 MDA Controller" << endl;
+                break;
+            case 0x3B9:
+                cout << "Ignoring port 3B9 MDA Controller" << endl;
+                break;
+            case 0x3BC:
+                cout << "Ignoring port 3BC Parallel Port Data" << endl;
+                break;
+            case 0x3D4:
+                cout << "Ignoring port 3D4 CRT Controller" << endl;
+                break;
+            case 0x3D5:
+                cout << "Ignoring port 3D5 CRT Controller" << endl;
                 break;
             case 0x3D8:
                 cga.setMode(value);
@@ -199,6 +230,12 @@ namespace DK86PC {
                 break;
             case 0x3F2:
                 fdc.writeControl(value);
+                break;
+            case 0x2FB:
+                cout << "Ignoring port 2FB Serial Port Line Control Register" << endl;
+                break;
+            case 0x3FB:
+                cout << "Ignoring port 3FB Serial Port Line Control Register" << endl;
                 break;
             default:
                 cout << "Port 0x" << hex << uppercase << port << dec << " not implemented for writing!" << endl;
@@ -236,8 +273,32 @@ namespace DK86PC {
             case 0x62:
                 return ppi.readC();
                 break;
+            case 0x278:
+                cout << "Ignoring reading port 278 Parallel Port Data" << endl;
+                return 0;
+                break;
+            case 0x378:
+                cout << "Ignoring reading port 378 Parallel Port Data" << endl;
+                return 0;
+                break;
+            case 0x3BC:
+                cout << "Ignoring reading port 3BC Parallel Port Data" << endl;
+                return 0;
+                break;
             case 0x3DA:
                 return cga.getStatus();
+                break;
+            case 0x201:
+                cout << "Ignoring reading port 201 adresses of the 8255 on the uPW48" << endl;
+                return 0;
+                break;
+            case 0x2FB:
+                cout << "Ignoring reading port 2FB Serial Port Line Control Register" << endl;
+                return 0;
+                break;
+            case 0x3FB:
+                cout << "Ignoring reading port 3FB Serial Port Line Control Register" << endl;
+                return 0;
                 break;
             default:
                 cout << "Port 0x" << hex << uppercase << port << dec << " not implemented for reading!" << endl;

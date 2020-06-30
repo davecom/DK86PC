@@ -49,7 +49,7 @@ SDL_Color colorPalette[16] = {
 };
 
 void CGA::initScreen() {
-    if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO) != 0) {
+    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't initialize SDL: %s", SDL_GetError());
         return;
     }
@@ -63,8 +63,8 @@ void CGA::initScreen() {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create renderer: %s", SDL_GetError());
         return;
     }
-    texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, PC_WIDTH, PC_HEIGHT);
-    SDL_SetRenderTarget(renderer, texture);
+//    texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, PC_WIDTH, PC_HEIGHT);
+//    SDL_SetRenderTarget(renderer, texture);
     SDL_SetRenderDrawColor(renderer, 0x00, 255, 0x00, 0x00);
     SDL_RenderClear(renderer);
     // load font
@@ -105,6 +105,7 @@ void CGA::renderScren() {
             }
         }
     }
+    SDL_RenderPresent(renderer);
 }
 
 byte CGA::getStatus() {
@@ -136,6 +137,14 @@ void CGA::verticalRetraceEnd() {
     status = status & 0b11110111;
 }
 
+void CGA::horizontalRetraceStart() {
+    status = status | 1;
+}
+
+void CGA::horizontalRetraceEnd() {
+    status = status & 0b11111110;
+}
+
 inline void CGA::drawCharacter(byte row, byte column, byte character, byte attribute) {
     // Can't draw non-characters
     if (character == 0) {
@@ -155,6 +164,16 @@ inline void CGA::drawCharacter(byte row, byte column, byte character, byte attri
     // draw text in foreground
     SDL_Surface *text_surface;
     char text = ((char)character);
+//    text = ((char)row * numColumns + column) + 1;
+//    if ((int)text > 100) {
+//        text = 100;
+//    }
+//    if (text != 0) {
+//        cout << byte(text) << endl;
+//    }
+//    if (attribute != 0) {
+//        cout << hex << uppercase << lowNibble(attribute) << dec << endl;
+//    }
     if(!(text_surface = TTF_RenderText_Solid(font, &text, fgColor))) {
         //handle error here, perhaps print TTF_GetError at least
         printf("Could not RenderText_Solid");

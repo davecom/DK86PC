@@ -193,7 +193,10 @@ namespace DK86PC {
         }
         
         address ea = calcEffectiveAddress(mrr);
-        address pa = ((*currentSegment << 4) + ea); // physical address
+        // bp implicitly should use ss
+        // maybe should allow bp to be overridden
+        word *segment = ((mrr.rm == 0b010 || mrr.rm == 0b011 || (mrr.rm == 0b110 && mrr.mod != 0b00)) && !segmentOverride) ? &ss : currentSegment;
+        address pa = ((*segment << 4) + ea); // physical address
         return memory.readWord(pa);
     }
     
@@ -202,7 +205,10 @@ namespace DK86PC {
             return getRegByte(mrr.rm);
         }
         address ea = calcEffectiveAddress(mrr);
-        address pa = ((*currentSegment << 4) + ea); // physical address
+       // bp implicitly should use ss
+        // maybe should allow bp to be overridden
+        word *segment = (mrr.rm == 0b010 || mrr.rm == 0b011 || (mrr.rm == 0b110 && mrr.mod != 0b00)) ? &ss : currentSegment;
+        address pa = ((*segment << 4) + ea); // physical address
         return memory.readByte(pa);
     }
     
@@ -795,7 +801,7 @@ namespace DK86PC {
         
         byte opcode = memory.readByte(NEXT_INSTRUCTION);
         currentSegment = &ds;
-        
+        segmentOverride = false;
         
         
         // check for prefix to opcode
@@ -828,6 +834,7 @@ namespace DK86PC {
                     debugPrint(opcode);
                     #endif
                     currentSegment = &cs;
+                    segmentOverride = true;
                     ip += 1;
                     break;
                 case 0x36:
@@ -835,6 +842,7 @@ namespace DK86PC {
                     debugPrint(opcode);
                     #endif
                     currentSegment = &ss;
+                    segmentOverride = true;
                     ip += 1;
                     break;
                 case 0x3E:
@@ -842,6 +850,7 @@ namespace DK86PC {
                     debugPrint(opcode);
                     #endif
                     currentSegment = &ds;
+                    segmentOverride = true;
                     ip += 1;
                     break;
                 case 0x26:
@@ -849,6 +858,7 @@ namespace DK86PC {
                     debugPrint(opcode);
                     #endif
                     currentSegment = &es;
+                    segmentOverride = true;
                     ip += 1;
                     break;
                 default:
@@ -2288,7 +2298,7 @@ namespace DK86PC {
             case 0xC3:
                 jump = true;
                 ip = pop();
-                cout << ip << endl;
+                // cout << ip << endl;
                 break;
                 
             // LES ES
@@ -2364,6 +2374,7 @@ namespace DK86PC {
             // INT (always 3)
             case 0xCC:
                 jump = true;
+                ip += instructionLength; // iret just past here
                 performInterrupt(3);
                 break;
             
@@ -2373,6 +2384,7 @@ namespace DK86PC {
                 instructionLength = 2;
                 byte type = memory.readByte(NEXT_INSTRUCTION + 1);
                 jump = true;
+                ip += instructionLength; // iret just past here
                 performInterrupt(type);
                 break;
             }
@@ -2381,6 +2393,7 @@ namespace DK86PC {
             case 0xCE:
                 if (overflow) {
                     jump=true;
+                    ip += instructionLength; // iret just past here
                     performInterrupt(4);
                 }
                 break;
@@ -2607,7 +2620,7 @@ namespace DK86PC {
             {
                 instructionLength = 3;
                 push(ip + instructionLength);
-                cout << (ip + instructionLength) << endl;
+                // cout << (ip + instructionLength) << endl;
                 word displacement = memory.readWord(NEXT_INSTRUCTION + 1);
                 ip += (displacement + instructionLength);
                 jump = true;
@@ -2691,9 +2704,23 @@ namespace DK86PC {
                         overflow = false;
                         break;
                     }
+                    
                     case 0b010: // // NOT one's complement (invert 1s and 0s) byte
                     {
                         setModRMByte(mrr, ~getModRMByte(mrr));
+                        break;
+                    }
+                    case 0b100: // MUL 8 bit to 16 bit
+                    {
+                        byte temp = getModRMByte(mrr);
+                        ax = ((word) al) * ((word) temp);
+                        if (ah == 0) {
+                            carry = false;
+                            overflow = false;
+                        } else {
+                            carry = true;
+                            overflow = true;
+                        }
                         break;
                     }
                     default:
@@ -2727,6 +2754,21 @@ namespace DK86PC {
                     case 0b010: // // NOT one's complement (invert 1s and 0s) word
                     {
                         setModRMWord(mrr, ~getModRMWord(mrr));
+                        break;
+                    }
+                    case 0b100: // MUL 16 bit to 32 bit
+                    {
+                        word temp = getModRMWord(mrr);
+                        address result = ((address) ax) * ((address) temp);
+                        ax = (word)(result & 0xFFFF);
+                        Dx = (word)((result >> 16) & 0xFFFF);
+                        if (Dx == 0) {
+                            carry = false;
+                            overflow = false;
+                        } else {
+                            carry = true;
+                            overflow = true;
+                        }
                         break;
                     }
                     default:
@@ -2866,6 +2908,12 @@ namespace DK86PC {
                 }
                 break;
             }
+            
+            case 0xDB:
+            case 0xD9:
+            case 0x64:
+                cout << "Unimplemented floating point opcode!" << endl;
+                break;
                 
                 
             // Unknown Opcode

@@ -147,6 +147,7 @@ namespace DK86PC {
         word sp, bp, si, di; // stack pointer, base pointer, source index, destination index
         word cs, ds, es, ss; // code segment, data segment, extra, stack
         word *currentSegment;
+        bool segmentOverride = false;
         word ip; // instruction pointer
         union {
             struct {
