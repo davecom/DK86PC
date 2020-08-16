@@ -28,7 +28,7 @@
 
 using namespace std;
 
-#define MILLI_PER_FRAME 16
+
 
 namespace DK86PC {
     
@@ -54,10 +54,24 @@ namespace DK86PC {
         memory.loadData(buffer, biosPlace);
     }
     
+    static int cgaThreadHelper(void *cga) {
+        CGA *cgaPtr = static_cast<CGA *>(cga);
+        cgaPtr->renderLoop();
+        return 0;
+    }
 
     void PC::run() {
-        static long long numFrames = 0;
-        // keep going until we hit an illegal/unknown instruction
+        // start cga render loop on a separate thread
+        SDL_Thread *cgaThread;
+
+        cgaThread = SDL_CreateThread(cgaThreadHelper, "CGAThread", (void *)&cga);
+
+        if (NULL == cgaThread) {
+            printf("SDL_CreateThread failed: %s\n", SDL_GetError());
+        }
+
+        
+        // keep going until the user quits
         while (true) {
             
             byte interruptType = pic.getInterrupt();
@@ -67,27 +81,6 @@ namespace DK86PC {
             
             cpu.step();
             pit.update(); // not quite right, but hopefully close enough
-            
-            if (SDL_GetTicks() / MILLI_PER_FRAME > numFrames) { // roughly 60 fps
-                cga.renderScren();
-                numFrames++;
-                
-                // pit is supposed to be 18.2 hz, doing ~20 hz here
-//                if (numFrames % 3 == 0) {
-//                    pit.update();
-//                }
-                
-                if (numFrames %4 == 0) {
-                    cga.verticalRetraceStart();
-                } else if (numFrames %4 == 1) {
-                    cga.verticalRetraceEnd();
-                } else if (numFrames %4 == 2) {
-                    cga.horizontalRetraceStart();
-                } else if (numFrames %4 == 3) {
-                    cga.horizontalRetraceEnd();
-                }
-            }
-            
             
             SDL_Event e;
             
@@ -118,6 +111,9 @@ namespace DK86PC {
             }
         }
         quit:
+        cga.exitRender();
+        int threadReturnValue;
+        SDL_WaitThread(cgaThread, &threadReturnValue);
         return;
     }
 

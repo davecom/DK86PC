@@ -44,7 +44,8 @@ public:
     };
     
     void initScreen();
-    void renderScren();
+    void renderLoop();
+    void renderScreen();
     byte getStatus();
     void setMode(byte value);
     void setColor(byte value);
@@ -52,6 +53,7 @@ public:
     void verticalRetraceEnd();
     void horizontalRetraceStart();
     void horizontalRetraceEnd();
+    void exitRender();
 private:
     inline void drawCharacter(byte row, byte column, byte character, byte attribute);
     Memory &memory;
@@ -69,6 +71,7 @@ private:
     bool alternatePalette = false;
     int cellWidth = 8;  // text cell width
     int cellHeight = 8; // text cell height
+    bool shouldExit = false;
 };
 
 }

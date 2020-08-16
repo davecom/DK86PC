@@ -79,7 +79,43 @@ void CGA::initScreen() {
     }
 }
 
-void CGA::renderScren() {
+#define MILLI_PER_FRAME 16
+
+void CGA::renderLoop() {
+    static long long numFrames = 0;
+    static uint32_t lastTicks = 0;
+    
+    
+                
+    while (!shouldExit) {
+        uint32_t nextTicks = SDL_GetTicks();
+        uint32_t difference = (nextTicks - lastTicks);
+        if (difference > MILLI_PER_FRAME) { // roughly 60 fps
+            lastTicks = nextTicks;
+            renderScreen();
+            numFrames++;
+            
+            // pit is supposed to be 18.2 hz, doing ~20 hz here
+    //                if (numFrames % 3 == 0) {
+    //                    pit.update();
+    //                }
+            
+            if (numFrames %4 == 0) {
+                verticalRetraceStart();
+            } else if (numFrames %4 == 1) {
+                verticalRetraceEnd();
+            } else if (numFrames %4 == 2) {
+                horizontalRetraceStart();
+            } else if (numFrames %4 == 3) {
+                horizontalRetraceEnd();
+            }
+        } else {
+            SDL_Delay(MILLI_PER_FRAME - difference);
+        }
+    }
+}
+
+void CGA::renderScreen() {
     // clear renderer
     // used to have this in but took it out and it seems to not
     // have any negative effect
@@ -100,6 +136,7 @@ void CGA::renderScren() {
             for (int column = 0; column < numColumns; column++) {
                 address memLocation = CGA_BASE_MEMORY_LOCATION + (row * (numColumns * 2)) + column * 2;
                 byte character = memory.readByte(memLocation);
+                // cout << character;
                 byte attribute = memory.readByte(memLocation + 1);
                 drawCharacter(row, column, character, attribute);
             }
@@ -174,7 +211,9 @@ inline void CGA::drawCharacter(byte row, byte column, byte character, byte attri
 //    if (attribute != 0) {
 //        cout << hex << uppercase << lowNibble(attribute) << dec << endl;
 //    }
-    if(!(text_surface = TTF_RenderText_Solid(font, &text, fgColor))) {
+    //text = 'A';
+    char show[2] = {text, '\0'};
+    if(!(text_surface = TTF_RenderText_Solid(font, show, fgColor))) {
         //handle error here, perhaps print TTF_GetError at least
         printf("Could not RenderText_Solid");
     } else {
@@ -184,6 +223,10 @@ inline void CGA::drawCharacter(byte row, byte column, byte character, byte attri
         SDL_FreeSurface(text_surface);
         SDL_DestroyTexture(inbetween);
     }
+}
+
+void CGA::exitRender() {
+   shouldExit = true;
 }
 
 }
