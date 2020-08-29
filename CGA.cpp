@@ -126,8 +126,9 @@ void CGA::renderLoop() {
         cout << dec << difference << endl;
         if (difference > MILLI_PER_FRAME) { // roughly 60 fps
             lastTicks = nextTicks;
+            verticalRetraceEnd();
             renderScreen(nextTicks);
-            
+            verticalRetraceStart();
             
             
             numFrames++;
@@ -137,15 +138,15 @@ void CGA::renderLoop() {
     //                    pit.update();
     //                }
             
-            if (numFrames %4 == 0) {
-                verticalRetraceStart();
-            } else if (numFrames %4 == 1) {
-                verticalRetraceEnd();
-            } else if (numFrames %4 == 2) {
-                horizontalRetraceStart();
-            } else if (numFrames %4 == 3) {
-                horizontalRetraceEnd();
-            }
+//            if (numFrames %4 == 0) {
+//                verticalRetraceStart();
+//            } else if (numFrames %4 == 1) {
+//                verticalRetraceEnd();
+//            } else if (numFrames %4 == 2) {
+//                horizontalRetraceStart();
+//            } else if (numFrames %4 == 3) {
+//                horizontalRetraceEnd();
+//            }
         } else {
             SDL_Delay(MILLI_PER_FRAME - difference);
         }
@@ -173,6 +174,7 @@ void CGA::renderScreen(uint32_t timing) {
         cellWidth = PC_WIDTH / numColumns;
         cellHeight = PC_HEIGHT / NUM_ROWS;
         for (int row = 0; row < NUM_ROWS; row++) {
+            horizontalRetraceStart();
             for (int column = 0; column < numColumns; column++) {
                 address memLocation = CGA_BASE_MEMORY_LOCATION + (row * (numColumns * 2)) + column * 2;
                 byte character = memory.readByte(memLocation);
@@ -185,6 +187,7 @@ void CGA::renderScreen(uint32_t timing) {
                     drawCharacter(row, column, character, attribute);
                 }
             }
+            horizontalRetraceEnd();
         }
     }
     SDL_RenderPresent(renderer);
