@@ -42,6 +42,7 @@ namespace DK86PC {
             //memory.setWatch(90094);
             //memory.setWatch(00000);
             //memory.setWatch(0x3E4);
+            //memory.setWatch(0x415);
 #endif
             
         };

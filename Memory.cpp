@@ -31,7 +31,7 @@ namespace DK86PC {
     byte Memory::readByte(address location) {
 #ifdef DEBUG
         if (watchLocations.find(location) != watchLocations.end()) {
-            cout << "read byte "  << hex << uppercase <<  (int) ram[location] << dec << " from " << location << endl;
+            cout << "read byte "  << hex << uppercase <<  (int) ((byte) ram[location]) << dec << " from " << location << endl;
         }
 #endif
         return ram[location];

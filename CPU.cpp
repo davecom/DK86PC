@@ -819,6 +819,7 @@ namespace DK86PC {
                     debugPrint(opcode);
                     #endif
                     repeatCX = true;
+                    repeatZF = true;
                     ip += 1;
                     break;
                 case 0xF2:
@@ -826,7 +827,6 @@ namespace DK86PC {
                     debugPrint(opcode);
                     #endif
                     repeatCX = true;
-                    repeatZF = true;
                     ip += 1;
                     break;
                 case 0x2E:
