@@ -2109,7 +2109,7 @@ namespace DK86PC {
             {
                 word temp = memory.readWord(NEXT_INSTRUCTION + 1);
                 instructionLength = 3;
-                word result = al & temp;
+                word result = ax & temp;
                 setSZPFlagsWord(result);
                 carry = false;
                 overflow = false;
