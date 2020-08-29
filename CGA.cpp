@@ -50,12 +50,14 @@ SDL_Color colorPalette[NUM_COLORS] = {
 
 void CGA::createFontCache() {
     for (int color = 0; color < NUM_COLORS; color++) {
-        for (int character = 0; character < NUM_CHARACTERS; character++) {
+        for (int character = 1; character < NUM_CHARACTERS; character++) {
             char tcharacter = (char)character;
             SDL_Surface *text_surface;
-            if(!(text_surface = TTF_RenderGlyph_Solid(font, tcharacter, colorPalette[color]))) {
+            char show[2] = {tcharacter, '\0'};
+            if(!(text_surface = TTF_RenderText_Solid(font, show, colorPalette[color]))) {
+            //if(!(text_surface = TTF_RenderGlyph_Solid(font, tcharacter, colorPalette[color]))) {
                 //handle error here, perhaps print TTF_GetError at least
-                printf("Could not RenderText_Solid");
+                printf("Could not RenderText_Solid for color %d, character %d\n", color, character);
             } else {
                 SDL_Texture* inbetween = SDL_CreateTextureFromSurface(renderer, text_surface);
                 //perhaps we can reuse it, but I assume not for simplicity.
@@ -64,12 +66,14 @@ void CGA::createFontCache() {
             }
             
         }
+        // Character 0 ignored
     }
 }
 
 void CGA::freeFontCache() {
     for (int color = 0; color < NUM_COLORS; color++) {
-        for (int character = 0; character < NUM_CHARACTERS; character++) {
+        // character 0 always ignored, never allocated
+        for (int character = 1; character < NUM_CHARACTERS; character++) {
             SDL_DestroyTexture(fontCache[color][character]);
         }
     }
@@ -99,7 +103,7 @@ void CGA::initScreen() {
         printf("Couldn't run TTF_Init() successfully.");
         SDL_Quit();
     }
-    font = TTF_OpenFont("Fonts/Px437_IBM_CGA.ttf", PC_HEIGHT / NUM_ROWS);
+    font = TTF_OpenFont("Fonts/Px437_IBM_BIOS.ttf", PC_HEIGHT / NUM_ROWS);
     if (font == NULL) {
         printf("Could not load font file.");
         SDL_Quit();
@@ -122,7 +126,10 @@ void CGA::renderLoop() {
         cout << dec << difference << endl;
         if (difference > MILLI_PER_FRAME) { // roughly 60 fps
             lastTicks = nextTicks;
-            renderScreen();
+            renderScreen(nextTicks);
+            
+            
+            
             numFrames++;
             
             // pit is supposed to be 18.2 hz, doing ~20 hz here
@@ -145,7 +152,7 @@ void CGA::renderLoop() {
     }
 }
 
-void CGA::renderScreen() {
+void CGA::renderScreen(uint32_t timing) {
     // clear renderer
     // used to have this in but took it out and it seems to not
     // have any negative effect
@@ -160,6 +167,9 @@ void CGA::renderScreen() {
     if (graphicsMode) {
         return;
     } else { // text mode
+        int cursorLocation = ((int)registers6845[0xE] << 8) | ((int)registers6845[0xF]);
+        byte cursorRow = cursorLocation / numColumns;
+        byte cursorColumn = cursorLocation - (cursorRow * numColumns);
         cellWidth = PC_WIDTH / numColumns;
         cellHeight = PC_HEIGHT / NUM_ROWS;
         for (int row = 0; row < NUM_ROWS; row++) {
@@ -168,7 +178,12 @@ void CGA::renderScreen() {
                 byte character = memory.readByte(memLocation);
                 // cout << character;
                 byte attribute = memory.readByte(memLocation + 1);
-                drawCharacter(row, column, character, attribute);
+                // if text mode, draw cursor every half second
+                if (cursorColumn == column && cursorRow == row && ((timing % 1000) > 500)) {
+                    drawCharacter(row, column, 95, (attribute&0xF0) | 15);
+                } else {
+                    drawCharacter(row, column, character, attribute);
+                }
             }
         }
     }
@@ -259,6 +274,14 @@ inline void CGA::drawCharacter(byte row, byte column, byte character, byte attri
 
 void CGA::exitRender() {
    shouldExit = true;
+}
+
+void CGA::set6845RegisterIndex(byte index) {
+    registerIndex6845 = index;
+}
+
+void CGA::set6845RegisterValue(byte value) {
+    registers6845[registerIndex6845] = value;
 }
 
 }

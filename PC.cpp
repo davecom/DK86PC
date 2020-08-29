@@ -213,10 +213,10 @@ namespace DK86PC {
                 cout << "Ignoring port 3BC Parallel Port Data" << endl;
                 break;
             case 0x3D4:
-                cout << "Ignoring port 3D4 CRT Controller" << endl;
+                cga.set6845RegisterIndex(value);
                 break;
             case 0x3D5:
-                cout << "Ignoring port 3D5 CRT Controller" << endl;
+                cga.set6845RegisterValue(value);
                 break;
             case 0x3D8:
                 cga.setMode(value);

@@ -32,6 +32,7 @@ namespace DK86PC {
 
 #define NUM_CHARACTERS 256
 #define NUM_COLORS 16
+#define NUM_6845_REGISTERS 18
 
 class CGA {
 public:
@@ -49,7 +50,7 @@ public:
     
     void initScreen();
     void renderLoop();
-    void renderScreen();
+    void renderScreen(uint32_t timing);
     byte getStatus();
     void setMode(byte value);
     void setColor(byte value);
@@ -58,6 +59,8 @@ public:
     void horizontalRetraceStart();
     void horizontalRetraceEnd();
     void exitRender();
+    void set6845RegisterIndex(byte index);
+    void set6845RegisterValue(byte value);
 private:
     inline void drawCharacter(byte row, byte column, byte character, byte attribute);
     void createFontCache();
@@ -79,6 +82,8 @@ private:
     int cellHeight = 8; // text cell height
     bool shouldExit = false;
     SDL_Texture *fontCache[NUM_COLORS][NUM_CHARACTERS];
+    byte registers6845[NUM_6845_REGISTERS];
+    byte registerIndex6845;
 };
 
 }
