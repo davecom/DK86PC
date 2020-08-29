@@ -30,12 +30,16 @@
 
 namespace DK86PC {
 
+#define NUM_CHARACTERS 256
+#define NUM_COLORS 16
+
 class CGA {
 public:
     CGA(Memory &mem) : memory(mem) {
         initScreen();
     };
     ~CGA() {
+        freeFontCache();
         TTF_CloseFont(font);
         SDL_DestroyRenderer(renderer);
         SDL_DestroyWindow(window);
@@ -56,6 +60,8 @@ public:
     void exitRender();
 private:
     inline void drawCharacter(byte row, byte column, byte character, byte attribute);
+    void createFontCache();
+    void freeFontCache();
     Memory &memory;
     byte status;
     SDL_Window *window;
@@ -72,6 +78,7 @@ private:
     int cellWidth = 8;  // text cell width
     int cellHeight = 8; // text cell height
     bool shouldExit = false;
+    SDL_Texture *fontCache[NUM_COLORS][NUM_CHARACTERS];
 };
 
 }

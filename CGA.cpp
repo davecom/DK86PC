@@ -29,7 +29,7 @@ namespace DK86PC {
 #define NUM_ROWS 25
 #define CGA_BASE_MEMORY_LOCATION 0xB8000
 
-SDL_Color colorPalette[16] = {
+SDL_Color colorPalette[NUM_COLORS] = {
     {0x00, 0x00, 0x00, 0xFF}, // black
     {0x00, 0x00, 0xAA, 0xFF}, // blue
     {0x00, 0xAA, 0x00, 0xFF}, // green
@@ -47,6 +47,33 @@ SDL_Color colorPalette[16] = {
     {0xFF, 0xFF, 0x55, 0xFF}, // yellow
     {0xFF, 0xFF, 0xFF, 0xFF}, // white
 };
+
+void CGA::createFontCache() {
+    for (int color = 0; color < NUM_COLORS; color++) {
+        for (int character = 0; character < NUM_CHARACTERS; character++) {
+            char tcharacter = (char)character;
+            SDL_Surface *text_surface;
+            if(!(text_surface = TTF_RenderGlyph_Solid(font, tcharacter, colorPalette[color]))) {
+                //handle error here, perhaps print TTF_GetError at least
+                printf("Could not RenderText_Solid");
+            } else {
+                SDL_Texture* inbetween = SDL_CreateTextureFromSurface(renderer, text_surface);
+                //perhaps we can reuse it, but I assume not for simplicity.
+                fontCache[color][character] = inbetween;
+                SDL_FreeSurface(text_surface);
+            }
+            
+        }
+    }
+}
+
+void CGA::freeFontCache() {
+    for (int color = 0; color < NUM_COLORS; color++) {
+        for (int character = 0; character < NUM_CHARACTERS; character++) {
+            SDL_DestroyTexture(fontCache[color][character]);
+        }
+    }
+}
 
 void CGA::initScreen() {
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -77,6 +104,8 @@ void CGA::initScreen() {
         printf("Could not load font file.");
         SDL_Quit();
     }
+    
+    createFontCache();
 }
 
 #define MILLI_PER_FRAME 16
@@ -90,6 +119,7 @@ void CGA::renderLoop() {
     while (!shouldExit) {
         uint32_t nextTicks = SDL_GetTicks();
         uint32_t difference = (nextTicks - lastTicks);
+        cout << dec << difference << endl;
         if (difference > MILLI_PER_FRAME) { // roughly 60 fps
             lastTicks = nextTicks;
             renderScreen();
@@ -189,7 +219,7 @@ inline void CGA::drawCharacter(byte row, byte column, byte character, byte attri
     }
     // some monitors/bios treat color and black and white modes both as color, so we'll try that here
     SDL_Color bgColor = colorPalette[highNibble(attribute)];
-    SDL_Color fgColor = colorPalette[lowNibble(attribute)];
+    int fgColor = lowNibble(attribute);
     SDL_Rect rect;
     rect.x = column * cellWidth;
     rect.y = row * cellHeight;
@@ -199,7 +229,7 @@ inline void CGA::drawCharacter(byte row, byte column, byte character, byte attri
     SDL_SetRenderDrawColor(renderer, bgColor.r, bgColor.g, bgColor.b, bgColor.a);
     SDL_RenderFillRect(renderer, &rect);
     // draw text in foreground
-    SDL_Surface *text_surface;
+    
     char text = ((char)character);
 //    text = ((char)row * numColumns + column) + 1;
 //    if ((int)text > 100) {
@@ -212,17 +242,19 @@ inline void CGA::drawCharacter(byte row, byte column, byte character, byte attri
 //        cout << hex << uppercase << lowNibble(attribute) << dec << endl;
 //    }
     //text = 'A';
-    char show[2] = {text, '\0'};
-    if(!(text_surface = TTF_RenderText_Solid(font, show, fgColor))) {
-        //handle error here, perhaps print TTF_GetError at least
-        printf("Could not RenderText_Solid");
-    } else {
-        SDL_Texture* inbetween = SDL_CreateTextureFromSurface(renderer, text_surface);
-        //perhaps we can reuse it, but I assume not for simplicity.
-        SDL_RenderCopy(renderer, inbetween, NULL, &rect);
-        SDL_FreeSurface(text_surface);
-        SDL_DestroyTexture(inbetween);
-    }
+    // char show[2] = {text, '\0'};
+//    if(!(text_surface = TTF_RenderGlyph_Solid(font, text, fgColor))) {
+//        //handle error here, perhaps print TTF_GetError at least
+//        printf("Could not RenderText_Solid");
+//    } else {
+//        SDL_Texture* inbetween = SDL_CreateTextureFromSurface(renderer, text_surface);
+//        //perhaps we can reuse it, but I assume not for simplicity.
+//        SDL_RenderCopy(renderer, inbetween, NULL, &rect);
+//        SDL_FreeSurface(text_surface);
+//        SDL_DestroyTexture(inbetween);
+//    }
+    SDL_Texture* inbetween = fontCache[fgColor][text];
+    SDL_RenderCopy(renderer, inbetween, NULL, &rect);
 }
 
 void CGA::exitRender() {
