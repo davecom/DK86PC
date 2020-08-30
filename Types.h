@@ -19,8 +19,8 @@ namespace DK86PC {
 #define lowNibble(b) ((b) & 0x0F)
 #define highNibble(b) (((b) & 0xF0) >> 4)
     
-#define highBitByte(b) (((b) & 0x80) >> 7)
-#define highBitWord(w) (((w) & 0x8000) >> 15)
+#define highBitByte(b) (((b) >> 7) & 1)
+#define highBitWord(w) (((w) >> 15) & 1)
 #define lowBit(b) ((b) & 1)
 
 #define lowByte(w) ((byte) ((w) & 0x00FF))
