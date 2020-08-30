@@ -106,6 +106,8 @@ namespace DK86PC {
         inline void andWord(word &left, word right);
         inline void subByte(byte &left, byte right);
         inline void subWord(word &left, word right);
+        inline void subByteWithBorrow(byte &left, byte right);
+        inline void subWordWithBorrow(word &left, word right);
         inline void addByte(byte &left, byte right);
         inline void addWord(word &left, word right);
         inline void addByteWithCarry(byte &left, byte right);

@@ -665,6 +665,26 @@ namespace DK86PC {
         setSZPFlagsWord(left);
     }
 
+    inline void CPU::subByteWithBorrow(byte &left, byte right) {
+        byte originalHigh = highBitByte(left);
+        bool oldCarry = carry;
+        carry = (right > left - carry);
+        auxiliaryCarry = (lowNibble(right) > lowNibble(left) - oldCarry);
+        left = left - right - oldCarry;
+        overflow = (originalHigh ^ highBitByte(right)) && (originalHigh ^ highBitByte(left));
+        setSZPFlagsByte(left);
+    }
+
+    inline void CPU::subWordWithBorrow(word &left, word right) {
+        word originalHigh = highBitWord(left);
+        bool oldCarry = carry;
+        carry = (right > left - carry);
+        auxiliaryCarry = (lowNibble(right) > lowNibble(left) - oldCarry);
+        left = left - right - oldCarry;
+        overflow = (originalHigh ^ highBitWord(right)) && (originalHigh ^ highBitWord(left));
+        setSZPFlagsWord(left);
+    }
+
     inline void CPU::addByte(byte &left, byte right) {
         byte originalHigh = highBitByte(left);
         carry = ((word)right + (word)left) > 0x00FF;
@@ -1093,7 +1113,7 @@ namespace DK86PC {
                 instructionLength = 2;
                 modInstructionLength(mrr, instructionLength);
                 byte temp = getModRMByte(mrr);
-                subByte(temp, (getRegByte(mrr.reg) - carry));
+                subByteWithBorrow(temp, getRegByte(mrr.reg));
                 setModRMByte(mrr, temp);
                 break;
             }
@@ -1104,7 +1124,7 @@ namespace DK86PC {
                 instructionLength = 2;
                 modInstructionLength(mrr, instructionLength);
                 word temp = getModRMWord(mrr);
-                subWord(temp, (getRegWord(mrr.reg) - carry));
+                subWordWithBorrow(temp, getRegWord(mrr.reg));
                 setModRMWord(mrr, temp);
                 break;
             }
@@ -1115,7 +1135,7 @@ namespace DK86PC {
                 instructionLength = 2;
                 modInstructionLength(mrr, instructionLength);
                 byte temp = getRegByte(mrr.reg);
-                subByte(temp, (getModRMByte(mrr) - carry));
+                subByteWithBorrow(temp, getModRMByte(mrr));
                 setRegByte(mrr.reg, temp);
                 break;
             }
@@ -1126,18 +1146,18 @@ namespace DK86PC {
                 instructionLength = 2;
                 modInstructionLength(mrr, instructionLength);
                 word temp = getRegWord(mrr.reg);
-                subWord(temp, (getModRMWord(mrr) - carry));
+                subWordWithBorrow(temp, getModRMWord(mrr));
                 setRegWord(mrr.reg, temp);
                 break;
             }
             
             case 0x1C:
-                subByte(al, (memory.readByte(NEXT_INSTRUCTION + 1) - carry));
+                subByteWithBorrow(al, memory.readByte(NEXT_INSTRUCTION + 1));
                 instructionLength = 2;
                 break;
                 
             case 0x1D:
-                subWord(ax, (memory.readWord(NEXT_INSTRUCTION + 1) - carry));
+                subWordWithBorrow(ax, memory.readWord(NEXT_INSTRUCTION + 1));
                 instructionLength = 3;
                 break;
             
@@ -1714,7 +1734,7 @@ namespace DK86PC {
                     case 0b011: // SBB
                     {
                         byte temp = getModRMByte(mrr);
-                        subByte(temp, (memory.readByte(NEXT_INSTRUCTION + instructionLength) - carry));
+                        subByteWithBorrow(temp, memory.readByte(NEXT_INSTRUCTION + instructionLength));
                         instructionLength += 1;
                         setModRMByte(mrr, temp);
                         break;
@@ -1786,7 +1806,7 @@ namespace DK86PC {
                     case 0b011: // SBB
                     {
                         word temp = getModRMWord(mrr);
-                        subWord(temp, (memory.readWord(NEXT_INSTRUCTION + instructionLength) - carry));
+                        subWordWithBorrow(temp, memory.readWord(NEXT_INSTRUCTION + instructionLength));
                         instructionLength += 2;
                         setModRMWord(mrr, temp);
                         break;
@@ -1855,7 +1875,7 @@ namespace DK86PC {
                     case 0b011: // SBB
                     {
                         word temp = getModRMWord(mrr);
-                        subWord(temp, signExtend((memory.readByte(NEXT_INSTRUCTION + instructionLength) - 1)));
+                        subWordWithBorrow(temp, signExtend(memory.readByte(NEXT_INSTRUCTION + instructionLength)));
                         instructionLength += 1;
                         setModRMWord(mrr, temp);
                         break;
