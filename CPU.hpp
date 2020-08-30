@@ -21,10 +21,9 @@
 #define CPU_hpp
 
 #include "Memory.hpp"
-
+#include "PortInterface.hpp"
 
 namespace DK86PC {
-    class PC;
 
     union ModRegRM {
         struct {
@@ -38,15 +37,16 @@ namespace DK86PC {
     
     class CPU {
     public:
-        CPU(PC &p, Memory &mem) : pc(p), memory(mem) {
+        CPU(PortInterface &p, Memory &mem) : portInterface(p), memory(mem) {
             reset();
         };
         void reset();
         void hardwareInterrupt(byte info);
         void step();
+        bool isHalted() { return halted; };
     private:
         uint64_t cycleCount;
-        
+        bool halted;
         // Private methods
         
         // Flag Set Methods
@@ -117,7 +117,7 @@ namespace DK86PC {
         inline void debugPrint(byte opcode);
         
         // External Constructs
-        PC &pc;
+        PortInterface &portInterface;
         Memory &memory;
         
         // Registers

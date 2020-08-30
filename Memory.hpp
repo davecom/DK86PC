@@ -32,7 +32,7 @@ namespace DK86PC {
 
     class Memory {
     public:
-        Memory(int ramSize = 1048576) {
+        Memory(unsigned int ramSize = 1048576) {
             ram = new byte[ramSize];
         }
         ~Memory() {
@@ -44,6 +44,7 @@ namespace DK86PC {
         void setByte(address location, byte data);
         void setWord(address location, word data);
         byte& readByteRef(address location);
+        void loadBIOS(string filename);
 #ifdef DEBUG
         void setWatch(address location) {
             watchLocations.insert(location);

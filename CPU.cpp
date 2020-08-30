@@ -21,7 +21,6 @@
 #include "CPU.hpp"
 #include <iostream>
 #include <iomanip>
-#include "PC.hpp"
 
 using namespace std;
 
@@ -780,6 +779,8 @@ namespace DK86PC {
         ss = 0;
         ip = 0; // reset vector at OxFFFF0 (cs << 4 + ip)
         flags = 0xF000;
+        
+        halted = false;
     }
 
     void CPU::hardwareInterrupt(byte info) {
@@ -998,6 +999,61 @@ namespace DK86PC {
             // PUSH cs
             case 0x0E:
                 push(cs);
+                break;
+            
+            // ADC integer addition with carry
+            case 0x10:
+            {
+                ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
+                modInstructionLength(mrr, instructionLength);
+                byte temp = getModRMByte(mrr);
+                addByte(temp, getRegByte(mrr.reg) + carry);
+                setModRMByte(mrr, temp);
+                break;
+            }
+            
+            case 0x11:
+            {
+                ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
+                modInstructionLength(mrr, instructionLength);
+                word temp = getModRMWord(mrr);
+                addWord(temp, getRegWord(mrr.reg) + carry);
+                setModRMWord(mrr, temp);
+                break;
+            }
+            
+            case 0x12:
+            {
+                ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
+                modInstructionLength(mrr, instructionLength);
+                byte temp = getRegByte(mrr.reg);
+                addByte(temp, getModRMByte(mrr) + carry);
+                setRegByte(mrr.reg, temp);
+                break;
+            }
+            
+            case 0x13:
+            {
+                ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
+                modInstructionLength(mrr, instructionLength);
+                word temp = getRegWord(mrr.reg);
+                addWord(temp, getModRMWord(mrr) + carry);
+                setRegWord(mrr.reg, temp);
+                break;
+            }
+            
+            case 0x14:
+                addByte(al, memory.readByte(NEXT_INSTRUCTION + 1) + carry);
+                instructionLength = 2;
+                break;
+                
+            case 0x15:
+                addWord(ax, memory.readWord(NEXT_INSTRUCTION + 1) + carry);
+                instructionLength = 3;
                 break;
             
             // PUSH ss
@@ -1627,9 +1683,14 @@ namespace DK86PC {
                         setModRMByte(mrr, temp);
                         break;
                     }
-                    case 0b010:
-                        cout << "unimplemented";
+                    case 0b010: // ADC
+                    {
+                        byte temp = getModRMByte(mrr);
+                        addByte(temp, memory.readByte(NEXT_INSTRUCTION + instructionLength) + carry);
+                        instructionLength += 1;
+                        setModRMByte(mrr, temp);
                         break;
+                    }
                     case 0b011: // SBB
                     {
                         byte temp = getModRMByte(mrr);
@@ -1694,9 +1755,14 @@ namespace DK86PC {
                         setModRMWord(mrr, temp);
                         break;
                     }
-                    case 0b010:
-                        cout << "unimplemented";
+                    case 0b010: // ADC
+                    {
+                        word temp = getModRMWord(mrr);
+                        addWord(temp, memory.readWord(NEXT_INSTRUCTION + instructionLength) + carry);
+                        instructionLength += 2;
+                        setModRMWord(mrr, temp);
                         break;
+                    }
                     case 0b011: // SBB
                     {
                         word temp = getModRMWord(mrr);
@@ -1758,9 +1824,14 @@ namespace DK86PC {
                         cout << "unimplemented";
                         break;
                     }
-                    case 0b010:
-                        cout << "unimplemented";
+                    case 0b010: // ADC
+                    {
+                        word temp = getModRMWord(mrr);
+                        addWord(temp, signExtend(memory.readByte(NEXT_INSTRUCTION + instructionLength)) + carry);
+                        instructionLength += 1;
+                        setModRMWord(mrr, temp);
                         break;
+                    }
                     case 0b011: // SBB
                     {
                         word temp = getModRMWord(mrr);
@@ -2006,7 +2077,7 @@ namespace DK86PC {
             case 0xA0:
             {
                 instructionLength = 3;
-                word location = memory.readWord(ip + 1);
+                word location = memory.readWord(NEXT_INSTRUCTION + 1);
                 address pa = ((*currentSegment << 4) + location); // physical address
                 al = memory.readByte(pa);
                 break;
@@ -2016,7 +2087,7 @@ namespace DK86PC {
             case 0xA1:
             {
                 instructionLength = 3;
-                word location = memory.readWord(ip + 1);
+                word location = memory.readWord(NEXT_INSTRUCTION + 1);
                 address pa = ((*currentSegment << 4) + location); // physical address
                 ax = memory.readWord(pa);
                 break;
@@ -2026,7 +2097,7 @@ namespace DK86PC {
             case 0xA2:
             {
                 instructionLength = 3;
-                word location = memory.readWord(ip + 1);
+                word location = memory.readWord(NEXT_INSTRUCTION + 1);
                 address pa = ((*currentSegment << 4) + location); // physical address
                 memory.setByte(pa, al);
                 break;
@@ -2036,7 +2107,7 @@ namespace DK86PC {
             case 0xA3:
             {
                 instructionLength = 3;
-                word location = memory.readWord(ip + 1);
+                word location = memory.readWord(NEXT_INSTRUCTION + 1);
                 address pa = ((*currentSegment << 4) + location); // physical address
                 memory.setWord(pa, ax);
                 break;
@@ -2594,25 +2665,25 @@ namespace DK86PC {
             // IN fixed port to AL
             case 0xE4:
                 instructionLength = 2;
-                al = pc.readPort(memory.readByte(NEXT_INSTRUCTION + 1));
+                al = portInterface.readPort(memory.readByte(NEXT_INSTRUCTION + 1));
                 break;
             
             // IN fixed port to AX
             case 0xE5:
                 instructionLength = 2;
-                ax = pc.readPort(memory.readByte(NEXT_INSTRUCTION + 1));
+                ax = portInterface.readPort(memory.readByte(NEXT_INSTRUCTION + 1));
                 break;
             
             // OUT from al
             case 0xE6:
                 instructionLength = 2;
-                pc.writePort(memory.readByte(NEXT_INSTRUCTION + 1), al);
+                portInterface.writePort(memory.readByte(NEXT_INSTRUCTION + 1), al);
                 break;
             
             // OUT from ax
             case 0xE7:
                 instructionLength = 2;
-                pc.writePort(memory.readByte(NEXT_INSTRUCTION + 1), ax);
+                portInterface.writePort(memory.readByte(NEXT_INSTRUCTION + 1), ax);
                 break;
                 
             // CALL within segment or group, ip relative; 16 bit displacement
@@ -2663,22 +2734,27 @@ namespace DK86PC {
             
             // IN variable port (DX) to al
             case 0xEC:
-                al = pc.readPort(Dx);
+                al = portInterface.readPort(Dx);
                 break;
             
             // IN variable port (DX) to ax
             case 0xED:
-                ax = pc.readPort(Dx);
+                ax = portInterface.readPort(Dx);
                 break;
                 
             // OUT to Dx from al
             case 0xEE:
-                pc.writePort(Dx, al);
+                portInterface.writePort(Dx, al);
                 break;
             
             // OUT to Dx from ax
             case 0xEF:
-                pc.writePort(Dx, ax);
+                portInterface.writePort(Dx, ax);
+                break;
+            
+            // HLT
+            case 0xF4:
+                halted = true;
                 break;
                 
             // CMC Complement Carry Flag

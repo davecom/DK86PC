@@ -29,13 +29,14 @@
 #include "PIT.hpp"
 #include "CGA.hpp"
 #include "FDC.hpp"
+#include "PortInterface.hpp"
 
 using namespace std;
 
 namespace DK86PC {
     class CPU;
 
-    class PC {
+    class PC: PortInterface {
     public:
         PC() : memory(), cpu(*this, memory), dma(), pic(), ppi(), pit(pic), cga(memory), fdc() {
 #ifdef DEBUG
@@ -48,8 +49,8 @@ namespace DK86PC {
         };
         void loadBIOS(string filename);
         void run();
-        void writePort(word port, word value);
-        word readPort(word port);
+        void writePort(word port, word value) override;
+        word readPort(word port) override;
     private:
         Memory memory;
         CPU cpu;
