@@ -652,7 +652,7 @@ namespace DK86PC {
         carry = (right > left);
         auxiliaryCarry = (lowNibble(right) > lowNibble(left));
         left = left - right;
-        overflow = (highBitByte(originalHigh) ^ highBitByte(right)) && (originalHigh ^ highBitByte(left));
+        overflow = (originalHigh ^ highBitByte(right)) && (originalHigh ^ highBitByte(left));
         setSZPFlagsByte(left);
     }
 
@@ -661,7 +661,7 @@ namespace DK86PC {
         carry = (right > left);
         auxiliaryCarry = (lowNibble(right) > lowNibble(left));
         left = left - right;
-        overflow = (highBitWord(originalHigh) ^ highBitWord(right)) && (originalHigh ^ highBitWord(left));
+        overflow = (originalHigh ^ highBitWord(right)) && (originalHigh ^ highBitWord(left));
         setSZPFlagsWord(left);
     }
 
@@ -670,7 +670,7 @@ namespace DK86PC {
         carry = ((word)right + (word)left) > 0x00FF;
         auxiliaryCarry = ((lowNibble(right) + lowNibble(left)) > 0x0F);
         left = left + right;
-        overflow = (highBitByte(originalHigh) == highBitByte(right)) && (originalHigh ^ highBitByte(left));
+        overflow = (originalHigh == highBitByte(right)) && (originalHigh ^ highBitByte(left));
         setSZPFlagsByte(left);
     }
 
@@ -679,7 +679,7 @@ namespace DK86PC {
         carry = ((uint32_t)right + (uint32_t)left) > 0x0000FFFF;
         auxiliaryCarry = ((lowNibble(right) + lowNibble(left)) > 0x0F);
         left = left + right;
-        overflow = (highBitWord(originalHigh) == highBitWord(right)) && (originalHigh ^ highBitWord(left));
+        overflow = (originalHigh == highBitWord(right)) && (originalHigh ^ highBitWord(left));
         setSZPFlagsWord(left);
     }
 

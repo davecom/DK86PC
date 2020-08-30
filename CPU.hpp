@@ -44,6 +44,11 @@ namespace DK86PC {
         void hardwareInterrupt(byte info);
         void step();
         bool isHalted() { return halted; };
+        #ifdef DEBUG
+        void setTestingFlags(word testFlags) {
+            flags = testFlags;
+        };
+        #endif
     private:
         uint64_t cycleCount;
         bool halted;
@@ -167,6 +172,8 @@ namespace DK86PC {
             };
             word flags;
         };
+        
+
     };
 
 }

@@ -57,9 +57,16 @@ TEST_CASE( "artlav CPU Tests" ) {
     DYNAMIC_SECTION( "Instructions: " << name ) {
         Memory memory = Memory();
         memory.loadBIOS("80186_tests/" + name + ".bin");
-        memory.setWatch(0);
+       // memory.setWatch(39);
+        memory.setWatch(150);
+        memory.setWatch(151);
+        //memory.setWatch(107);
+        //memory.setWatch(112);
+        //memory.setWatch(114);
         DummyPortInterface dpi = DummyPortInterface();
         CPU cpu = CPU(dpi, memory);
+        // default flags for later x86 CPUs expected by tests
+        cpu.setTestingFlags(0b0000000000000010);
         while (!cpu.isHalted()) {
             cpu.step();
         }
