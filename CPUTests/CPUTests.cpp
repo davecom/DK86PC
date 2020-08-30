@@ -52,17 +52,12 @@ TEST_CASE( "artlav CPU Tests" ) {
     
     
     
-    auto name = GENERATE(as<std::string>{}, "add", "shifts", "sub");
+    auto name = GENERATE(as<std::string>{}, "add");
     
     DYNAMIC_SECTION( "Instructions: " << name ) {
         Memory memory = Memory();
         memory.loadBIOS("80186_tests/" + name + ".bin");
-       // memory.setWatch(39);
-        memory.setWatch(150);
-        memory.setWatch(151);
-        //memory.setWatch(107);
-        //memory.setWatch(112);
-        //memory.setWatch(114);
+        //memory.setWatch(45);
         DummyPortInterface dpi = DummyPortInterface();
         CPU cpu = CPU(dpi, memory);
         // default flags for later x86 CPUs expected by tests

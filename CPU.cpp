@@ -683,6 +683,26 @@ namespace DK86PC {
         setSZPFlagsWord(left);
     }
 
+    inline void CPU::addByteWithCarry(byte &left, byte right) {
+        byte originalHigh = highBitByte(left);
+        bool oldCarry = carry;
+        carry = ((word)right + (word)left + oldCarry) > 0x00FF;
+        auxiliaryCarry = ((lowNibble(right) + lowNibble(left) + oldCarry) > 0x0F);
+        left = left + right + oldCarry;
+        overflow = (originalHigh == highBitByte(right)) && (originalHigh ^ highBitByte(left));
+        setSZPFlagsByte(left);
+    }
+
+    inline void CPU::addWordWithCarry(word &left, word right) {
+        word originalHigh = highBitWord(left);
+        bool oldCarry = carry;
+        carry = ((uint32_t)right + (uint32_t)left + oldCarry) > 0x0000FFFF;
+        auxiliaryCarry = ((lowNibble(right) + lowNibble(left) + oldCarry) > 0x0F);
+        left = left + right + oldCarry;
+        overflow = (originalHigh == highBitWord(right)) && (originalHigh ^ highBitWord(left));
+        setSZPFlagsWord(left);
+    }
+
     inline void CPU::incByte(byte &temp) {
         auxiliaryCarry = (lowNibble(temp) == 0x0F);
         temp++;
@@ -1008,7 +1028,7 @@ namespace DK86PC {
                 instructionLength = 2;
                 modInstructionLength(mrr, instructionLength);
                 byte temp = getModRMByte(mrr);
-                addByte(temp, getRegByte(mrr.reg) + carry);
+                addByteWithCarry(temp, getRegByte(mrr.reg));
                 setModRMByte(mrr, temp);
                 break;
             }
@@ -1019,7 +1039,7 @@ namespace DK86PC {
                 instructionLength = 2;
                 modInstructionLength(mrr, instructionLength);
                 word temp = getModRMWord(mrr);
-                addWord(temp, getRegWord(mrr.reg) + carry);
+                addWordWithCarry(temp, getRegWord(mrr.reg));
                 setModRMWord(mrr, temp);
                 break;
             }
@@ -1030,7 +1050,7 @@ namespace DK86PC {
                 instructionLength = 2;
                 modInstructionLength(mrr, instructionLength);
                 byte temp = getRegByte(mrr.reg);
-                addByte(temp, getModRMByte(mrr) + carry);
+                addByteWithCarry(temp, getModRMByte(mrr));
                 setRegByte(mrr.reg, temp);
                 break;
             }
@@ -1041,18 +1061,18 @@ namespace DK86PC {
                 instructionLength = 2;
                 modInstructionLength(mrr, instructionLength);
                 word temp = getRegWord(mrr.reg);
-                addWord(temp, getModRMWord(mrr) + carry);
+                addWordWithCarry(temp, getModRMWord(mrr));
                 setRegWord(mrr.reg, temp);
                 break;
             }
             
             case 0x14:
-                addByte(al, memory.readByte(NEXT_INSTRUCTION + 1) + carry);
+                addByteWithCarry(al, memory.readByte(NEXT_INSTRUCTION + 1));
                 instructionLength = 2;
                 break;
                 
             case 0x15:
-                addWord(ax, memory.readWord(NEXT_INSTRUCTION + 1) + carry);
+                addWordWithCarry(ax, memory.readWord(NEXT_INSTRUCTION + 1));
                 instructionLength = 3;
                 break;
             
@@ -1686,7 +1706,7 @@ namespace DK86PC {
                     case 0b010: // ADC
                     {
                         byte temp = getModRMByte(mrr);
-                        addByte(temp, memory.readByte(NEXT_INSTRUCTION + instructionLength) + carry);
+                        addByteWithCarry(temp, memory.readByte(NEXT_INSTRUCTION + instructionLength));
                         instructionLength += 1;
                         setModRMByte(mrr, temp);
                         break;
@@ -1758,7 +1778,7 @@ namespace DK86PC {
                     case 0b010: // ADC
                     {
                         word temp = getModRMWord(mrr);
-                        addWord(temp, memory.readWord(NEXT_INSTRUCTION + instructionLength) + carry);
+                        addWordWithCarry(temp, memory.readWord(NEXT_INSTRUCTION + instructionLength));
                         instructionLength += 2;
                         setModRMWord(mrr, temp);
                         break;
@@ -1827,7 +1847,7 @@ namespace DK86PC {
                     case 0b010: // ADC
                     {
                         word temp = getModRMWord(mrr);
-                        addWord(temp, signExtend(memory.readByte(NEXT_INSTRUCTION + instructionLength)) + carry);
+                        addWordWithCarry(temp, signExtend(memory.readByte(NEXT_INSTRUCTION + instructionLength)));
                         instructionLength += 1;
                         setModRMWord(mrr, temp);
                         break;
