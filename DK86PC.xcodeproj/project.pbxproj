@@ -266,7 +266,7 @@
 		557530CE22E7E69A009C1B28 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1140;
+				LastUpgradeCheck = 1160;
 				ORGANIZATIONNAME = "David Kopec";
 				TargetAttributes = {
 					557530D522E7E69A009C1B28 = {
@@ -499,6 +499,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 59VX8JQ7R6;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -512,6 +513,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 59VX8JQ7R6;
 				ENABLE_HARDENED_RUNTIME = YES;

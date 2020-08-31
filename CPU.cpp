@@ -458,7 +458,7 @@ namespace DK86PC {
         setModRMByte(mrr, operand);
     }
     
-    inline void CPU::shlByte(ModRegRM mrr, byte amount, bool variable) {
+    inline void CPU::shlByte(ModRegRM mrr, byte amount) {
         int count = amount;
         byte operand = getModRMByte(mrr);
         
@@ -563,7 +563,7 @@ namespace DK86PC {
         setModRMWord(mrr, operand);
     }
     
-    inline void CPU::shlWord(ModRegRM mrr, byte amount, bool variable) {
+    inline void CPU::shlWord(ModRegRM mrr, byte amount) {
         int count = amount;
         word operand = getModRMWord(mrr);
         
@@ -1907,6 +1907,36 @@ namespace DK86PC {
                 }
                 break;
             }
+                
+            // TEST
+            case 0x84:
+            {
+                ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
+                modInstructionLength(mrr, instructionLength);
+                byte temp1 = getRegByte(mrr.reg);
+                byte temp2 = getModRMByte(mrr);
+                byte result = temp1 & temp2;
+                setSZPFlagsByte(result);
+                carry = false;
+                overflow = false;
+                break;
+            }
+            
+            // TEST
+            case 0x85:
+            {
+                ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
+                modInstructionLength(mrr, instructionLength);
+                word temp1 = getRegWord(mrr.reg);
+                word temp2 = getModRMWord(mrr);
+                word result = temp1 & temp2;
+                setSZPFlagsWord(result);
+                carry = false;
+                overflow = false;
+                break;
+            }
             
             // XCHG byte reg to modrm
             case 0x86:
@@ -1979,6 +2009,17 @@ namespace DK86PC {
                 instructionLength = 2;
                 modInstructionLength(mrr, instructionLength);
                 setModRMWord(mrr, getSegmentRegWord(mrr.reg));
+                break;
+            }
+            
+            // LEA
+            case 0x8D:
+            {
+                ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
+                instructionLength = 2;
+                modInstructionLength(mrr, instructionLength);
+                address ea = calcEffectiveAddress(mrr);
+                setRegWord(mrr.reg, ea);
                 break;
             }
             
@@ -2102,7 +2143,7 @@ namespace DK86PC {
             
             // POPF
             case 0x9D:
-                flags = pop();
+                flags = pop() | 0xF000;
                 break;
             
             // SAHF store AH into lower byte of flags
@@ -2517,7 +2558,7 @@ namespace DK86PC {
                 jump = true;
                 ip = pop();
                 cs = pop();
-                flags = pop();
+                flags = pop() | 0xF000;
                 break;
             
             // ROL/ROR/RCL/RCR/SHL/SHR/SAR/ROL 8 bits 1
@@ -2612,7 +2653,7 @@ namespace DK86PC {
                         rcrByte(mrr, cl);
                         break;
                     case 0b100:
-                        shlByte(mrr, cl, true);
+                        shlByte(mrr, cl);
                         break;
                     case 0b101:
                         shrByte(mrr, cl);
@@ -2648,7 +2689,7 @@ namespace DK86PC {
                         rcrWord(mrr, cl);
                         break;
                     case 0b100:
-                        shlWord(mrr, cl, true);
+                        shlWord(mrr, cl);
                         break;
                     case 0b101:
                         shrWord(mrr, cl);
@@ -2663,6 +2704,11 @@ namespace DK86PC {
                 }
                 break;
             }
+            
+            // XLAT
+            case 0xD7:
+                al = memory.readByte(calcEffectiveAddress(bx + al));
+                break;
                 
             // LOOPNE, LOOPNZ branch if CX non-zero and ZF = 0
             case 0xE0:

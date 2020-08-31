@@ -86,14 +86,14 @@ namespace DK86PC {
         inline void rorByte(ModRegRM mrr, byte amount);
         inline void rclByte(ModRegRM mrr, byte amount);
         inline void rcrByte(ModRegRM mrr, byte amount);
-        inline void shlByte(ModRegRM mrr, byte amount, bool variable = false);
+        inline void shlByte(ModRegRM mrr, byte amount);
         inline void shrByte(ModRegRM mrr, byte amount);
         inline void sarByte(ModRegRM mrr, byte amount);
         inline void rolWord(ModRegRM mrr, byte amount);
         inline void rorWord(ModRegRM mrr, byte amount);
         inline void rclWord(ModRegRM mrr, byte amount);
         inline void rcrWord(ModRegRM mrr, byte amount);
-        inline void shlWord(ModRegRM mrr, byte amount, bool variable = false);
+        inline void shlWord(ModRegRM mrr, byte amount);
         inline void shrWord(ModRegRM mrr, byte amount);
         inline void sarWord(ModRegRM mrr, byte amount);
         
