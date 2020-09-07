@@ -80,6 +80,8 @@ private:
     bool alternatePalette = false;
     int cellWidth = 8;  // text cell width
     int cellHeight = 8; // text cell height
+    int pcWidth;
+    int pcHeight;
     bool shouldExit = false;
     SDL_Texture *fontCache[NUM_COLORS][NUM_CHARACTERS];
     byte registers6845[NUM_6845_REGISTERS];

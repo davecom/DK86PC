@@ -270,6 +270,10 @@ namespace DK86PC {
                 cout << "Ignoring reading port 201 adresses of the 8255 on the uPW48" << endl;
                 return 0;
                 break;
+            case 0x2C1:
+                cout << "Ignoring clock port" << endl;
+                return 0;
+                break;
             case 0x2FB:
                 cout << "Ignoring reading port 2FB Serial Port Line Control Register" << endl;
                 return 0;

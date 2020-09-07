@@ -2874,6 +2874,20 @@ namespace DK86PC {
                         setModRMByte(mrr, ~getModRMByte(mrr));
                         break;
                     }
+                    
+                    case 0b011: //NEG two's complement
+                    {
+                        byte temp1 = 0;
+                        byte temp2 = getModRMByte(mrr);
+                        subByte(temp1, temp2);
+                        setModRMByte(mrr, temp1);
+                        if (temp2 == 0) {
+                            carry = 0;
+                        } else {
+                            carry = 1;
+                        }
+                        break;
+                    }
                     case 0b100: // MUL 8 bit to 16 bit
                     {
                         byte temp = getModRMByte(mrr);
@@ -2885,6 +2899,9 @@ namespace DK86PC {
                             carry = true;
                             overflow = true;
                         }
+                        // not required by documentation (undefined)
+                        // but set so bios detect 8088
+                        setSZPFlagsWord(ax);
                         break;
                     }
                     default:
@@ -2918,6 +2935,19 @@ namespace DK86PC {
                     case 0b010: // // NOT one's complement (invert 1s and 0s) word
                     {
                         setModRMWord(mrr, ~getModRMWord(mrr));
+                        break;
+                    }
+                    case 0b011: //NEG two's complement
+                    {
+                        word temp1 = 0;
+                        word temp2 = getModRMWord(mrr);
+                        subWord(temp1, temp2);
+                        setModRMWord(mrr, temp1);
+                        if (temp2 == 0) {
+                            carry = 0;
+                        } else {
+                            carry = 1;
+                        }
                         break;
                     }
                     case 0b100: // MUL 16 bit to 32 bit
@@ -3076,6 +3106,7 @@ namespace DK86PC {
             case 0xDB:
             case 0xD9:
             case 0x64:
+                instructionLength = 2;
                 cout << "Unimplemented floating point opcode!" << endl;
                 break;
                 
