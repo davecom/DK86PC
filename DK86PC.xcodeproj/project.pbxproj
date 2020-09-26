@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		552646842507A8F300BA42AF /* DOS in CopyFiles */ = {isa = PBXBuildFile; fileRef = 552646832507A8CF00BA42AF /* DOS */; };
 		5539EC5A23EE82C400257920 /* SDL2_ttf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5539EC5923EE82C400257920 /* SDL2_ttf.framework */; };
 		5539EC5B23EE82D200257920 /* SDL2_ttf.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5539EC5923EE82C400257920 /* SDL2_ttf.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5539EC5D23EE82F100257920 /* Fonts in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5539EC5C23EE82F100257920 /* Fonts */; };
@@ -46,6 +47,7 @@
 			files = (
 				5539EC5D23EE82F100257920 /* Fonts in CopyFiles */,
 				55A0F3EE22E82F8900F6A149 /* BIOS in CopyFiles */,
+				552646842507A8F300BA42AF /* DOS in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,6 +77,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		552646832507A8CF00BA42AF /* DOS */ = {isa = PBXFileReference; lastKnownFileType = folder; path = DOS; sourceTree = "<group>"; };
 		5539EC5923EE82C400257920 /* SDL2_ttf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_ttf.framework; path = SDL/SDL2_ttf.framework; sourceTree = "<group>"; };
 		5539EC5C23EE82F100257920 /* Fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Fonts; sourceTree = "<group>"; };
 		555F82F323F7EE390068D5AB /* PIT.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PIT.cpp; sourceTree = "<group>"; };
@@ -136,6 +139,7 @@
 		557530CD22E7E69A009C1B28 = {
 			isa = PBXGroup;
 			children = (
+				552646832507A8CF00BA42AF /* DOS */,
 				5539EC5C23EE82F100257920 /* Fonts */,
 				55A0F3ED22E82F8900F6A149 /* BIOS */,
 				557530D822E7E69A009C1B28 /* DK86PC */,
@@ -228,8 +232,8 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 557530DD22E7E69A009C1B28 /* Build configuration list for PBXNativeTarget "DK86PC" */;
 			buildPhases = (
-				557530D222E7E69A009C1B28 /* Sources */,
 				557530D322E7E69A009C1B28 /* Frameworks */,
+				557530D222E7E69A009C1B28 /* Sources */,
 				557530D422E7E69A009C1B28 /* CopyFiles */,
 				55F0A7C523CB8AB400A0E64B /* Embed Frameworks */,
 			);
@@ -266,7 +270,7 @@
 		557530CE22E7E69A009C1B28 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1160;
+				LastUpgradeCheck = 1200;
 				ORGANIZATIONNAME = "David Kopec";
 				TargetAttributes = {
 					557530D522E7E69A009C1B28 = {
@@ -355,6 +359,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -417,6 +422,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;

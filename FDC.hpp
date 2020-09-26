@@ -23,24 +23,49 @@
 #define FDC_hpp
 
 #include <stdio.h>
+#include <string>
+#include <vector>
 #include "Types.h"
+#include "PIC.hpp"
+
+using namespace std;
 
 namespace DK86PC {
     class FDC {
     public:
-        FDC() :  dmaEnabled(false), selectedDevice(0)
+        FDC(PIC &pic) : pic(pic), dmaEnabled(false), selectedDevice(0),
+        fdcBusy(false), DIO(false), RQM(false)
         {
             for (int i = 0; i < 4; i++) {
                 motorActive[i] = false;
             }
+            // for now always load DOS into A Drive
+            loadDisk("DOS/DOS1.img");
         };
+        ~FDC() {
+            //delete diskAData;
+        }
         void writeControl(byte command); // Digital Output Register or Digital Control Port
         byte readStatus();
         
+        byte readCommand();
+        void writeCommand(byte command);
+        
     private:
+        vector<byte> diskAData;
         bool motorActive[4];
         bool dmaEnabled;
+        bool fdcBusy;
+        bool DIO; // false expecting data from cpu, true has data for CPU
+        bool RQM; // data register ready?
         byte selectedDevice;
+        byte commandBuffer[8];
+        byte commandBufferIndex = 0;
+        byte commandLength = 0;
+        byte currentCylinder = 0;
+        PIC &pic;
+        
+        void loadDisk(string filename);
     };
 }
 

@@ -1228,6 +1228,18 @@ namespace DK86PC {
                 instructionLength = 3;
                 break;
             
+            //DAA Decimal Adjust for Addition
+            case 0x27:
+                if (((al & 0xF) > 9) || auxiliaryCarry) {
+                    addByte(al, 6);
+                    auxiliaryCarry = true;
+                }
+                if ((al > 0x9F) || carry) {
+                    addByte(al, 0x60);
+                    carry = true;
+                }
+                break;
+            
             // SUB integer subtraction
             case 0x28:
             {

@@ -44,6 +44,7 @@ namespace DK86PC {
         void hardwareInterrupt(byte info);
         void step();
         bool isHalted() { return halted; };
+        bool canInterrupt() { return interrupt; };
         #ifdef DEBUG
         void setTestingFlags(word testFlags) {
             flags = testFlags;

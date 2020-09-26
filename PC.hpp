@@ -38,7 +38,7 @@ namespace DK86PC {
 
     class PC: PortInterface {
     public:
-        PC() : memory(), cpu(*this, memory), dma(), pic(), ppi(), pit(pic), cga(memory), fdc() {
+        PC() : memory(), cpu(*this, memory), dma(), pic(), ppi(), pit(pic), cga(memory), fdc(pic) {
 #ifdef DEBUG
             //memory.setWatch(90094);
             //memory.setWatch(00000);

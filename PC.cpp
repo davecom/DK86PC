@@ -56,9 +56,11 @@ namespace DK86PC {
         // keep going until the user quits
         while (true) {
             
-            byte interruptType = pic.getInterrupt();
-            if (interruptType != NO_INTERRUPT) {
-                cpu.hardwareInterrupt(interruptType);
+            if (cpu.canInterrupt()) {
+                byte interruptType = pic.getInterrupt();
+                if (interruptType != NO_INTERRUPT) {
+                    cpu.hardwareInterrupt(interruptType);
+                }
             }
             
             cpu.step();
@@ -206,11 +208,14 @@ namespace DK86PC {
             case 0x3D9:
                 cga.setColor(value);
                 break;
+            case 0x2FB:
+                cout << "Ignoring port 2FB Serial Port Line Control Register" << endl;
+                break;
             case 0x3F2:
                 fdc.writeControl(value);
                 break;
-            case 0x2FB:
-                cout << "Ignoring port 2FB Serial Port Line Control Register" << endl;
+            case 0x3F5:
+                fdc.writeCommand(value);
                 break;
             case 0x3FB:
                 cout << "Ignoring port 3FB Serial Port Line Control Register" << endl;
@@ -267,16 +272,24 @@ namespace DK86PC {
                 return cga.getStatus();
                 break;
             case 0x201:
-                cout << "Ignoring reading port 201 adresses of the 8255 on the uPW48" << endl;
-                return 0;
+                cout << "Reading game port 201, trying to say not there" << endl;
+                return 0xFF; // hack for bios to not thingk game port is there
                 break;
             case 0x2C1:
-                cout << "Ignoring clock port" << endl;
-                return 0;
+            case 0x241:
+            case 0x341:
+                cout << "Reading clock port, trying to say not there" << endl;
+                return 0xFF;
                 break;
             case 0x2FB:
                 cout << "Ignoring reading port 2FB Serial Port Line Control Register" << endl;
                 return 0;
+                break;
+            case 0x3F4: // FDC read status (MSR)
+                return fdc.readStatus();
+                break;
+            case 0x3F5: // FDC read command (FIFO)
+                return fdc.readCommand();
                 break;
             case 0x3FB:
                 cout << "Ignoring reading port 3FB Serial Port Line Control Register" << endl;

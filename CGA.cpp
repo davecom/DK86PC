@@ -125,7 +125,8 @@ void CGA::renderLoop() {
     while (!shouldExit) {
         uint32_t nextTicks = SDL_GetTicks();
         uint32_t difference = (nextTicks - lastTicks);
-        cout << dec << difference << endl;
+        // output frame timing if needed
+        //cout << dec << difference << endl;
         if (difference > MILLI_PER_FRAME) { // roughly 60 fps
             lastTicks = nextTicks;
             verticalRetraceEnd();
