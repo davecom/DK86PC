@@ -64,6 +64,7 @@ namespace DK86PC {
         byte commandLength = 0;
         byte currentCylinder = 0;
         PIC &pic;
+        bool normalMode = true;
         
         void loadDisk(string filename);
     };

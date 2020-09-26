@@ -33,10 +33,14 @@ void FDC::writeControl(byte command) {
     for (int i = 0; i < 4; i++) {
         motorActive[i] = ((command >> (4 + i)) & 1);
     }
-    if (!(command & 4)) { // reset mode
+    if (normalMode && !(command & 4)) { // do reset
         RQM = true;
         pic.requestInterrupt(6);
-        return; // reset mode what should we do?
+    }
+    if (command & 4) {
+        normalMode = true;
+    } else {
+        normalMode = false;
     }
 }
 
