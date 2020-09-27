@@ -51,7 +51,11 @@ byte FDC::readStatus() {
 byte FDC::readCommand() {
     byte temp = commandBuffer[commandBufferIndex];
     commandBufferIndex++;
-    if (commandBufferIndex >= commandLength) { pic.requestInterrupt(6); }
+    if (commandBufferIndex >= commandLength) {
+        DIO = false;
+        pic.requestInterrupt(6);
+        
+    }
     return temp;
 }
 
@@ -76,6 +80,7 @@ void FDC::writeCommand(byte command) {
             commandBuffer[1] = currentCylinder;
             commandLength = 2;
             commandBufferIndex = 0;
+            DIO = true;
             break;
         case 0x9: // WRITE DELETE SECTOR
             break;
