@@ -127,6 +127,39 @@ void CGA::renderLoop() {
         uint32_t difference = (nextTicks - lastTicks);
         // output frame timing if needed
         //cout << dec << difference << endl;
+        SDL_Event e;
+        
+        while (SDL_PollEvent(&e) != 0) {
+            switch (e.type) {
+                case SDL_QUIT:
+                    shouldExit = true;
+                    break;
+                case SDL_KEYDOWN:
+                    switch (e.key.keysym.sym) {
+                        case SDLK_x:
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case SDL_KEYUP:
+                    switch (e.key.keysym.sym) {
+                        case SDLK_x:
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        
+        if (modeChanged) {
+            modeChanged = false;
+            SDL_SetWindowSize(window, pcWidth, pcHeight);
+        }
+        
         if (difference > MILLI_PER_FRAME) { // roughly 60 fps
             lastTicks = nextTicks;
             verticalRetraceEnd();
@@ -215,7 +248,7 @@ void CGA::setMode(byte value) {
     } else if (!graphicsMode && numColumns == 80) {
         pcWidth = 640;
     }
-    SDL_SetWindowSize(window, pcWidth, pcHeight);
+    modeChanged = true;
 }
 
 void CGA::setColor(byte value) {

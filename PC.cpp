@@ -42,19 +42,9 @@ namespace DK86PC {
         return 0;
     }
 
-    void PC::run() {
-        // start cga render loop on a separate thread
-        SDL_Thread *cgaThread;
-
-        cgaThread = SDL_CreateThread(cgaThreadHelper, "CGAThread", (void *)&cga);
-
-        if (NULL == cgaThread) {
-            printf("SDL_CreateThread failed: %s\n", SDL_GetError());
-        }
-
-        
+    void PC::runLoop() {
         // keep going until the user quits
-        while (true) {
+        while (!shouldQuit) {
             
             if (cpu.canInterrupt()) {
                 byte interruptType = pic.getInterrupt();
@@ -66,38 +56,36 @@ namespace DK86PC {
             cpu.step();
             pit.update(); // not quite right, but hopefully close enough
             
-            SDL_Event e;
-            
-            while (SDL_PollEvent(&e) != 0) {
-                switch (e.type) {
-                    case SDL_QUIT:
-                        goto quit;
-                        break;
-                    case SDL_KEYDOWN:
-                        switch (e.key.keysym.sym) {
-                            case SDLK_x:
-                                break;
-                            default:
-                                break;
-                        }
-                        break;
-                    case SDL_KEYUP:
-                        switch (e.key.keysym.sym) {
-                            case SDLK_x:
-                                break;
-                            default:
-                                break;
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            }
         }
         quit:
         cga.exitRender();
+    }
+    
+
+    static int runLoopHelper(void *pc) {
+        PC *pcPtr = static_cast<PC *>(pc);
+        pcPtr->runLoop();
+        return 0;
+    }
+
+    void PC::run() {
+        // start run loop on a separate thread
+        SDL_Thread *runLoopThread;
+
+        runLoopThread = SDL_CreateThread(runLoopHelper, "PCRunLoopThread", (void *)this);
+
+        if (NULL == runLoopThread) {
+            printf("SDL_CreateThread failed: %s\n", SDL_GetError());
+        }
+        
+        // SDL Rendering must be on the main thread
+        cga.renderLoop();
+        shouldQuit = true;
+        // when we get out of here, we quit
+        
+        
         int threadReturnValue;
-        SDL_WaitThread(cgaThread, &threadReturnValue);
+        SDL_WaitThread(runLoopThread, &threadReturnValue);
         return;
     }
 

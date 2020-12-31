@@ -48,10 +48,12 @@ namespace DK86PC {
             
         };
         void loadBIOS(string filename);
+        void runLoop();
         void run();
         void writePort(word port, word value) override;
         word readPort(word port) override;
     private:
+        bool shouldQuit = false;
         Memory memory;
         CPU cpu;
         DMA dma;

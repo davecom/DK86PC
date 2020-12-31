@@ -82,6 +82,7 @@ private:
     int cellHeight = 8; // text cell height
     int pcWidth;
     int pcHeight;
+    bool modeChanged = false;
     bool shouldExit = false;
     SDL_Texture *fontCache[NUM_COLORS][NUM_CHARACTERS];
     byte registers6845[NUM_6845_REGISTERS];

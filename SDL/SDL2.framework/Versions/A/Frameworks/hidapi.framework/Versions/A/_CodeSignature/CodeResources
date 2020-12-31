@@ -10,7 +10,7 @@
 		</data>
 		<key>Resources/Info.plist</key>
 		<data>
-		eqy0vvISpY1m2UE2zzwN5nsOg00=
+		nTWQKOXR9gMkAYXawldbICWohU4=
 		</data>
 		<key>Resources/LICENSE-bsd.txt</key>
 		<data>
@@ -31,12 +31,15 @@
 	</dict>
 	<key>files2</key>
 	<dict>
+		<key>Headers/hidapi.h</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			lVEZqQL+xakdQRDnxHo2VwkisMieptRP2Im3DPsMMAs=
+			</data>
+		</dict>
 		<key>Resources/AUTHORS.txt</key>
 		<dict>
-			<key>hash</key>
-			<data>
-			MKG+c/Ng8ZXbj7p1G5WReTJm06Y=
-			</data>
 			<key>hash2</key>
 			<data>
 			syens6RZflkCVW7D6EB8vdHiiKvUYjt7S1bRTUnoTss=
@@ -44,21 +47,13 @@
 		</dict>
 		<key>Resources/Info.plist</key>
 		<dict>
-			<key>hash</key>
-			<data>
-			eqy0vvISpY1m2UE2zzwN5nsOg00=
-			</data>
 			<key>hash2</key>
 			<data>
-			URtZhZZMVQ0W8AnIoo1VF2mkN9aBvt5La1el7xY0mGU=
+			3fFgisvHgoNBeNW1qkuQBdxX4A6t7zsHjiAdclqpPk0=
 			</data>
 		</dict>
 		<key>Resources/LICENSE-bsd.txt</key>
 		<dict>
-			<key>hash</key>
-			<data>
-			fd5CtMb9r65yLY0HVWttnbpNKWM=
-			</data>
 			<key>hash2</key>
 			<data>
 			MOsb7ym0b4unq4tBYDXb2TywNKRUgd2XgVuUQoRYLNI=
@@ -66,10 +61,6 @@
 		</dict>
 		<key>Resources/LICENSE-gpl3.txt</key>
 		<dict>
-			<key>hash</key>
-			<data>
-			hiS82uVbru8AzRHV38+mD2hxCgI=
-			</data>
 			<key>hash2</key>
 			<data>
 			jOtLnuWt7d5Hsx6XXB2QxzrSe2sWWh3NgMfFRetluQM=
@@ -77,10 +68,6 @@
 		</dict>
 		<key>Resources/LICENSE-orig.txt</key>
 		<dict>
-			<key>hash</key>
-			<data>
-			ZgR9vPP9aJyZRyJm9a0UHFPW8sY=
-			</data>
 			<key>hash2</key>
 			<data>
 			+1Q2qmPRtxqN+/dOyvGltOHsTff4AHTRH+yZKE9pyl8=
@@ -88,10 +75,6 @@
 		</dict>
 		<key>Resources/LICENSE.txt</key>
 		<dict>
-			<key>hash</key>
-			<data>
-			9VS7iq5RUyXd9/XSbbwcYpQMum4=
-			</data>
 			<key>hash2</key>
 			<data>
 			fTsIfDTzXU1TjjvN3R/49m6S+e8zaIGZlIKADd+ECRM=
