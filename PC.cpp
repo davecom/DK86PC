@@ -36,11 +36,11 @@ namespace DK86PC {
         memory.loadBIOS(filename);
     }
     
-    static int cgaThreadHelper(void *cga) {
-        CGA *cgaPtr = static_cast<CGA *>(cga);
-        cgaPtr->renderLoop();
-        return 0;
-    }
+//    static int cgaThreadHelper(void *cga) {
+//        CGA *cgaPtr = static_cast<CGA *>(cga);
+//        cgaPtr->renderLoop();
+//        return 0;
+//    }
 
     void PC::runLoop() {
         // keep going until the user quits

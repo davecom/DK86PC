@@ -14,10 +14,6 @@
 		5564B20823C60B400081F6B1 /* PIC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5564B20623C60B400081F6B1 /* PIC.cpp */; };
 		5564B20B23C614470081F6B1 /* PPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5564B20923C614470081F6B1 /* PPI.cpp */; };
 		557530DA22E7E69A009C1B28 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 557530D922E7E69A009C1B28 /* main.cpp */; };
-		55909A99259E6D4D009B439F /* SDL2_ttf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55909A98259E6D4D009B439F /* SDL2_ttf.framework */; };
-		55909A9C259E6D9A009B439F /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55909A9B259E6D9A009B439F /* SDL2.framework */; };
-		55909A9F259E6E31009B439F /* SDL2.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 55909A9B259E6D9A009B439F /* SDL2.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		55909AA0259E6E33009B439F /* SDL2_ttf.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 55909A98259E6D4D009B439F /* SDL2_ttf.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5594A57724FAED260089E59F /* CPUTestsMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5594A57624FAED260089E59F /* CPUTestsMain.cpp */; };
 		5594A57B24FAED3C0089E59F /* Memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55A0F3E222E7EA2900F6A149 /* Memory.cpp */; };
 		5594A57D24FAEE2C0089E59F /* CPU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55A0F3DF22E7E85C00F6A149 /* CPU.cpp */; };
@@ -33,6 +29,10 @@
 		55A0F3E822E80F3900F6A149 /* PC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55A0F3E622E80F3900F6A149 /* PC.cpp */; };
 		55A0F3EE22E82F8900F6A149 /* BIOS in CopyFiles */ = {isa = PBXBuildFile; fileRef = 55A0F3ED22E82F8900F6A149 /* BIOS */; };
 		55B5EDF6249A7DB600283102 /* FDC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55B5EDF4249A7DB600283102 /* FDC.cpp */; };
+		55CD6151259FE5D7005CD4E0 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55CD614F259FE5D7005CD4E0 /* SDL2.framework */; };
+		55CD6152259FE5D7005CD4E0 /* SDL2_ttf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55CD6150259FE5D7005CD4E0 /* SDL2_ttf.framework */; };
+		55CD6153259FE5E4005CD4E0 /* SDL2_ttf.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 55CD6150259FE5D7005CD4E0 /* SDL2_ttf.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		55CD6154259FE5E4005CD4E0 /* SDL2.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 55CD614F259FE5D7005CD4E0 /* SDL2.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		55F0A7BF23CB739E00A0E64B /* CGA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55F0A7BD23CB739E00A0E64B /* CGA.cpp */; };
 /* End PBXBuildFile section */
 
@@ -65,8 +65,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				55909A9F259E6E31009B439F /* SDL2.framework in Embed Frameworks */,
-				55909AA0259E6E33009B439F /* SDL2_ttf.framework in Embed Frameworks */,
+				55CD6153259FE5E4005CD4E0 /* SDL2_ttf.framework in Embed Frameworks */,
+				55CD6154259FE5E4005CD4E0 /* SDL2.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -88,8 +88,6 @@
 		556C12B622EABC8600A3F140 /* notes.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = notes.txt; sourceTree = "<group>"; };
 		557530D622E7E69A009C1B28 /* DK86PC */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DK86PC; sourceTree = BUILT_PRODUCTS_DIR; };
 		557530D922E7E69A009C1B28 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		55909A98259E6D4D009B439F /* SDL2_ttf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_ttf.framework; path = SDL/SDL2_ttf.framework; sourceTree = "<group>"; };
-		55909A9B259E6D9A009B439F /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = SDL/SDL2.framework; sourceTree = "<group>"; };
 		5594A57424FAED260089E59F /* CPUTests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CPUTests; sourceTree = BUILT_PRODUCTS_DIR; };
 		5594A57624FAED260089E59F /* CPUTestsMain.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CPUTestsMain.cpp; sourceTree = "<group>"; };
 		5594A57C24FAEE100089E59F /* catch.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = catch.hpp; sourceTree = "<group>"; };
@@ -107,6 +105,8 @@
 		55A0F3ED22E82F8900F6A149 /* BIOS */ = {isa = PBXFileReference; lastKnownFileType = folder; path = BIOS; sourceTree = "<group>"; };
 		55B5EDF4249A7DB600283102 /* FDC.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FDC.cpp; sourceTree = "<group>"; };
 		55B5EDF5249A7DB600283102 /* FDC.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = FDC.hpp; sourceTree = "<group>"; };
+		55CD614F259FE5D7005CD4E0 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = SDL/SDL2.framework; sourceTree = "<group>"; };
+		55CD6150259FE5D7005CD4E0 /* SDL2_ttf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_ttf.framework; path = SDL/SDL2_ttf.framework; sourceTree = "<group>"; };
 		55F0A7BD23CB739E00A0E64B /* CGA.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CGA.cpp; sourceTree = "<group>"; };
 		55F0A7BE23CB739E00A0E64B /* CGA.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CGA.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -116,8 +116,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				55909A99259E6D4D009B439F /* SDL2_ttf.framework in Frameworks */,
-				55909A9C259E6D9A009B439F /* SDL2.framework in Frameworks */,
+				55CD6152259FE5D7005CD4E0 /* SDL2_ttf.framework in Frameworks */,
+				55CD6151259FE5D7005CD4E0 /* SDL2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -198,8 +198,8 @@
 		55F0A7C023CB8A5100A0E64B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				55909A98259E6D4D009B439F /* SDL2_ttf.framework */,
-				55909A9B259E6D9A009B439F /* SDL2.framework */,
+				55CD6150259FE5D7005CD4E0 /* SDL2_ttf.framework */,
+				55CD614F259FE5D7005CD4E0 /* SDL2.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -454,7 +454,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/SDL",
-					"$(PROJECT_DIR)/SDL/SDL2_ttf.framework/Versions/A/Frameworks",
+					"$(PROJECT_DIR)/SDL/SDL2.framework/Headers",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/SDL/SDL2.framework/Headers",
@@ -479,7 +479,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/SDL",
-					"$(PROJECT_DIR)/SDL/SDL2_ttf.framework/Versions/A/Frameworks",
+					"$(PROJECT_DIR)/SDL/SDL2.framework/Headers",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/SDL/SDL2.framework/Headers",
