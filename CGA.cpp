@@ -135,20 +135,10 @@ void CGA::renderLoop() {
                     shouldExit = true;
                     break;
                 case SDL_KEYDOWN:
-                    switch (e.key.keysym.sym) {
-                        case SDLK_x:
-                            break;
-                        default:
-                            break;
-                    }
+                    ppi.keyboardDown(e.key.keysym);
                     break;
                 case SDL_KEYUP:
-                    switch (e.key.keysym.sym) {
-                        case SDLK_x:
-                            break;
-                        default:
-                            break;
-                    }
+                    ppi.keyboardUp(e.key.keysym);
                     break;
                 default:
                     break;

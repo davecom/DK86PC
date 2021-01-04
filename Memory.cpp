@@ -72,26 +72,41 @@ namespace DK86PC {
         return ram[location];
     }
 
-    // On the original PC BIOS exists from 0xE0000 to 0xFFFFF
-    // so implicitly must be <= 128k
-    void Memory::loadBIOS(string filename) {
-        
+    static vector<byte> loadFile(string filename) {
+        vector<byte> buffer;
         // open input stream
         ifstream input(filename, ios::in | ios::binary);
         // check if the file opened successfully
         if (!input.is_open() || input.fail()) {
-            cout << "BIOS File " << filename << " can't be opened!";
-            return;
+            cout << "File " << filename << " can't be opened!";
         }
         
-        vector<byte> buffer;
+        
         copy(istreambuf_iterator<char>(input),
              istreambuf_iterator<char>(),
              back_inserter(buffer));
+        return buffer;
+    }
+
+    // On the original PC BIOS exists from 0xE0000 to 0xFFFFF
+    // so implicitly must be <= 128k
+    void Memory::loadBIOS(string filename) {
         
+        vector<byte> buffer = loadFile(filename);
         // in original IBM PC BIOS is right before end of 1 MB of memory
         address biosPlace = 0x100000 - (address) buffer.size();
         loadData(buffer, biosPlace);
+    }
+
+    void Memory::loadCasetteBASIC(string filename1, string filename2, string filename3, string filename4) {
+        vector<byte> buffer1 = loadFile(filename1);
+        loadData(buffer1, 0xF6000);
+        vector<byte> buffer2 = loadFile(filename2);
+        loadData(buffer2, 0xF8000);
+        vector<byte> buffer3 = loadFile(filename3);
+        loadData(buffer3, 0xFA000);
+        vector<byte> buffer4 = loadFile(filename4);
+        loadData(buffer4, 0xFC000);
     }
     
 }

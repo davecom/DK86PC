@@ -38,7 +38,7 @@ namespace DK86PC {
 
     class PC: PortInterface {
     public:
-        PC() : memory(), cpu(*this, memory), dma(), pic(), ppi(), pit(pic), cga(memory), fdc(pic) {
+        PC() : memory(), cpu(*this, memory), dma(), pic(), ppi(pic), pit(pic), cga(memory, ppi), fdc(pic) {
 #ifdef DEBUG
             //memory.setWatch(90094);
             //memory.setWatch(00000);
@@ -48,6 +48,7 @@ namespace DK86PC {
             
         };
         void loadBIOS(string filename);
+        void loadCasetteBASIC(string filename1, string filename2, string filename3, string filename4);
         void runLoop();
         void run();
         void writePort(word port, word value) override;

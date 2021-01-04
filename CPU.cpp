@@ -2121,6 +2121,15 @@ namespace DK86PC {
                 di = temp;
                 break;
             }
+                
+            // CBW Convert Byte to Word
+            case 0x98:
+                if ((al & 0x80) == 0x80) {
+                    ah = 0xFF;
+                } else {
+                    ah = 0;
+                }
+                break;
             
             // CWD Convert Word to Doubleword
             case 0x99:

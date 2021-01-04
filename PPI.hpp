@@ -24,18 +24,23 @@
 
 #include <stdio.h>
 #include "Types.h"
+#include "PIC.hpp"
+#include <SDL.h>
 
 namespace DK86PC {
     class PPI {
     public:
-        PPI() : a(16), b(16), c(0), control(0) {};
+        PPI(PIC &pic) : pic(pic), a(16), b(16), c(0), control(0) {};
         void setB(byte value);
         void setControl(byte value);
         byte readA();
         byte readB();
         byte readC();
+        void keyboardDown(SDL_Keysym s);
+        void keyboardUp(SDL_Keysym s);
     private:
         byte a, b, c, control; // registers
+        PIC &pic;
     };
 }
 

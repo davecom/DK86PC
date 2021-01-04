@@ -35,6 +35,10 @@ namespace DK86PC {
     void PC::loadBIOS(string filename) {
         memory.loadBIOS(filename);
     }
+
+    void PC::loadCasetteBASIC(string filename1, string filename2, string filename3, string filename4) {
+        memory.loadCasetteBASIC(filename1, filename2, filename3, filename4);
+    }
     
 //    static int cgaThreadHelper(void *cga) {
 //        CGA *cgaPtr = static_cast<CGA *>(cga);
@@ -200,7 +204,7 @@ namespace DK86PC {
                 cout << "Ignoring port 2FB Serial Port Line Control Register" << endl;
                 break;
             case 0x3F2:
-                fdc.writeControl(value);
+                 fdc.writeControl(value);
                 break;
             case 0x3F5:
                 fdc.writeCommand(value);

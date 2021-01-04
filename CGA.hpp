@@ -27,6 +27,7 @@
 #include <SDL.h>
 #include <vector>
 #include "SDL_ttf.h"
+#include "PPI.hpp"
 
 namespace DK86PC {
 
@@ -36,7 +37,7 @@ namespace DK86PC {
 
 class CGA {
 public:
-    CGA(Memory &mem) : memory(mem) {
+    CGA(Memory &mem, PPI &ppi) : memory(mem), ppi(ppi) {
         initScreen();
     };
     ~CGA() {
@@ -66,6 +67,7 @@ private:
     void createFontCache();
     void freeFontCache();
     Memory &memory;
+    PPI &ppi;
     byte status;
     SDL_Window *window;
     SDL_Renderer *renderer;

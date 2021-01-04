@@ -33,6 +33,7 @@
 		55CD6152259FE5D7005CD4E0 /* SDL2_ttf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55CD6150259FE5D7005CD4E0 /* SDL2_ttf.framework */; };
 		55CD6153259FE5E4005CD4E0 /* SDL2_ttf.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 55CD6150259FE5D7005CD4E0 /* SDL2_ttf.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		55CD6154259FE5E4005CD4E0 /* SDL2.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 55CD614F259FE5D7005CD4E0 /* SDL2.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		55CEF85525A2AB8800B80872 /* CasetteBASIC in CopyFiles */ = {isa = PBXBuildFile; fileRef = 55CEF85425A2AB8800B80872 /* CasetteBASIC */; };
 		55F0A7BF23CB739E00A0E64B /* CGA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55F0A7BD23CB739E00A0E64B /* CGA.cpp */; };
 /* End PBXBuildFile section */
 
@@ -46,6 +47,7 @@
 				5539EC5D23EE82F100257920 /* Fonts in CopyFiles */,
 				55A0F3EE22E82F8900F6A149 /* BIOS in CopyFiles */,
 				552646842507A8F300BA42AF /* DOS in CopyFiles */,
+				55CEF85525A2AB8800B80872 /* CasetteBASIC in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -107,6 +109,7 @@
 		55B5EDF5249A7DB600283102 /* FDC.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = FDC.hpp; sourceTree = "<group>"; };
 		55CD614F259FE5D7005CD4E0 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = SDL/SDL2.framework; sourceTree = "<group>"; };
 		55CD6150259FE5D7005CD4E0 /* SDL2_ttf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_ttf.framework; path = SDL/SDL2_ttf.framework; sourceTree = "<group>"; };
+		55CEF85425A2AB8800B80872 /* CasetteBASIC */ = {isa = PBXFileReference; lastKnownFileType = folder; path = CasetteBASIC; sourceTree = "<group>"; };
 		55F0A7BD23CB739E00A0E64B /* CGA.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CGA.cpp; sourceTree = "<group>"; };
 		55F0A7BE23CB739E00A0E64B /* CGA.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CGA.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -134,6 +137,7 @@
 		557530CD22E7E69A009C1B28 = {
 			isa = PBXGroup;
 			children = (
+				55CEF85425A2AB8800B80872 /* CasetteBASIC */,
 				552646832507A8CF00BA42AF /* DOS */,
 				5539EC5C23EE82F100257920 /* Fonts */,
 				55A0F3ED22E82F8900F6A149 /* BIOS */,
@@ -440,6 +444,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "";
 				SDKROOT = macosx;
 			};

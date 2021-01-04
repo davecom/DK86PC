@@ -44,7 +44,9 @@ namespace DK86PC {
         void setByte(address location, byte data);
         void setWord(address location, word data);
         byte& readByteRef(address location);
+         
         void loadBIOS(string filename);
+        void loadCasetteBASIC(string filename1, string filename2, string filename3, string filename4);
 #ifdef DEBUG
         void setWatch(address location) {
             watchLocations.insert(location);

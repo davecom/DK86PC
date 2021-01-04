@@ -29,6 +29,7 @@ int main(int argc, const char * argv[]) {
     PC pc = PC();
     //pc.loadBIOS("BIOS/Original5150/BIOS_5150_24APR81_U33.BIN");
     pc.loadBIOS("BIOS/pcxtbios.bin");
+    pc.loadCasetteBASIC("CasetteBASIC/5150cb10_1.bin", "CasetteBASIC/5150cb10_2.bin", "CasetteBASIC/5150cb10_3.bin", "CasetteBASIC/5150cb10_4.bin");
     pc.run();
     
     return 0;
