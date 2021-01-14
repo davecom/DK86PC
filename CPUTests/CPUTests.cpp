@@ -52,7 +52,7 @@ TEST_CASE( "artlav CPU Tests" ) {
     
     
     
-    auto name = GENERATE(as<std::string>{}, "datatrnf");
+    auto name = GENERATE(as<std::string>{}, "div");
     
     DYNAMIC_SECTION( "Instructions: " << name ) {
         Memory memory = Memory();
@@ -68,7 +68,9 @@ TEST_CASE( "artlav CPU Tests" ) {
         vector<uint8_t> expectedResult = loadBin("80186_tests/res_" + name + ".bin");
         for (int i = 0; i < expectedResult.size(); i++) {
             INFO("Testing byte #" << i);
-            CHECK(expectedResult[i] == memory.readByte(i));
+            uint8_t expected = (uint8_t)expectedResult[i];
+            uint8_t actual = (uint8_t)memory.readByte(i);
+            CHECK(expected == actual);
         }
     }
 }

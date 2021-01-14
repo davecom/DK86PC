@@ -2169,6 +2169,7 @@ namespace DK86PC {
             
             // SAHF store AH in flags
             case 0x9E:
+                // flags = ((flags & 0xFF00) | ah);
                 sign = ah & 128;
                 zero = ah & 64;
                 auxiliaryCarry = ah & 16;
@@ -2179,6 +2180,17 @@ namespace DK86PC {
             // LAHF copy low byte of flags word to AH
             case 0x9F:
                 ah = ((byte) (flags & 0x00FF));
+//                ah = (ah & ~128) | (sign << 7);
+//                ah = (ah & ~64) | (zero << 6);
+//                ah = (ah & ~16) | (auxiliaryCarry << 4);
+//                ah = (ah & ~4) | (parity << 2);
+//                ah = (ah & ~1) | (carry);
+//                ah = 0;
+//                ah = (ah) | (sign << 7);
+//                ah = (ah) | (zero << 6);
+//                ah = (ah) | (auxiliaryCarry << 4);
+//                ah = (ah) | (parity << 2);
+//                ah = (ah) | (carry);
                 break;
             
             // MOV mem byte to AL
@@ -2729,7 +2741,33 @@ namespace DK86PC {
                 }
                 break;
             }
+                
+            // AAM ASCII Adjust for Multiplication (long opcode usually, D4, 0A - two bytes)
+            // technically other second bytes will work, may be used by some obscure software
+            case 0xD4:
+            {
+                instructionLength = 2;
+                // next byte is usually 10 but can be used otherwise
+                byte operand = memory.readByte(NEXT_INSTRUCTION + 1);
+                ah = al / operand;
+                al = al % operand;
+                setSZPFlagsByte(ah);
+                break;
+            }
             
+            // AAD ASCII Adjust for Division (long opcode usually, D5, 0A - two bytes)
+            // technically other second bytes will work, may be used by some obscure software
+            case 0xD5:
+            {
+                instructionLength = 2;
+                // next byte is usually 10 but can be used otherwise
+                byte operand = memory.readByte(NEXT_INSTRUCTION + 1);
+                al = al + (ah * operand);
+                ah = 0;
+                setSZPFlagsByte(al);
+                break;
+            }
+                
             // XLAT
             case 0xD7:
                 al = memory.readByte(calcEffectiveAddress(bx + al));
@@ -2929,6 +2967,43 @@ namespace DK86PC {
                         setSZPFlagsWord(ax);
                         break;
                     }
+                    case 0b110: // DIV 16 bit by 8 bit
+                    {
+                        byte temp = getModRMByte(mrr);
+                        if (temp == 0) { // division by 0
+                            jump = true;
+                            performInterrupt(0);
+                        } else {
+                            word result = ax / temp;
+                            if (result > 0xFF) { // overflow interrupt
+                                jump = true;
+                                performInterrupt(0);
+                            } else {
+                                ah = ax % temp;
+                                al = (byte)result;
+                            }
+                        }
+                        break;
+                    }
+                    case 0b111: // IDIV 16 bit by 8 bit
+                    {
+                        int8_t temp = (int8_t)getModRMByte(mrr);
+                        if (temp == 0) { // division by 0
+                            jump = true;
+                            performInterrupt(0);
+                        } else {
+                            word result = ((int16_t)ax) / ((int16_t)temp);
+                            if (result > 0x7F || result == 0x80) { // overflow interrupt
+                                jump = true;
+                                performInterrupt(0);
+                            } else {
+                                al = (byte)result;
+                                ah = ((int16_t)ax) % temp;
+                                
+                            }
+                        }
+                        break;
+                    }
                     default:
                     {
                         cout << "unimplemented F6 opcode" << endl;
@@ -2987,6 +3062,44 @@ namespace DK86PC {
                         } else {
                             carry = true;
                             overflow = true;
+                        }
+                        break;
+                    }
+                    case 0b110: // DIV 32 bit by 16 bit
+                    {
+                        word temp = getModRMWord(mrr);
+                        if (temp == 0) { // division by 0
+                            jump = true;
+                            performInterrupt(0);
+                        } else {
+                            address combined = (((address)Dx) << 16) | ((address)ax);
+                            address result = combined / temp;
+                            if (result > 0xFFFF) { // overflow interrupt
+                                jump = true;
+                                performInterrupt(0);
+                            } else {
+                                ax = (word)result;
+                                Dx = combined % temp;
+                            }
+                        }
+                        break;
+                    }
+                    case 0b111: // IDIV 32 bit by 16 bit
+                    {
+                        int16_t temp = (int16_t)getModRMWord(mrr);
+                        if (temp == 0) { // division by 0
+                            jump = true;
+                            performInterrupt(0);
+                        } else {
+                            int32_t combined = (int32_t)(((address)Dx) << 16) | ((address)ax);
+                            word result = combined / ((int32_t)temp);
+                            if (result > 0x7FFF || result == 0x8000) { // overflow interrupt
+                                jump = true;
+                                performInterrupt(0);
+                            } else {
+                                ax = (word)result;
+                                Dx = combined % temp;
+                            }
                         }
                         break;
                     }
