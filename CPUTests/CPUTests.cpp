@@ -52,7 +52,7 @@ TEST_CASE( "artlav CPU Tests" ) {
     
     
     
-    auto name = GENERATE(as<std::string>{}, "cmpneg");
+    auto name = GENERATE(as<std::string>{}, "datatrnf");
     
     DYNAMIC_SECTION( "Instructions: " << name ) {
         Memory memory = Memory();

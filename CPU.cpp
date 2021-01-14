@@ -2167,9 +2167,13 @@ namespace DK86PC {
                 flags = pop() | 0xF000;
                 break;
             
-            // SAHF store AH into lower byte of flags
+            // SAHF store AH in flags
             case 0x9E:
-                flags = ((flags & 0xFF00) | ah);
+                sign = ah & 128;
+                zero = ah & 64;
+                auxiliaryCarry = ah & 16;
+                parity = ah & 4;
+                carry = ah & 1;
                 break;
             
             // LAHF copy low byte of flags word to AH
