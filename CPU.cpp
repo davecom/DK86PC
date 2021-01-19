@@ -914,7 +914,7 @@ namespace DK86PC {
         
     actualOpcode:
         #ifdef DEBUG
-        debugPrint(opcode);
+        //debugPrint(opcode);
         #endif
         switch (opcode) {
             
