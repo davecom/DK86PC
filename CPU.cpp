@@ -2770,7 +2770,7 @@ namespace DK86PC {
                 
             // XLAT
             case 0xD7:
-                al = memory.readByte(calcEffectiveAddress(bx + al));
+                al = memory.readByte((*currentSegment << 4) + bx + al);
                 break;
                 
             // LOOPNE, LOOPNZ branch if CX non-zero and ZF = 0
