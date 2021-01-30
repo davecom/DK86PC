@@ -263,6 +263,10 @@ namespace DK86PC {
             case 0x3DA:
                 return cga.getStatus();
                 break;
+            case 0x3D5:
+                cout << "Ignoring reading port 3D5 6845 crt controller register" << endl;
+                return 0;
+                break;
             case 0x201:
                 cout << "Reading game port 201, trying to say not there" << endl;
                 return 0xFF; // hack for bios to not thingk game port is there

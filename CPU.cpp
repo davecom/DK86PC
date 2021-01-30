@@ -914,7 +914,7 @@ namespace DK86PC {
         
     actualOpcode:
         #ifdef DEBUG
-        //debugPrint(opcode);
+        debugPrint(opcode);
         #endif
         switch (opcode) {
             
@@ -2283,6 +2283,76 @@ namespace DK86PC {
                 break;
             }
                 
+                // CMPSB compare strings byte
+                case 0xA6:
+                {
+                    repA6:
+                    address place1 = (*currentSegment << 4) + si;
+                    address place2 = (es << 4) + di;
+                    //cout << place <<  " : ";
+                    //cout << hex << uppercase << setfill('0') << setw(2) << memory.readByte(place) << endl;
+                    byte temp1 = memory.readByte(place1);
+                    byte temp2 = memory.readByte(place2);
+                    subByte(temp1, temp2);
+                    if (direction == 0) {
+                        di++;
+                        si++;
+                    } else {
+                        di--;
+                        si--;
+                    }
+                    
+                    if (repeatCX) {
+                        cx--;
+                        if (cx > 0) {
+                            if (!repeatZF && zero == true) {
+                                break;
+                            }
+                            if (repeatZF && zero == false) {
+                                break;
+                            }
+                            goto repA6;
+                        }
+                    }
+                    
+                    break;
+                }
+                
+                // CMPSW compare strings
+                case 0xA7:
+                {
+                    repA7:
+                    address place1 = (*currentSegment << 4) + si;
+                    address place2 = (es << 4) + di;
+                    //cout << place <<  " : ";
+                    //cout << hex << uppercase << setfill('0') << setw(2) << memory.readByte(place) << endl;
+                    word temp1 = memory.readWord(place1);
+                    word temp2 = memory.readWord(place2);
+                    subWord(temp1, temp2);
+                    if (direction == 0) {
+                        di += 2;
+                        si += 2;
+                    } else {
+                        di -= 2;
+                        si -= 2;
+                    }
+                    
+                    if (repeatCX) {
+                        cx--;
+                        if (cx > 0) {
+                            if (!repeatZF && zero == true) {
+                                break;
+                            }
+                            if (repeatZF && zero == false) {
+                                break;
+                            }
+                            goto repA7;
+                        }
+                    }
+                    
+                    break;
+                }
+                
             // TEST AL & immediate
             case 0xA8:
             {
@@ -2967,6 +3037,20 @@ namespace DK86PC {
                         setSZPFlagsWord(ax);
                         break;
                     }
+                    case 0b101: // IMUL 8 bit to 16 bit
+                    {
+                        byte temp = getModRMByte(mrr);
+                        int32_t result = ((int16_t) al) * ((int16_t) temp);
+                        ax = (word)(result & 0xFFFF);
+                        if (ah == 0) {
+                            carry = false;
+                            overflow = false;
+                        } else {
+                            carry = true;
+                            overflow = true;
+                        }
+                        break;
+                    }
                     case 0b110: // DIV 16 bit by 8 bit
                     {
                         byte temp = getModRMByte(mrr);
@@ -3054,6 +3138,21 @@ namespace DK86PC {
                     {
                         word temp = getModRMWord(mrr);
                         address result = ((address) ax) * ((address) temp);
+                        ax = (word)(result & 0xFFFF);
+                        Dx = (word)((result >> 16) & 0xFFFF);
+                        if (Dx == 0) {
+                            carry = false;
+                            overflow = false;
+                        } else {
+                            carry = true;
+                            overflow = true;
+                        }
+                        break;
+                    }
+                    case 0b101: // IMUL 16 bit to 32 bit
+                    {
+                        word temp = getModRMWord(mrr);
+                        int32_t result = ((int32_t) ax) * ((int32_t) temp);
                         ax = (word)(result & 0xFFFF);
                         Dx = (word)((result >> 16) & 0xFFFF);
                         if (Dx == 0) {

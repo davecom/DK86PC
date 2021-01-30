@@ -52,7 +52,7 @@ TEST_CASE( "artlav CPU Tests" ) {
     
     
     
-    auto name = GENERATE(as<std::string>{}, "div");
+    auto name = GENERATE(as<std::string>{}, "mul");
     
     DYNAMIC_SECTION( "Instructions: " << name ) {
         Memory memory = Memory();
