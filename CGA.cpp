@@ -21,6 +21,9 @@
 
 #include "CGA.hpp"
 #include "Types.h"
+#include <stdlib.h>
+#include <string.h>
+
 
 namespace DK86PC {
 
@@ -105,9 +108,20 @@ void CGA::initScreen() {
         printf("Couldn't run TTF_Init() successfully.");
         SDL_Quit();
     }
+//#ifdef _WIN32
+//    // annoyingly, on Windows TTF_OpenFont expects an absolute path
+//    char* basePath = SDL_GetBasePath();
+//    const char* fontSubPath = "Fonts\\Px437_IBM_BIOS.ttf";
+//    char* fullPath = (char *)malloc(strlen(basePath) + strlen(fontSubPath) + 1);
+//    strcpy(fullPath, basePath);
+//    strcat(fullPath, fontSubPath);
+//    font = TTF_OpenFont(fullPath, pcHeight / NUM_ROWS);
+//#else
+//    font = TTF_OpenFont("Fonts/Px437_IBM_BIOS.ttf", pcHeight / NUM_ROWS);
+//#endif
     font = TTF_OpenFont("Fonts/Px437_IBM_BIOS.ttf", pcHeight / NUM_ROWS);
     if (font == NULL) {
-        printf("Could not load font file.");
+        printf("Could not load font file.%s\n", TTF_GetError());
         SDL_Quit();
     }
     
