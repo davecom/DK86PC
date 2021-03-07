@@ -81,12 +81,16 @@
     <CopyLocalDeploymentContent>true</CopyLocalDeploymentContent>
     <IncludePath>$(SolutionDir)..\SDL\Windows\SDL_ttf\include;$(SolutionDir)..\SDL\Windows\SDL\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)..\SDL\Windows\SDL_ttf\lib\x64;$(SolutionDir)..\SDL\Windows\SDL\lib\x64;$(LibraryPath)</LibraryPath>
+    <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
+    <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <CopyLocalDeploymentContent>true</CopyLocalDeploymentContent>
     <IncludePath>$(SolutionDir)..\SDL\Windows\SDL_ttf\include;$(SolutionDir)..\SDL\Windows\SDL\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)..\SDL\Windows\SDL_ttf\lib\x64;$(SolutionDir)..\SDL\Windows\SDL\lib\x64;$(LibraryPath)</LibraryPath>
+    <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
+    <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

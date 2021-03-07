@@ -91,9 +91,9 @@ void PPI::keyboardDown(SDL_Keysym s) {
 
 void PPI::keyboardUp(SDL_Keysym s) {
     // SDL uses usb codes for scancodes
-    SDL_Scancode usb_code = s.scancode;
+    const SDL_Scancode usb_code = s.scancode;
     // convert it
-    byte scancode = usbToPCScancode[usb_code];
+    const byte scancode = usbToPCScancode[usb_code];
     if (scancode == 0xFF) { // this key didn't exist in IBM PC scancode days
         return;
     }

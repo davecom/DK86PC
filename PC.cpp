@@ -61,7 +61,7 @@ namespace DK86PC {
             pit.update(); // not quite right, but hopefully close enough
             
         }
-        quit:
+        //quit:
         cga.exitRender();
     }
     
@@ -222,7 +222,7 @@ namespace DK86PC {
         switch (port) {
             case 0x00: case 0x01: case 0x02: case 0x03: case 0x04: case 0x05: case 0x06: case 0x07:
             {
-                byte channel = (byte) port / 2;
+                const byte channel = (byte) port / 2;
                 if (port % 2 == 0) {
                     return dma.readAddress(channel);
                 } else {
