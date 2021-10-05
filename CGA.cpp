@@ -86,7 +86,7 @@ void CGA::initScreen() {
     // default
     pcWidth = 640;
     pcHeight = 200;
-    window = SDL_CreateWindow("DK86PC", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, pcWidth, pcHeight, SDL_WINDOW_ALLOW_HIGHDPI);
+    window = SDL_CreateWindow("DK86PC", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, pcWidth, pcHeight, SDL_WINDOW_SHOWN);
     if (window == NULL) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create window: %s", SDL_GetError());
         return;
