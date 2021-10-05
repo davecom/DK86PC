@@ -21,6 +21,9 @@
 
 #include "CGA.hpp"
 #include "Types.h"
+#include <stdlib.h>
+#include <string.h>
+
 
 namespace DK86PC {
 
@@ -105,9 +108,20 @@ void CGA::initScreen() {
         printf("Couldn't run TTF_Init() successfully.");
         SDL_Quit();
     }
+//#ifdef _WIN32
+//    // annoyingly, on Windows TTF_OpenFont expects an absolute path
+//    char* basePath = SDL_GetBasePath();
+//    const char* fontSubPath = "Fonts\\Px437_IBM_BIOS.ttf";
+//    char* fullPath = (char *)malloc(strlen(basePath) + strlen(fontSubPath) + 1);
+//    strcpy(fullPath, basePath);
+//    strcat(fullPath, fontSubPath);
+//    font = TTF_OpenFont(fullPath, pcHeight / NUM_ROWS);
+//#else
+//    font = TTF_OpenFont("Fonts/Px437_IBM_BIOS.ttf", pcHeight / NUM_ROWS);
+//#endif
     font = TTF_OpenFont("Fonts/Px437_IBM_BIOS.ttf", pcHeight / NUM_ROWS);
     if (font == NULL) {
-        printf("Could not load font file.");
+        printf("Could not load font file.%s\n", TTF_GetError());
         SDL_Quit();
     }
     
@@ -194,18 +208,18 @@ void CGA::renderScreen(uint32_t timing) {
     if (graphicsMode) {
         return;
     } else { // text mode
-        int cursorLocation = ((int)registers6845[0xE] << 8) | ((int)registers6845[0xF]);
-        byte cursorRow = cursorLocation / numColumns;
-        byte cursorColumn = cursorLocation - (cursorRow * numColumns);
+        const int cursorLocation = ((int)registers6845[0xE] << 8) | ((int)registers6845[0xF]);
+        const byte cursorRow = cursorLocation / numColumns;
+        const byte cursorColumn = cursorLocation - (cursorRow * numColumns);
         cellWidth = pcWidth / numColumns;
         cellHeight = pcHeight / NUM_ROWS;
         for (int row = 0; row < NUM_ROWS; row++) {
             horizontalRetraceStart();
             for (int column = 0; column < numColumns; column++) {
-                address memLocation = CGA_BASE_MEMORY_LOCATION + (row * (numColumns * 2)) + column * 2;
-                byte character = memory.readByte(memLocation);
+                const address memLocation = CGA_BASE_MEMORY_LOCATION + (row * (numColumns * 2)) + column * 2;
+                const byte character = memory.readByte(memLocation);
                 // cout << character;
-                byte attribute = memory.readByte(memLocation + 1);
+                const byte attribute = memory.readByte(memLocation + 1);
                 // if text mode, draw cursor every half second
                 if (cursorColumn == column && cursorRow == row && ((timing % 1000) > 500)) {
                     drawCharacter(row, column, 219, (attribute&0xF0) | 15);
@@ -271,7 +285,7 @@ inline void CGA::drawCharacter(byte row, byte column, byte character, byte attri
     // some monitors/bios treat color and black and white modes both as color, so we'll try that here
     SDL_Color bgColor = colorPalette[highNibble(attribute)];
     int fgColor = lowNibble(attribute);
-    SDL_Rect rect;
+    SDL_Rect rect{};
     rect.x = column * cellWidth;
     rect.y = row * cellHeight;
     rect.w = cellWidth;

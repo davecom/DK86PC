@@ -49,7 +49,7 @@ byte FDC::readStatus() {
 }
 
 byte FDC::readCommand() {
-    byte temp = commandBuffer[commandBufferIndex];
+    const byte temp = commandBuffer[commandBufferIndex];
     commandBufferIndex++;
     if (commandBufferIndex >= commandLength) {
         DIO = false;

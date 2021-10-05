@@ -688,7 +688,7 @@ namespace DK86PC {
     }
 
     inline void CPU::addByte(byte &left, byte right) {
-        byte originalHigh = highBitByte(left);
+        const byte originalHigh = highBitByte(left);
         carry = ((word)right + (word)left) > 0x00FF;
         auxiliaryCarry = ((lowNibble(right) + lowNibble(left)) > 0x0F);
         left = left + right;
@@ -697,7 +697,7 @@ namespace DK86PC {
     }
 
     inline void CPU::addWord(word &left, word right) {
-        word originalHigh = highBitWord(left);
+        const word originalHigh = highBitWord(left);
         carry = ((uint32_t)right + (uint32_t)left) > 0x0000FFFF;
         auxiliaryCarry = ((lowNibble(right) + lowNibble(left)) > 0x0F);
         left = left + right;
@@ -706,7 +706,7 @@ namespace DK86PC {
     }
 
     inline void CPU::addByteWithCarry(byte &left, byte right) {
-        byte originalHigh = highBitByte(left);
+        const byte originalHigh = highBitByte(left);
         bool oldCarry = carry;
         carry = ((word)right + (word)left + oldCarry) > 0x00FF;
         auxiliaryCarry = ((lowNibble(right) + lowNibble(left) + oldCarry) > 0x0F);
@@ -1636,7 +1636,7 @@ namespace DK86PC {
             
             // JNBE/JA Jump on not below or equal above
             case 0x77:
-                if (!(zero | carry)) {
+                if (!(zero || carry)) {
                     ip = (ip + 2) + signExtend(memory.readByte(NEXT_INSTRUCTION + 1));
                     jump = true;
                 }
@@ -1699,7 +1699,7 @@ namespace DK86PC {
             
             // JLE/JNG Jump if not greater
             case 0x7E:
-                if ((sign ^ overflow) | zero) {
+                if ((sign ^ overflow) || zero) {
                     ip = (ip + 2) + signExtend(memory.readByte(NEXT_INSTRUCTION + 1));
                     jump = true;
                 }
@@ -1708,7 +1708,7 @@ namespace DK86PC {
             
             // JNLE/JG Jump if greater
             case 0x7F:
-                if (!((sign ^ overflow) | zero)) {
+                if (!((sign ^ overflow) || zero)) {
                     ip = (ip + 2) + signExtend(memory.readByte(NEXT_INSTRUCTION + 1));
                     jump = true;
                 }
