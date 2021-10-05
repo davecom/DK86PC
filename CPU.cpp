@@ -3040,7 +3040,7 @@ namespace DK86PC {
                     case 0b101: // IMUL 8 bit to 16 bit
                     {
                         byte temp = getModRMByte(mrr);
-                        int32_t result = ((int16_t) al) * ((int16_t) temp);
+                        int16_t result = ((int8_t) al) * ((int8_t) temp);
                         ax = (word)(result & 0xFFFF);
                         if (ah == 0) {
                             carry = false;
@@ -3152,7 +3152,7 @@ namespace DK86PC {
                     case 0b101: // IMUL 16 bit to 32 bit
                     {
                         word temp = getModRMWord(mrr);
-                        int32_t result = ((int32_t) ax) * ((int32_t) temp);
+                        uint32_t result = ((int16_t) ax) * ((int16_t) temp);
                         ax = (word)(result & 0xFFFF);
                         Dx = (word)((result >> 16) & 0xFFFF);
                         if (Dx == 0) {

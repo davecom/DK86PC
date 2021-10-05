@@ -52,14 +52,14 @@ TEST_CASE( "artlav CPU Tests" ) {
     
     
     
-    auto name = GENERATE(as<std::string>{}, "mul");
+    auto name = GENERATE(as<std::string>{}, "sub");
     
     DYNAMIC_SECTION( "Instructions: " << name ) {
         Memory memory = Memory();
         memory.loadBIOS("80186_tests/" + name + ".bin");
         //memory.setWatch(0);
         cout << "TEST POSITION 0:";
-        cout << hex << uppercase << setfill('0') << setw(4) << memory.readByte(0) << dec << endl;
+        cout << hex << uppercase << setfill('0') << setw(4) << memory.readByte(0xFFFF0) << dec << endl;
         DummyPortInterface dpi = DummyPortInterface();
         CPU cpu = CPU(dpi, memory);
         // default flags for later x86 CPUs expected by tests
