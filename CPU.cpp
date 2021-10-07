@@ -849,63 +849,44 @@ namespace DK86PC {
         
         // check for prefix to opcode
         while (true) {
+            #ifdef DEBUG
+            debugPrint(opcode);
+            #endif
             switch (opcode) {
                 case 0xF0:
-                    #ifdef DEBUG
-                    debugPrint(opcode);
-                    #endif
                     lock = true;
                     ip += 1;
                     break;
                 case 0xF3:
-                    #ifdef DEBUG
-                    debugPrint(opcode);
-                    #endif
                     repeatCX = true;
                     repeatZF = true;
                     ip += 1;
                     break;
                 case 0xF2:
-                    #ifdef DEBUG
-                    debugPrint(opcode);
-                    #endif
                     repeatCX = true;
                     ip += 1;
                     break;
                 case 0x2E:
-                    #ifdef DEBUG
-                    debugPrint(opcode);
-                    #endif
                     currentSegment = &cs;
                     segmentOverride = true;
                     ip += 1;
                     break;
                 case 0x36:
-                    #ifdef DEBUG
-                    debugPrint(opcode);
-                    #endif
                     currentSegment = &ss;
                     segmentOverride = true;
                     ip += 1;
                     break;
                 case 0x3E:
-                    #ifdef DEBUG
-                    debugPrint(opcode);
-                    #endif
                     currentSegment = &ds;
                     segmentOverride = true;
                     ip += 1;
                     break;
                 case 0x26:
-                    #ifdef DEBUG
-                    debugPrint(opcode);
-                    #endif
                     currentSegment = &es;
                     segmentOverride = true;
                     ip += 1;
                     break;
                 default:
-                    
                     goto actualOpcode;
             }
             opcode = memory.readByte(NEXT_INSTRUCTION);
@@ -913,9 +894,6 @@ namespace DK86PC {
         }
         
     actualOpcode:
-        #ifdef DEBUG
-        debugPrint(opcode);
-        #endif
         switch (opcode) {
             
             // ADD integer addition

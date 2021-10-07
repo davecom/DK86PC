@@ -81,7 +81,6 @@ namespace DK86PC {
             cout << "File " << filename << " can't be opened!";
         }
         
-        
         copy(istreambuf_iterator<char>(input),
              istreambuf_iterator<char>(),
              back_inserter(buffer));

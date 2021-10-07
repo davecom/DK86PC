@@ -49,6 +49,10 @@ namespace DK86PC {
         void setTestingFlags(word testFlags) {
             flags = testFlags;
         };
+        void setCSIP(word cs, word ip) {
+            this->cs = cs;
+            this->ip = ip;
+        }
         #endif
     private:
         uint64_t cycleCount;
