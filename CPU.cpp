@@ -459,7 +459,7 @@ namespace DK86PC {
     }
     
     inline void CPU::shlByte(ModRegRM mrr, byte amount) {
-        int count = amount;
+        int count = amount & 0x1F;
         byte operand = getModRMByte(mrr);
         
         while (count > 0) {
@@ -467,28 +467,32 @@ namespace DK86PC {
             operand <<= 1;
             count--;
         }
-        if (amount == 1) {
+        if (amount >= 1) {
             overflow = highBitByte(operand) ^ carry;
         }
-        setSZPFlagsByte(operand);
+        if (amount != 0) {
+            setSZPFlagsByte(operand);
+        }
         setModRMByte(mrr, operand);
     }
     
     inline void CPU::shrByte(ModRegRM mrr, byte amount) {
-        int count = amount;
+        int count = amount & 0x1F;
         byte operand = getModRMByte(mrr);
-        if (count == 1) { overflow = highBitByte(operand); }
+        if (count >= 1) { overflow = highBitByte(operand); }
         while (count > 0) {
             carry = lowBit(operand);
             operand >>= 1;
             count--;
         }
-        setSZPFlagsByte(operand);
+        if (amount != 0) {
+            setSZPFlagsByte(operand);
+        }
         setModRMByte(mrr, operand);
     }
     
     inline void CPU::sarByte(ModRegRM mrr, byte amount) {
-        int count = amount;
+        int count = amount & 0x1F;
         byte operand = getModRMByte(mrr);
         while (count > 0) {
             carry = lowBit(operand);
@@ -498,7 +502,9 @@ namespace DK86PC {
             count--;
         }
         if (amount == 1) { overflow = 0; }
-        setSZPFlagsByte(operand);
+        if (amount != 0) {
+            setSZPFlagsByte(operand);
+        }
         setModRMByte(mrr, operand);
     }
     
@@ -564,7 +570,7 @@ namespace DK86PC {
     }
     
     inline void CPU::shlWord(ModRegRM mrr, byte amount) {
-        int count = amount;
+        int count = amount & 0x1F;
         word operand = getModRMWord(mrr);
         
         while (count > 0) {
@@ -572,28 +578,32 @@ namespace DK86PC {
             operand <<= 1;
             count--;
         }
-        if (amount == 1) {
+        if (amount >= 1) {
             overflow = highBitWord(operand) ^ carry;
         }
-        setSZPFlagsWord(operand);
+        if (amount != 0) {
+            setSZPFlagsWord(operand);
+        }
         setModRMWord(mrr, operand);
     }
     
     inline void CPU::shrWord(ModRegRM mrr, byte amount) {
-        int count = amount;
+        int count = amount & 0x1F;
         word operand = getModRMWord(mrr);
-        if (count == 1) { overflow = highBitWord(operand); }
+        if (count >= 1) { overflow = highBitWord(operand); }
         while (count > 0) {
             carry = lowBit(operand);
             operand >>= 1;
             count--;
         }
-        setSZPFlagsWord(operand);
+        if (amount != 0) {
+            setSZPFlagsWord(operand);
+        }
         setModRMWord(mrr, operand);
     }
     
     inline void CPU::sarWord(ModRegRM mrr, byte amount) {
-        int count = amount;
+        int count = amount & 0x1F;
         word operand = getModRMWord(mrr);
         while (count > 0) {
             carry = lowBit(operand);
@@ -603,7 +613,9 @@ namespace DK86PC {
             count--;
         }
         if (amount == 1) { overflow = 0; }
-        setSZPFlagsWord(operand);
+        if (amount != 0) {
+            setSZPFlagsWord(operand);
+        }
         setModRMWord(mrr, operand);
     }
 
