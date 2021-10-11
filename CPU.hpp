@@ -70,6 +70,8 @@ namespace DK86PC {
         inline void setSignFlagWord(word data);
         inline void setSZPFlagsWord(word data);
         
+        inline void setFlagsDefaults();
+        
         // Get & Change Reg/Memory Methods
         inline address calcEffectiveAddress(ModRegRM mrr);
         inline word getModRMWord(ModRegRM mrr);

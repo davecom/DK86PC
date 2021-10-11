@@ -81,6 +81,13 @@ namespace DK86PC {
         setZeroFlag(data);
         setParityFlag(data);
     }
+
+    inline void CPU::setFlagsDefaults() {
+        nothing = 0;
+        nothing2 = 0;
+        nothing3 = 0;
+        nothing4 = 1;
+    }
     
     inline word CPU::getRegWord(byte reg) {
         switch (reg) {
@@ -833,7 +840,7 @@ namespace DK86PC {
         ss = 0;
         ip = 0; // reset vector at OxFFFF0 (cs << 4 + ip)
         flags = 0x0000;
-        nothing4 = 1;
+        setFlagsDefaults();
         
         halted = false;
     }
@@ -2161,10 +2168,7 @@ namespace DK86PC {
 //                word second = whole & 0x00FF;
 //                flags = (second << 8) | first;
                 flags = pop();
-                nothing = 0;
-                nothing2 = 0;
-                nothing3 = 0;
-                nothing4 = 1;
+                setFlagsDefaults();
                 break;
             }
             
@@ -2666,7 +2670,8 @@ namespace DK86PC {
                 jump = true;
                 ip = pop();
                 cs = pop();
-                flags = pop() | 0xF000;
+                flags = pop();
+                setFlagsDefaults();
                 break;
             
             // ROL/ROR/RCL/RCR/SHL/SHR/SAR/ROL 8 bits 1
