@@ -52,7 +52,7 @@ TEST_CASE( "artlav CPU Tests" ) {
     
     
     
-    auto name = GENERATE(as<std::string>{}, "bcdcnv");
+    auto name = GENERATE(as<std::string>{}, "rotate");
     
     DYNAMIC_SECTION( "Instructions: " << name ) {
         Memory memory = Memory();

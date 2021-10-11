@@ -398,21 +398,21 @@ namespace DK86PC {
     
     // ROL
     inline void CPU::rolByte(ModRegRM mrr, byte amount) {
-        int count = amount;
+        int count = (amount & 0x1F) % 8;
         byte operand = getModRMByte(mrr);
         while (count > 0) {
             carry = highBitByte(operand);
             operand = ((operand << 1) | carry);
             count--;
         }
-        if (amount == 1) {
+        if (amount >= 1) {
             overflow = highBitByte(operand) ^ carry;
         }
         setModRMByte(mrr, operand);
     }
     
     inline void CPU::rorByte(ModRegRM mrr, byte amount) {
-        int count = amount;
+        int count = amount & 0x1F;
         byte operand = getModRMByte(mrr);
         while (count > 0) {
             carry = lowBit(operand);
@@ -420,14 +420,14 @@ namespace DK86PC {
             operand |= (carry << 7);
             count--;
         }
-        if (amount == 1) {
-            overflow = highBitByte(operand) ^ carry;
+        if (amount >= 1) {
+            overflow = highBitByte(operand) ^ ((operand >> 6) & 1);
         }
         setModRMByte(mrr, operand);
     }
     
     inline void CPU::rclByte(ModRegRM mrr, byte amount) {
-        int count = amount;
+        int count = amount & 0x1F;
         byte operand = getModRMByte(mrr);
         while (count > 0) {
             bool tempCarry = carry;
@@ -435,16 +435,16 @@ namespace DK86PC {
             operand = ((operand << 1) | tempCarry);
             count--;
         }
-        if (amount == 1) {
+        if (amount >= 1) {
             overflow = highBitByte(operand) ^ carry;
         }
         setModRMByte(mrr, operand);
     }
     
     inline void CPU::rcrByte(ModRegRM mrr, byte amount) {
-        int count = amount;
+        int count = amount & 0x1F;
         byte operand = getModRMByte(mrr);
-        if (count == 1) {
+        if (count >= 1) {
             overflow = highBitByte(operand) ^ carry;
         }
         
@@ -503,21 +503,21 @@ namespace DK86PC {
     }
     
     inline void CPU::rolWord(ModRegRM mrr, byte amount) {
-        int count = amount;
+        int count = (amount & 0x1F) % 16;
         word operand = getModRMWord(mrr);
         while (count > 0) {
             carry = highBitWord(operand);
             operand = ((operand << 1) | carry);
             count--;
         }
-        if (amount == 1) {
+        if (amount >= 1) {
             overflow = highBitWord(operand) ^ carry;
         }
         setModRMWord(mrr, operand);
     }
     
     inline void CPU::rorWord(ModRegRM mrr, byte amount) {
-        int count = amount;
+        int count = amount & 0x1F;
         word operand = getModRMWord(mrr);
         while (count > 0) {
             carry = lowBit(operand);
@@ -525,14 +525,14 @@ namespace DK86PC {
             operand |= (carry << 15);
             count--;
         }
-        if (amount == 1) {
-            overflow = highBitWord(operand) ^ carry;
+        if (amount >= 1) {
+            overflow = highBitWord(operand) ^ ((operand >> 14) & 1);
         }
         setModRMWord(mrr, operand);
     }
     
     inline void CPU::rclWord(ModRegRM mrr, byte amount) {
-        int count = amount;
+        int count = amount & 0x1F;
         word operand = getModRMWord(mrr);
         while (count > 0) {
             bool tempCarry = carry;
@@ -540,16 +540,16 @@ namespace DK86PC {
             operand = ((operand << 1) | tempCarry);
             count--;
         }
-        if (amount == 1) {
+        if (amount >= 1) {
             overflow = highBitWord(operand) ^ carry;
         }
         setModRMWord(mrr, operand);
     }
     
     inline void CPU::rcrWord(ModRegRM mrr, byte amount) {
-        int count = amount;
+        int count = amount & 0x1F;
         word operand = getModRMWord(mrr);
-        if (count == 1) {
+        if (count >= 1) {
             overflow = highBitWord(operand) ^ carry;
         }
         
