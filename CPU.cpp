@@ -820,7 +820,8 @@ namespace DK86PC {
         es = 0;
         ss = 0;
         ip = 0; // reset vector at OxFFFF0 (cs << 4 + ip)
-        flags = 0xF000;
+        flags = 0x0000;
+        nothing4 = 1;
         
         halted = false;
     }
@@ -2142,8 +2143,18 @@ namespace DK86PC {
             
             // POPF
             case 0x9D:
-                flags = pop() | 0xF000;
+            {
+//                word whole = pop();
+//                word first = (whole >> 8) & 0x00FF;
+//                word second = whole & 0x00FF;
+//                flags = (second << 8) | first;
+                flags = pop();
+                nothing = 0;
+                nothing2 = 0;
+                nothing3 = 0;
+                nothing4 = 1;
                 break;
+            }
             
             // SAHF store AH in flags
             case 0x9E:
