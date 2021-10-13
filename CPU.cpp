@@ -190,7 +190,16 @@ namespace DK86PC {
                 ea = bx + disp;
                 break;
         }
-        return ea;
+        return ea & 0xFFFF;
+    }
+
+    inline address CPU::calcPhysicalAddress(ModRegRM mrr) {
+        address ea = calcEffectiveAddress(mrr);
+        // bp implicitly should use ss
+        // maybe should allow bp to be overridden
+        word *segment = ((mrr.rm == 0b010 || mrr.rm == 0b011 || (mrr.rm == 0b110 && mrr.mod != 0b00)) && !segmentOverride) ? &ss : currentSegment;
+        address pa = ((*segment << 4) + ea); // physical address
+        return pa;
     }
     
     inline word CPU::getModRMWord(ModRegRM mrr) {
@@ -198,12 +207,8 @@ namespace DK86PC {
             return getRegWord(mrr.rm);
         }
         
-        address ea = calcEffectiveAddress(mrr);
-        // bp implicitly should use ss
-        // maybe should allow bp to be overridden
-        word *segment = ((mrr.rm == 0b010 || mrr.rm == 0b011 || (mrr.rm == 0b110 && mrr.mod != 0b00)) && !segmentOverride) ? &ss : currentSegment;
-        address pa = ((*segment << 4) + ea); // physical address
-        return memory.readWord(pa);
+        
+        return memory.readWord(calcPhysicalAddress(mrr));
     }
     
     inline byte CPU::getModRMByte(ModRegRM mrr) {
@@ -2841,6 +2846,7 @@ namespace DK86PC {
                 al = al + (ah * operand);
                 ah = 0;
                 setSZPFlagsByte(al);
+                
                 break;
             }
                 
@@ -3328,7 +3334,7 @@ namespace DK86PC {
                         break;
                     case 0b101: // JMP inter-segment, indirect
                         {
-                            address temp = calcEffectiveAddress(mrr);
+                            address temp = calcPhysicalAddress(mrr);
                             ip = memory.readWord(temp);
                             cs = memory.readWord(temp + 2);
                             jump = true;

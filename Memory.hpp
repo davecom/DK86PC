@@ -33,10 +33,11 @@ namespace DK86PC {
     class Memory {
     public:
         Memory(unsigned int ramSize = 1048576) {
-            ram = new byte[ramSize];
+            ram = new byte[ramSize]();
+            
         }
         ~Memory() {
-            delete ram;
+            delete[] ram;
         }
         void loadData(vector<byte> &data, address location);
         byte readByte(address location);

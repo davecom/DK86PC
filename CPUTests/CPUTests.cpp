@@ -51,14 +51,16 @@ vector<uint8_t> loadBin(string filename) {
 TEST_CASE( "artlav CPU Tests" ) {
     
     
-    // passing tests "rotate", "add", "sub", "jump1", "jump2", "bitwise", "control", "cmpneg", "rep", "shifts", "strings", "interrupt"
+    // passing tests "rotate", "add", "sub", "jump1", "jump2", "bitwise", "control", "cmpneg", "rep", "shifts", "strings", "interrupt", "jmpmov"
     // failing tests "mul", "div", "jmpmov", "segpr", "bcdconv", "datatrnf"
-    auto name = GENERATE(as<std::string>{}, "mul");
+    auto name = GENERATE(as<std::string>{}, "rotate", "add", "sub", "jump1", "jump2", "jmpmov", "bitwise", "control", "cmpneg", "rep", "shifts", "strings", "interrupt");
     
     DYNAMIC_SECTION( "Instructions: " << name ) {
         Memory memory = Memory();
         memory.loadBIOS("80186_tests/" + name + ".bin");
-        //memory.setWatch(0);
+//        memory.setWatch(0x10000 + 0x2501);
+//        memory.setWatch(0x10000 + 0x2600);
+//        memory.setWatch(0x10000 + 0x2601);
         DummyPortInterface dpi = DummyPortInterface();
         CPU cpu = CPU(dpi, memory);
         // default flags for later x86 CPUs expected by tests
@@ -68,6 +70,13 @@ TEST_CASE( "artlav CPU Tests" ) {
         while (!cpu.isHalted()) {
             cpu.step();
         }
+        // special test case without result
+        if (name == "jmpmov") {
+            INFO("Testing byte 0 of Memory for jmpmov test");
+            CHECK((uint8_t)memory.readByte(0) == (uint8_t)0x4001);
+            return;
+        }
+        // normal test cases
         vector<uint8_t> expectedResult = loadBin("80186_tests/res_" + name + ".bin");
         for (int i = 0; i < expectedResult.size(); i++) {
             INFO("Testing byte #" << i);

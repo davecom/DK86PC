@@ -74,6 +74,7 @@ namespace DK86PC {
         
         // Get & Change Reg/Memory Methods
         inline address calcEffectiveAddress(ModRegRM mrr);
+        inline address calcPhysicalAddress(ModRegRM mrr);
         inline word getModRMWord(ModRegRM mrr);
         inline word getRegWord(byte reg);
         inline byte getModRMByte(ModRegRM mrr);
