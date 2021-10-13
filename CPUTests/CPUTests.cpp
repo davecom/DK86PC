@@ -52,8 +52,8 @@ TEST_CASE( "artlav CPU Tests" ) {
     
     
     // passing tests "rotate", "add", "sub", "jump1", "jump2", "bitwise", "control", "cmpneg", "rep", "shifts", "strings", "interrupt", "jmpmov"
-    // failing tests "mul", "div", "jmpmov", "segpr", "bcdconv", "datatrnf"
-    auto name = GENERATE(as<std::string>{}, "rotate", "add", "sub", "jump1", "jump2", "jmpmov", "bitwise", "control", "cmpneg", "rep", "shifts", "strings", "interrupt");
+    // failing tests "mul", "div", "segpr", "bcdconv", "datatrnf"
+    auto name = GENERATE(as<std::string>{}, "segpr");
     
     DYNAMIC_SECTION( "Instructions: " << name ) {
         Memory memory = Memory();

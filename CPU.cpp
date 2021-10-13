@@ -206,8 +206,6 @@ namespace DK86PC {
         if (mrr.mod == 0b11) {
             return getRegWord(mrr.rm);
         }
-        
-        
         return memory.readWord(calcPhysicalAddress(mrr));
     }
     
@@ -215,12 +213,7 @@ namespace DK86PC {
         if (mrr.mod == 0b11) {
             return getRegByte(mrr.rm);
         }
-        address ea = calcEffectiveAddress(mrr);
-       // bp implicitly should use ss
-        // maybe should allow bp to be overridden
-        word *segment = (mrr.rm == 0b010 || mrr.rm == 0b011 || (mrr.rm == 0b110 && mrr.mod != 0b00)) ? &ss : currentSegment;
-        address pa = ((*segment << 4) + ea); // physical address
-        return memory.readByte(pa);
+        return memory.readByte(calcPhysicalAddress(mrr));
     }
     
     template <typename T>
@@ -341,8 +334,7 @@ namespace DK86PC {
             return;
         }
         
-        address ea = calcEffectiveAddress(mrr);
-        address pa = ((*currentSegment << 4) + ea); // physical address
+        address pa = calcPhysicalAddress(mrr); // physical address
         memory.setByte(pa, data);
     }
     
@@ -352,8 +344,7 @@ namespace DK86PC {
             return;
         }
         
-        address ea = calcEffectiveAddress(mrr);
-        address pa = ((*currentSegment << 4) + ea); // physical address
+        address pa = calcPhysicalAddress(mrr); // physical address
         memory.setWord(pa, data);
     }
     
@@ -3321,8 +3312,7 @@ namespace DK86PC {
                         push(ip + instructionLength);
                         // next two instructions are new ip
                         // can't change ip until after have read CS
-                        address ea = calcEffectiveAddress(mrr);
-                        address pa = ((*currentSegment << 4) + ea); // physical address
+                        address pa = calcPhysicalAddress(mrr); // physical address
                         ip = memory.readWord(pa);
                         cs = memory.readWord(pa + 2);
                         jump = true;

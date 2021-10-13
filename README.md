@@ -1,7 +1,7 @@
 # DK86PC
-A WIP attempt to write an Intel 8086 emulator... and eventually an original IBM PC 5150 emulator.
+This is a work-in-progress Intel 8086 and IBM PC 5150 emulator. Currently, it successfully runs some programs.
 
-It's at the point where it gets through booting the BIOS and gets to the IBM Casette BASIC (I haven't made much progress on the floppy disk controller to boot DOS). But everything is a syntax error—I think because of the u character being inserted at the end of each line: 
+It's at the point where it gets through booting the BIOS and gets to the IBM Casette BASIC (I haven't made much progress on the floppy disk controller to boot DOS). It can successfully run some code in BASIC:
 
 ![Casette BASIC Booting](CasetteBASIC.png)
 
@@ -13,4 +13,4 @@ Currently I am testing on Big Sur on Apple Silicon (ARM64), and on Windows 10 on
 
 I've run some automated CPU tests and the CPU is reasonably good, but is still missing a few instructions. I wrote it all by hand using Intel/IBM/online documentation, only looking at other emulators when I got really stuck for a particular specific item.
 
-The emulator I've found most helpful as a reference is [this Java one](https://github.com/NeatMonster/Intel8086) by @NeatMonster. And [this C one](https://github.com/mikechambers84/XTulator/tree/master/XTulator/modules/video) by @mikechambers84.
+The emulators I've found most helpful as a reference is [this Java one](https://github.com/NeatMonster/Intel8086) by @NeatMonster and [this C one](https://github.com/mikechambers84/XTulator) by @mikechambers84.
