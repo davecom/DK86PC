@@ -2569,7 +2569,7 @@ namespace DK86PC {
                 ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
                 instructionLength = 2;
                 modInstructionLength(mrr, instructionLength);
-                address temp = calcEffectiveAddress(mrr);
+                address temp = calcPhysicalAddress(mrr);
                 word operand1 = memory.readWord(temp);
                 word operand2 = memory.readWord(temp + 2);
                 setRegWord(mrr.reg, operand1);
@@ -2583,7 +2583,7 @@ namespace DK86PC {
                 ModRegRM mrr = ModRegRM(memory.readByte(NEXT_INSTRUCTION + 1));
                 instructionLength = 2;
                 modInstructionLength(mrr, instructionLength);
-                address temp = calcEffectiveAddress(mrr);
+                address temp = calcPhysicalAddress(mrr);
                 word operand1 = memory.readWord(temp);
                 word operand2 = memory.readWord(temp + 2);
                 setRegWord(mrr.reg, operand1);

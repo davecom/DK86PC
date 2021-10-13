@@ -92,6 +92,8 @@ void FDC::writeCommand(byte command) {
             break;
         case 0xF: // SEEK
             break;
+        default:
+            cout << "Unexpected FDC write command " << command << endl;
     }
 }
 
