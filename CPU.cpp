@@ -2234,7 +2234,7 @@ namespace DK86PC {
             case 0xA4:
             {
                 repA4:
-                address fromPlace = (ds << 4) + si;
+                address fromPlace = (*currentSegment << 4) + si;
                 address toPlace = (es << 4) + di;
                 memory.setByte(toPlace, memory.readByte(fromPlace));
                 if (direction == 0) {
@@ -2259,7 +2259,7 @@ namespace DK86PC {
             case 0xA5:
             {
                 repA5:
-                address fromPlace = (ds << 4) + si;
+                address fromPlace = (*currentSegment << 4) + si;
                 address toPlace = (es << 4) + di;
                 memory.setWord(toPlace, memory.readWord(fromPlace));
                 if (direction == 0) {
