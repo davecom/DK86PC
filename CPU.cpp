@@ -785,7 +785,7 @@ namespace DK86PC {
         interrupt = false;
         trace = false;
         push(cs);
-        push(ip);
+        push(ip - prefixCount);
         cs = memory.readWord(type * 4 + 2);
         ip = memory.readWord(type * 4);
         
@@ -837,7 +837,7 @@ namespace DK86PC {
         ip = 0; // reset vector at OxFFFF0 (cs << 4 + ip)
         flags = 0x0000;
         setFlagsDefaults();
-        
+        prefixCount = 0;
         halted = false;
     }
 
@@ -857,6 +857,7 @@ namespace DK86PC {
         bool repeatCX = false;
         bool repeatZF = false;
         byte instructionLength = 1;
+        prefixCount = 0;
         
         byte opcode = memory.readByte(NEXT_INSTRUCTION);
         currentSegment = &ds;
@@ -871,40 +872,35 @@ namespace DK86PC {
             switch (opcode) {
                 case 0xF0:
                     lock = true;
-                    ip += 1;
                     break;
                 case 0xF3:
                     repeatCX = true;
                     repeatZF = true;
-                    ip += 1;
                     break;
                 case 0xF2:
                     repeatCX = true;
-                    ip += 1;
                     break;
                 case 0x2E:
                     currentSegment = &cs;
                     segmentOverride = true;
-                    ip += 1;
                     break;
                 case 0x36:
                     currentSegment = &ss;
                     segmentOverride = true;
-                    ip += 1;
                     break;
                 case 0x3E:
                     currentSegment = &ds;
                     segmentOverride = true;
-                    ip += 1;
                     break;
                 case 0x26:
                     currentSegment = &es;
                     segmentOverride = true;
-                    ip += 1;
                     break;
                 default:
                     goto actualOpcode;
             }
+            prefixCount++;
+            ip += 1;
             opcode = memory.readByte(NEXT_INSTRUCTION);
             
         }

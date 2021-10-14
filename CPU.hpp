@@ -166,6 +166,7 @@ namespace DK86PC {
         word *currentSegment;
         bool segmentOverride = false;
         word ip; // instruction pointer
+        byte prefixCount; // how many prefixes before current opcode
         union {
             struct {
                 bool carry: 1; // bit 0
