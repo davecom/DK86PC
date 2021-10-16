@@ -2889,10 +2889,13 @@ namespace DK86PC {
                 instructionLength = 2;
                 // next byte is usually 10 but can be used otherwise
                 byte operand = memory.readByte(NEXT_INSTRUCTION + 1);
-                al = ((word)al + ((word)ah * operand)) & 0xFF;
+                al = ((word)al + ((word)ah * (word)operand)) & 0xFF;
+                
                 ah = 0;
                 setSZPFlagsByte(al);
-                
+                //sign = 0;
+                overflow = false;
+                carry = false;
                 break;
             }
                 
@@ -3092,21 +3095,22 @@ namespace DK86PC {
                         }
                         // not required by documentation (undefined)
                         // but set so bios detect 8088
-                        setSZPFlagsWord(ax);
+                        setSZPFlagsByte((byte)ax);
                         break;
                     }
                     case 0b101: // IMUL 8 bit to 16 bit
                     {
                         byte temp = getModRMByte(mrr);
-                        int16_t result = ((int8_t) al) * ((int8_t) temp);
+                        uint16_t result = ((int8_t) al) * ((int8_t) temp);
                         ax = (word)(result & 0xFFFF);
-                        if (ah == 0) {
+                        if (((signExtend(al) & 0xFF00) >> 8) == ah) {
                             carry = false;
                             overflow = false;
                         } else {
                             carry = true;
                             overflow = true;
                         }
+                        setSZPFlagsByte((byte)result);
                         break;
                     }
                     case 0b110: // DIV 16 bit by 8 bit
@@ -3205,6 +3209,7 @@ namespace DK86PC {
                             carry = true;
                             overflow = true;
                         }
+                        setSZPFlagsWord((word) result);
                         break;
                     }
                     case 0b101: // IMUL 16 bit to 32 bit
@@ -3213,13 +3218,14 @@ namespace DK86PC {
                         uint32_t result = ((int16_t) ax) * ((int16_t) temp);
                         ax = (word)(result & 0xFFFF);
                         Dx = (word)((result >> 16) & 0xFFFF);
-                        if (Dx == 0) {
+                        if (((ax & 0x8000) && Dx == 0xFFFF) || (ax >> 15 == 0 && Dx == 0)) {
                             carry = false;
                             overflow = false;
                         } else {
                             carry = true;
                             overflow = true;
                         }
+                        setSZPFlagsWord((word)result);
                         break;
                     }
                     case 0b110: // DIV 32 bit by 16 bit
