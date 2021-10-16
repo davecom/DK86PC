@@ -14,3 +14,5 @@ Currently I am testing on Big Sur on Apple Silicon (ARM64), and on Windows 10 on
 I've run some automated CPU tests and the CPU is reasonably good, but is still missing a few instructions. I wrote it all by hand using Intel/IBM/online documentation, only looking at other emulators when I got really stuck for a particular specific item.
 
 The emulators I've found most helpful as a reference is [this Java one](https://github.com/NeatMonster/Intel8086) by @NeatMonster and [this C one](https://github.com/mikechambers84/XTulator) by @mikechambers84.
+
+For the CPU opcode implementations, I largely used the official Intel 8086 manual as well as this [great site by Felix Cloutier](https://www.felixcloutier.com/x86/index.html).

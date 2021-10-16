@@ -50,16 +50,12 @@ namespace DK86PC {
     
     template <typename T>
     inline void CPU::setParityFlag(T data) {
-        // source: http://graphics.stanford.edu/~seander/bithacks.html#ParityNaive
+        // source: https://stackoverflow.com/a/21618038/281461
         byte tested = lowByte(data);
-        bool p = true;
-        
-        while (tested) {
-            p = !p;
-            tested = tested & (tested - 1);
-        }
-        
-        parity = p;
+        tested ^= tested >> 4;
+        tested ^= tested >> 2;
+        tested ^= tested >> 1;
+        parity = (~tested) & 1;
     }
     
     inline void CPU::setSZPFlagsByte(byte data) {
@@ -1220,15 +1216,26 @@ namespace DK86PC {
             
             //DAA Decimal Adjust for Addition
             case 0x27:
-                if (((al & 0xF) > 9) || auxiliaryCarry) {
-                    addByte(al, 6);
+            {
+                byte origValue = al;
+                bool origC = carry;
+                carry = false;
+                if (((al & 0x0F) > 9) || (auxiliaryCarry)) {
+                    al += 6;
+                    carry = (origC | ((al & 0x80) > 0));
                     auxiliaryCarry = true;
+                } else {
+                    auxiliaryCarry = false;
                 }
-                if ((al > 0x9F) || carry) {
-                    addByte(al, 0x60);
+                if ((origValue > 0x99) || (origC)) {
+                    al += 0x60;
                     carry = true;
+                } else {
+                    carry = false;
                 }
+                setSZPFlagsByte(al);
                 break;
+            }
             
             // SUB integer subtraction
             case 0x28:
@@ -1285,6 +1292,27 @@ namespace DK86PC {
                 instructionLength = 3;
                 break;
             
+            // DAS Decimal Adjust for Subtraction
+            case 0x2F:
+            {
+                byte origValue = al;
+                bool origC = carry;
+                carry = false;
+                if (((al & 0x0F) > 9) || (auxiliaryCarry)) {
+                    al -= 6;
+                    carry = (origC | ((al & 0x80) == 0));
+                    auxiliaryCarry = true;
+                } else {
+                    auxiliaryCarry = false;
+                }
+                if ((origValue > 0x99) || (origC)) {
+                    al -= 0x60;
+                    carry = true;
+                }
+                setSZPFlagsByte(al);
+                break;
+            }
+            
             // XOR exclusive or
             case 0x30:
             {
@@ -1337,6 +1365,21 @@ namespace DK86PC {
             case 0x35:
                 xorWord(ax, memory.readWord(NEXT_INSTRUCTION + 1));
                 instructionLength = 3;
+                break;
+                
+            // AAA ASCII Adjust for Addition
+            case 0x37:
+                if (((al & 0x0F) > 9) || (auxiliaryCarry)) {
+                    al += 6;
+                    ah += 1;
+                    carry = true;
+                    auxiliaryCarry = true;
+                } else {
+                    auxiliaryCarry = false;
+                    carry = false;
+                }
+                al &= 0x0F;
+                setSZPFlagsByte(al);
                 break;
             
             // CMP Memory/Reg with Reg byte
@@ -1400,6 +1443,21 @@ namespace DK86PC {
                 subWord(temp, memory.readWord(NEXT_INSTRUCTION + 1));
                 break;
             }
+                
+            // AAS ASCII Adjust for Subtraction
+            case 0x3F:
+                if (((al & 0x0F) > 9) || (auxiliaryCarry)) {
+                    al -= 6;
+                    ah -= 1;
+                    carry = true;
+                    auxiliaryCarry = true;
+                } else {
+                    carry = false;
+                    auxiliaryCarry = false;
+                }
+                al &= 0x0F;
+                setSZPFlagsByte(al);
+                break;
                 
             // INC AX
             case 0x40:
@@ -2817,9 +2875,10 @@ namespace DK86PC {
                 instructionLength = 2;
                 // next byte is usually 10 but can be used otherwise
                 byte operand = memory.readByte(NEXT_INSTRUCTION + 1);
+                byte oldAL = al;
                 ah = al / operand;
-                al = al % operand;
-                setSZPFlagsByte(ah);
+                al = oldAL % operand;
+                setSZPFlagsByte(al);
                 break;
             }
             
@@ -2830,7 +2889,7 @@ namespace DK86PC {
                 instructionLength = 2;
                 // next byte is usually 10 but can be used otherwise
                 byte operand = memory.readByte(NEXT_INSTRUCTION + 1);
-                al = al + (ah * operand);
+                al = ((word)al + ((word)ah * operand)) & 0xFF;
                 ah = 0;
                 setSZPFlagsByte(al);
                 

@@ -36,6 +36,8 @@ namespace DK86PC {
         }
         return (word) original;
     }
+
+    
 }
 
 #endif /* Types_h */

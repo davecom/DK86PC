@@ -51,9 +51,9 @@ vector<uint8_t> loadBin(string filename) {
 TEST_CASE( "artlav CPU Tests" ) {
     
     
-    // passing tests "rotate", "add", "sub", "jump1", "jump2", "bitwise", "control", "cmpneg", "rep", "shifts", "strings", "interrupt", "jmpmov", "datatrnf", "segpr"
-    // failing tests "mul", "div", "bcdconv"
-    auto name = GENERATE(as<std::string>{}, "rotate", "add", "sub", "jump1", "jump2", "bitwise", "control", "cmpneg", "rep", "shifts", "strings", "interrupt", "jmpmov", "datatrnf", "segpr");
+    // passing tests "rotate", "add", "sub", "jump1", "jump2", "bitwise", "control", "cmpneg", "rep", "shifts", "strings", "interrupt", "jmpmov", "datatrnf", "segpr", "bcdconv"
+    // failing tests "mul", "div"
+    auto name = GENERATE(as<std::string>{}, "mul");
     
     DYNAMIC_SECTION( "Instructions: " << name ) {
         Memory memory = Memory();
