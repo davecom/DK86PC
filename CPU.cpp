@@ -2437,8 +2437,8 @@ namespace DK86PC {
             {
                 repAA:
                 address place = (es << 4) + di;
-                cout << place <<  " : ";
-                cout << hex << uppercase << setfill('0') << setw(2) << al << endl;
+                //cout << place <<  " : ";
+                //cout << hex << uppercase << setfill('0') << setw(2) << al << endl;
                 memory.setByte(place, al);
                 if (direction == 0) {
                     di++;
@@ -2485,8 +2485,8 @@ namespace DK86PC {
             {
                 repAC:
                 address place = (*currentSegment << 4) + si;
-                cout << place <<  " : ";
-                cout << hex << uppercase << setfill('0') << setw(2) << memory.readByte(place) << endl;
+                //cout << place <<  " : ";
+                //cout << hex << uppercase << setfill('0') << setw(2) << memory.readByte(place) << endl;
                 al = memory.readByte(place);
                 if (direction == 0) {
                     si++;
@@ -2531,8 +2531,8 @@ namespace DK86PC {
             {
                 repAE:
                 address place = (es << 4) + di;
-                cout << place <<  " : ";
-                cout << hex << uppercase << setfill('0') << setw(2) << memory.readByte(place) << endl;
+                //cout << place <<  " : ";
+                //cout << hex << uppercase << setfill('0') << setw(2) << memory.readByte(place) << endl;
                 byte temp1 = al;
                 byte temp2 = memory.readByte(place);
                 subByte(temp1, temp2);
@@ -2875,10 +2875,15 @@ namespace DK86PC {
                 instructionLength = 2;
                 // next byte is usually 10 but can be used otherwise
                 byte operand = memory.readByte(NEXT_INSTRUCTION + 1);
-                byte oldAL = al;
-                ah = al / operand;
-                al = oldAL % operand;
-                setSZPFlagsByte(al);
+                if (operand == 0) { // division by 0
+                    jump = true;
+                    performInterrupt(0);
+                } else {
+                    byte oldAL = al;
+                    ah = al / operand;
+                    al = oldAL % operand;
+                    setSZPFlagsByte(al);
+                }
                 break;
             }
             
@@ -3133,18 +3138,19 @@ namespace DK86PC {
                     }
                     case 0b111: // IDIV 16 bit by 8 bit
                     {
+                        
                         int8_t temp = (int8_t)getModRMByte(mrr);
                         if (temp == 0) { // division by 0
                             jump = true;
                             performInterrupt(0);
                         } else {
-                            word result = ((int16_t)ax) / ((int16_t)temp);
-                            if (result > 0x7F || result == 0x80) { // overflow interrupt
+                            int16_t result = ((int16_t)ax) / ((int16_t)temp);
+                            if (result > 0x7F || result < -127) { // overflow interrupt
                                 jump = true;
                                 performInterrupt(0);
                             } else {
-                                al = (byte)result;
                                 ah = ((int16_t)ax) % temp;
+                                al = (byte)result;
                                 
                             }
                         }
@@ -3254,9 +3260,9 @@ namespace DK86PC {
                             jump = true;
                             performInterrupt(0);
                         } else {
-                            int32_t combined = (int32_t)(((address)Dx) << 16) | ((address)ax);
-                            word result = combined / ((int32_t)temp);
-                            if (result > 0x7FFF || result == 0x8000) { // overflow interrupt
+                            int32_t combined = (int32_t)((((address)Dx) << 16) | ((address)ax));
+                            int32_t result = (int32_t)combined / ((int32_t)temp);
+                            if (result > 0x7FFF || result < -32767) { // overflow interrupt
                                 jump = true;
                                 performInterrupt(0);
                             } else {

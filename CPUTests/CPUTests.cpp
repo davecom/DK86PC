@@ -49,23 +49,11 @@ vector<uint8_t> loadBin(string filename) {
 
 
 TEST_CASE( "artlav CPU Tests" ) {
-    
-    
-    // passing tests "rotate", "add", "sub", "jump1", "jump2", "bitwise", "control", "cmpneg", "rep", "shifts", "strings", "interrupt", "jmpmov", "datatrnf", "segpr", "bcdcnv", "mul"
-    // failing tests "div"
-    auto name = GENERATE(as<std::string>{}, "div");
+    auto name = GENERATE(as<std::string>{}, "rotate", "add", "sub", "jump1", "jump2", "bitwise", "control", "cmpneg", "rep", "shifts", "strings", "interrupt", "jmpmov", "datatrnf", "segpr", "bcdcnv", "mul", "div");
     
     DYNAMIC_SECTION( "Instructions: " << name ) {
         Memory memory = Memory();
         memory.loadBIOS("80186_tests/" + name + ".bin");
-//        memory.setWatch(0x10000 + 0x2501);
-//        memory.setWatch(0x10000 + 0x2600);
-//        memory.setWatch(0x2A);
-//        memory.setWatch(22);
-//        memory.setWatch(23);
-//        memory.setWatch(24);
-//        memory.setWatch(25);
-//        memory.setWatch(26);
         DummyPortInterface dpi = DummyPortInterface();
         CPU cpu = CPU(dpi, memory);
         // default flags for later x86 CPUs expected by tests
