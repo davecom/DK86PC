@@ -10,11 +10,13 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: ./CPUTests
 
     steps:
     - uses: actions/checkout@v2
-    - name: cd CPUTests
-      run: cd CPUTests
     - name: make
       run: make
     - name: cputest
