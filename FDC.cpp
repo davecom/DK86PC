@@ -45,7 +45,7 @@ void FDC::writeControl(byte command) {
 }
 
 byte FDC::readStatus() {
-    return RQM << 7 | DIO << 6 | dmaEnabled << 5 | fdcBusy << 4;
+    return RQM << 7 | DIO << 6 | !dmaEnabled << 5 | fdcBusy << 4;
 }
 
 byte FDC::readCommand() {
@@ -74,11 +74,13 @@ void FDC::writeCommand(byte command) {
         case 0x7: // CALIBRATE
             break;
         case 0x8: // CHECK INTTERUPT
+            // byte 0 number of bytes that follow
+            commandBuffer[0] = 0x20;
             // byte 0 status registor 0 (ST0)
-            commandBuffer[0] = 0;
+            commandBuffer[1] = 0;
             // byte 1 current cylinder
-            commandBuffer[1] = currentCylinder;
-            commandLength = 2;
+            commandBuffer[2] = currentCylinder;
+            commandLength = 3;
             commandBufferIndex = 0;
             DIO = true;
             break;

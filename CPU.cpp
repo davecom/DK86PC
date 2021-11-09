@@ -843,6 +843,9 @@ namespace DK86PC {
             //byte irq = info & 0b00000111;
             //performInterrupt(baseVector / 4 + irq);
             performInterrupt(info);
+            if (info == 14) {
+                cout << "Floppy Interrupt" << endl;
+            }
         }
     }
     
@@ -3099,8 +3102,14 @@ namespace DK86PC {
                             overflow = true;
                         }
                         // not required by documentation (undefined)
-                        // but set so bios detect 8088
+                        // but set so bios detect 8088 and cpu tests pass
+                        
+                        #ifdef CPU_TESTS
                         setSZPFlagsByte((byte)ax);
+                        #else
+                        setSZPFlagsWord(ax);
+                        #endif
+                        
                         break;
                     }
                     case 0b101: // IMUL 8 bit to 16 bit

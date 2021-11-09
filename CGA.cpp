@@ -53,7 +53,7 @@ Uint16 unicodeMappings[256] = {0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0
 
 void CGA::createFontCache() {
     for (int color = 0; color < NUM_COLORS; color++) {
-        for (int character = 1; character < NUM_CHARACTERS; character++) {
+        for (uint16_t character = 1; character < NUM_CHARACTERS; character++) {
             Uint16 tcharacter = unicodeMappings[character];
             SDL_Surface *text_surface;
             if(!(text_surface = TTF_RenderGlyph_Solid(font, tcharacter, colorPalette[color]))) {
@@ -64,6 +64,9 @@ void CGA::createFontCache() {
                 SDL_Texture* inbetween = SDL_CreateTextureFromSurface(renderer, text_surface);
                 //perhaps we can reuse it, but I assume not for simplicity.
                 fontCache[color][character] = inbetween;
+                if (color == 0 && character == 201) {
+                    printf("Created fonte cache for color %d, character %d\n", color, character);
+                }
                 SDL_FreeSurface(text_surface);
             }
             
@@ -214,7 +217,8 @@ void CGA::renderScreen(uint32_t timing) {
         cellWidth = pcWidth / numColumns;
         cellHeight = pcHeight / NUM_ROWS;
         for (int row = 0; row < NUM_ROWS; row++) {
-            horizontalRetraceStart();
+            horizontalRetraceEnd();
+            
             for (int column = 0; column < numColumns; column++) {
                 const address memLocation = CGA_BASE_MEMORY_LOCATION + (row * (numColumns * 2)) + column * 2;
                 const byte character = memory.readByte(memLocation);
@@ -227,7 +231,7 @@ void CGA::renderScreen(uint32_t timing) {
                     drawCharacter(row, column, character, attribute);
                 }
             }
-            horizontalRetraceEnd();
+            horizontalRetraceStart();
         }
     }
     SDL_RenderPresent(renderer);

@@ -1,5 +1,5 @@
 CC = g++
-FLAGS = -std=c++17 -DDEBUG -Werror
+FLAGS = -std=c++17 -DDEBUG -DCPU_TESTS -Werror
 VPATH = ../
 OBJECTS = CPUTests.o CPUTestsMain.o Memory.o CPU.o
 
