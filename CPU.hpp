@@ -44,7 +44,9 @@ namespace DK86PC {
         void hardwareInterrupt(byte info);
         void step();
         bool isHalted() { return halted; };
-        bool canInterrupt() { return interrupt; };
+        bool canInterrupt() {
+            return interrupt;
+        };
         #ifdef DEBUG
         void setTestingFlags(word testFlags) {
             flags = testFlags;
@@ -167,6 +169,7 @@ namespace DK86PC {
         bool segmentOverride = false;
         word ip; // instruction pointer
         byte prefixCount; // how many prefixes before current opcode
+        bool delayInterrupt; // STI is only supposed to set interrupt at start of next instruction, not right away, so that RET can work without interrupt causing CLI
         union {
             struct {
                 bool carry: 1; // bit 0

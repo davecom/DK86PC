@@ -87,10 +87,7 @@ byte PIC::readData() {
 }
 
 void PIC::requestInterrupt(byte irq) {
-    // ignore if masked
-    if (interruptMaskRegister & (1 << irq)) {
-        return;
-    }
+    
     interruptRequestRegister = interruptRequestRegister | (1 << irq);
 }
 
@@ -99,6 +96,11 @@ byte PIC::getInterrupt() {
         return NO_INTERRUPT;
     }
     for (int i = 0; i < 8; i++) {
+        // ignore if masked
+        if (interruptMaskRegister & (1 << i)) {
+            continue;
+        }
+        // otherwise handle
         if (interruptRequestRegister & (1 << i)) {
             // turn off request
             interruptRequestRegister &= ~((byte) 1 << i);

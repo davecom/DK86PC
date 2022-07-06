@@ -834,6 +834,7 @@ namespace DK86PC {
         flags = 0x0000;
         setFlagsDefaults();
         prefixCount = 0;
+        delayInterrupt = false;
         halted = false;
     }
 
@@ -858,9 +859,16 @@ namespace DK86PC {
         byte instructionLength = 1;
         prefixCount = 0;
         
+        // Make sure interrupt after STI is only enabled one instruction later
+        if (delayInterrupt) {
+            interrupt = true;
+            delayInterrupt = false;
+        }
+        
         byte opcode = memory.readByte(NEXT_INSTRUCTION);
         currentSegment = &ds;
         segmentOverride = false;
+        
         
         
         // check for prefix to opcode
@@ -3311,7 +3319,10 @@ namespace DK86PC {
             
             // STI set interrupt flag
             case 0xFB:
-                interrupt = true;
+                if (!interrupt) {
+                    delayInterrupt = true; // delaying interrupt breaks basic interpreter with weird behavior
+                }
+                //interrupt = true;
                 break;
             
             // CLD clear direction flag
