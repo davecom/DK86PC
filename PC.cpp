@@ -115,6 +115,9 @@ namespace DK86PC {
             case 0x0B:
                 dma.setMode((byte) value);
                 break;
+            case 0x0C:
+                dma.clearBytePointerFlipFlop();
+                break;
             case 0x0D:
                 dma.masterReset();
                 break;

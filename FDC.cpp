@@ -60,10 +60,31 @@ byte FDC::readCommand() { // 3F5
 }
 
 void FDC::writeCommand(byte command) {
-    switch (command & 0xF) {
+    static byte currentCommand = 0;
+    static byte commandBytesRemaining = 0;
+    if (commandBytesRemaining == 0) {
+        currentCommand = command;
+    }
+    
+    switch (currentCommand & 0xF) {
         case 0x2: // READ TRACK
             break;
         case 0x3: // SPECIFY
+            switch (commandBytesRemaining) {
+                case 0:
+                    commandBytesRemaining = 2;
+                    fdcBusy = true;
+                    break;
+                case 2: // we ignore step rate/head unload time
+                    commandBytesRemaining--;
+                    break;
+                case 1: // we ignore head load time/ndm
+                    commandBytesRemaining--;
+                    fdcBusy = false;
+                    break;
+                
+            }
+            
             break;
         case 0x4: // CHECK STAT
             break;

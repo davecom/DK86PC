@@ -72,5 +72,9 @@ void DMA::masterReset() {
     status = 0;
     masks = 0x0F;
 }
+
+void DMA::clearBytePointerFlipFlop() {
+    flipflop = false;
+}
     
 }

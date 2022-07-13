@@ -48,6 +48,7 @@ namespace DK86PC {
         
         void writeCommand(byte command);
         void masterReset();
+        void clearBytePointerFlipFlop();
     private:
         word addressRegisters[4];
         word counterRegisters[4];
