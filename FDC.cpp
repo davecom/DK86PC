@@ -44,17 +44,17 @@ void FDC::writeControl(byte command) {
     }
 }
 
-byte FDC::readStatus() {
-    return RQM << 7 | DIO << 6 | !dmaEnabled << 5 | fdcBusy << 4;
+byte FDC::readStatus() {  // 3F4
+    byte temp = RQM << 7 | DIO << 6 | !dmaEnabled << 5 | fdcBusy << 4;
+    return temp;
 }
 
-byte FDC::readCommand() {
+byte FDC::readCommand() { // 3F5
     const byte temp = commandBuffer[commandBufferIndex];
     commandBufferIndex++;
     if (commandBufferIndex >= commandLength) {
         DIO = false;
-        pic.requestInterrupt(6);
-        
+        fdcBusy = false;
     }
     return temp;
 }
@@ -75,14 +75,16 @@ void FDC::writeCommand(byte command) {
             break;
         case 0x8: // CHECK INTTERUPT
             // byte 0 number of bytes that follow
-            commandBuffer[0] = 0x20;
+            commandBuffer[0] = 2;
             // byte 0 status registor 0 (ST0)
-            commandBuffer[1] = 0;
+            // 0x80 if no interrupts pending (invalid command)
+            commandBuffer[1] = 0x80;
             // byte 1 current cylinder
             commandBuffer[2] = currentCylinder;
             commandLength = 3;
             commandBufferIndex = 0;
             DIO = true;
+            fdcBusy = true;
             break;
         case 0x9: // WRITE DELETE SECTOR
             break;

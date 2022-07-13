@@ -13,6 +13,6 @@ Currently I am testing on Big Sur on Apple Silicon (ARM64), and on Windows 10 on
 
 I wrote it all by hand using Intel/IBM/online documentation, looking at other emulators for hints/quick solutions when I got really stuck on a particular item.
 
-The emulators I've found most helpful as a reference are [this Java one](https://github.com/NeatMonster/Intel8086) by @NeatMonster, [this C one](https://github.com/mikechambers84/XTulator) by @mikechambers84, and [this Go one](https://github.com/andreas-jonsson/virtualxt) by @andreas-jonsson.
+The emulators I've found most helpful as a reference are [this Java one](https://github.com/NeatMonster/Intel8086) by @NeatMonster, [this C one](https://github.com/mikechambers84/XTulator) by @mikechambers84, [this C one](https://github.com/andreas-jonsson/virtualxt) by @andreas-jonsson, and [this Rust one](https://github.com/dbalsom/marty) by @dbalsom.
 
 For the CPU opcode implementations, I largely used the official Intel 8086 manual as well as this [great site by Felix Cloutier](https://www.felixcloutier.com/x86/index.html).
