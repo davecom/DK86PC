@@ -74,14 +74,12 @@ void FDC::writeCommand(byte command) {
         case 0x7: // CALIBRATE
             break;
         case 0x8: // CHECK INTTERUPT
-            // byte 0 number of bytes that follow
-            commandBuffer[0] = 2;
             // byte 0 status registor 0 (ST0)
             // 0x80 if no interrupts pending (invalid command)
-            commandBuffer[1] = 0x80;
+            commandBuffer[0] = 0xC0;
             // byte 1 current cylinder
-            commandBuffer[2] = currentCylinder;
-            commandLength = 3;
+            commandBuffer[1] = currentCylinder;
+            commandLength = 2;
             commandBufferIndex = 0;
             DIO = true;
             fdcBusy = true;
